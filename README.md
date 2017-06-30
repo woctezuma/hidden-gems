@@ -15,8 +15,8 @@ Data source:
 The quality measure comes from [SteamDB](https://steamdb.info/stats/gameratings/) and the popularity measure comes from [SteamSpy API](http://steamspy.com/api.php).
 
 Usage:
-i)  create_dict_using_json.py merges data from SteamDB and SteamSpy
-ii) compute_stats.py creates the ranking by optimizing the free parameter alpha
+1. `create_dict_using_json.py` merges data from SteamDB and SteamSpy
+2. `compute_stats.py` creates the ranking by optimizing the free parameter alpha
 
 Results:
 * [ranking](https://gist.github.com/woctezuma/9cea3a93fd5cba2f1b876864a0dc8854), using players total (forever) as a popularity measure,
