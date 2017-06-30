@@ -4,27 +4,45 @@
 #
 # - a text file, copied from SteamDB, named "top_rated_games_on_steam.txt"
 input_filename = "top_rated_games_on_steam.txt"
+steamdb_url = "https://steamdb.info/stats/gameratings/?all"
 # NB: To download & copy the content of input_filename by yourself, you need to log in using your own Steam account on
-#     https://steamdb.info/stats/gameratings/?all and then select to show all in the dropdown menu.
+#     steamdb_url and then select to show all in the dropdown menu.
 #
 # - a json file, downloaded from SteamSpy, named "steamspy.json"
 json_filename = "steamspy.json"
-# NB: To download & copy the content of json_filename by yourself, you need to use the API of SteamSpy on:
-#     http://steamspy.com/api.php?request=all and then click on the "Save" button.
+steamspy_url = "http://steamspy.com/api.php?request=all"
+# NB: To download & copy the content of json_filename by yourself, you need to use the API of SteamSpy on
+#     steamspy_url and then click on the "Save" button.
 #
 # Output:
 #
 # a dictionary stored in a text file named "dict_top_rated_games_on_steam.txt"
 output_filename = "dict_top_rated_games_on_steam.txt"
 
-import json
+import urllib.request, json
 
 D = dict()
 
 verbose = False
 
-with open(json_filename, 'r', encoding="utf8") as in_json_file:
-    data = json.load(in_json_file)
+try:
+    with open(json_filename, 'r', encoding="utf8") as in_json_file:
+        data = json.load(in_json_file)
+except FileNotFoundError:
+    print("Downloading and caching data from SteamSpy")
+    # Trick to download the JSON file directly from SteamSpy, in case the file does not exist locally yet
+    # Reference: https://stackoverflow.com/a/31758803/
+    class AppURLopener(urllib.request.FancyURLopener):
+        version = "Mozilla/5.0"
+    opener = AppURLopener()
+    with opener.open(steamspy_url) as response:
+        data = json.load(response)
+        # Make sure the json data is using double quotes instead of single quotes
+        # Reference: https://stackoverflow.com/a/8710579/
+        jsonString = json.dumps(data)
+        # Cache the json data to a local file
+        with open(json_filename, 'w', encoding="utf8") as cache_json_file:
+            print(jsonString, file=cache_json_file)
 
 with open(input_filename, 'r', encoding="utf8") as infile:
     for line in infile:
