@@ -43,7 +43,7 @@ with open(input_filename, 'r', encoding="utf8") as infile:
                 alltime_peak = -1 # Not available
                 num_owners = data[appid]['owners']
                 num_players = data[appid]['players_forever']
-                median_time = data[appid]['owners']
+                median_time = data[appid]['median_forever']
 
                 stats_save = [name, wilson_score, alltime_peak, num_owners, num_players, median_time]
 
