@@ -1,18 +1,32 @@
-from scipy.optimize import differential_evolution
-from math import log10
+# Objective: compute a score for each Steam game and then rank all the games while favoring hidden gems.
+#
+# Input:
+#
+# a dictionary stored in a text file named "dict_top_rated_games_on_steam.txt"
+input_filename = "dict_top_rated_games_on_steam.txt"
+#
+# Output:
+#
+# a ranking in a text file named "hidden_gems.txt"
+output_filename = "hidden_gems.txt"
 
-#filename = "thousand_dict_top_rated_games_on_steam.txt"
-filename = "dict_top_rated_games_on_steam.txt"
+from scipy.optimize import differential_evolution
 
 base_steam_store_url = "http://store.steampowered.com/app/"
 
-with open(filename, 'r', encoding="utf8") as infile:
+# Import the dictionary from the input file
+with open(input_filename, 'r', encoding="utf8") as infile:
     lines = infile.readlines()
     # The dictionary is on the second line
     D = eval(lines[1])
 
 def computeScoreGeneric(tuple, alpha):
-    # A tuple is a list consisting of: [game_name wilson_score all_time_peak num_owners num_players]
+    # Objective: compute a score for one Steam game.
+    #
+    # Input:    - a tuple is a list consisting of all retrieved information regarding one game
+    #           - alpha is the only parameter of the ranking, and could be chosen up to one's tastes, or optimized
+    # Output:   game score
+
     game_name = tuple[0]
     wilson_score = tuple[1]
     all_time_peak = tuple[2]
@@ -27,7 +41,6 @@ def computeScoreGeneric(tuple, alpha):
 
     quality_measure = wilson_score
     popularity_measure = num_players
-    #popularity_measure = median_playtime
 
     # Decreasing function
     decreasing_fun = lambda x: alpha / (alpha + x)
@@ -39,14 +52,20 @@ def computeScoreGeneric(tuple, alpha):
 # Goal: find the optimal values for alpha by maximizing the rank of the game "Contradiction"
 
 def functionToMinimize(alpha, verbose=False):
+    # Objective: rank all the Steam games, given a parameter alpha.
+    #
+    # Input:    - alpha is the only parameter of the ranking, and could be chosen up to one's tastes, or optimized
+    #           - optional verbosity boolean
+    # Output:   rank of the game called "Contradiction"
+
     computeScore = lambda x: computeScoreGeneric(x, alpha)
 
+    # Rank all the Steam games
     sortedValues = sorted(D.values(), key=computeScore, reverse=True)
 
     sortedGameNames = list(map(lambda x: x[0], sortedValues))
-    sortedOriginalGameScores = list(map(lambda x: x[1], sortedValues))
-    sortedComputedGameScores = list(map(lambda x: computeScore(x), sortedValues))
 
+    # Display the ranking in a format parsable by Github Gist
     if verbose:
         for i in range(len(sortedGameNames)):
             game_name = sortedGameNames[i]
@@ -62,18 +81,13 @@ def functionToMinimize(alpha, verbose=False):
     appidContradiction = "373390"
     nameContradiction = D[appidContradiction][0]
     rankContradiction = sortedGameNames.index(nameContradiction) + 1
-    if verbose:
-        print("Contradiction rank:\t" + str(rankContradiction) + "\n")
 
     return rankContradiction
 
-# Example of usage
-alphaExample = pow(10, 6.45)
-#functionToMinimize(alphaExample, True)
-
-# Optimization
+# Optimization procedure of the parameter alpha
 res = differential_evolution(functionToMinimize, bounds=[(1, pow(10, 10))])
 alphaOptim = res.x
-print( log10(alphaOptim) )
 
 functionToMinimize(alphaOptim, True)
+
+# TODO save to output_filename
