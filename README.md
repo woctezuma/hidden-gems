@@ -21,6 +21,7 @@ Usage:
 Results:
 * [ranking](https://gist.github.com/woctezuma/9cea3a93fd5cba2f1b876864a0dc8854), using players total (forever) as a popularity measure.
 * [updated ranking](https://gist.github.com/woctezuma/9e3005006361dbd09b7f5b416b5e6869), a week after the Steam summer sales have started.
+* [updated ranking with tag filtering](https://gist.github.com/woctezuma/ed649b5ffe4d1c3d0699ddef9bec34c9), a week after the Steam summer sales have started, and filtering out a few tags (VR, Anime, Visual Novel, and Free To Play).
 
 NB: I have computed the ranking based on playtime as well, but it does not seem like a good popularity measure a posteriori. Typically, it could be skewed by people idling for trading cards, plus the time to finish a game can differ widely between games.
 
