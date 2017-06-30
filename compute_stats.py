@@ -29,12 +29,10 @@ def computeScoreGeneric(tuple, alpha):
 
     game_name = tuple[0]
     wilson_score = tuple[1]
-    all_time_peak = tuple[2]
-    num_owners = tuple[3]
-    num_players = tuple[4]
-    median_playtime = tuple[5]
+    num_owners = tuple[2]
+    num_players = tuple[3]
+    median_playtime = tuple[4]
 
-    all_time_peak = float(all_time_peak)
     num_owners = float(num_owners)
     num_players = float(num_players)
     median_playtime = float(median_playtime)

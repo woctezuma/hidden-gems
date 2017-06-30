@@ -40,12 +40,11 @@ with open(input_filename, 'r', encoding="utf8") as infile:
             print("\n" + name + "\t" + str(wilson_score) + "\n" + appid)
 
             try:
-                alltime_peak = -1 # Not available
                 num_owners = data[appid]['owners']
                 num_players = data[appid]['players_forever']
                 median_time = data[appid]['median_forever']
 
-                stats_save = [name, wilson_score, alltime_peak, num_owners, num_players, median_time]
+                stats_save = [name, wilson_score, num_owners, num_players, median_time]
 
                 print(stats_save)
 
