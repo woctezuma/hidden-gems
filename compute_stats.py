@@ -73,7 +73,9 @@ def functionToMinimize(alpha, verbose=False):
             width = 40
             store_url_fixed_width = f'{store_url: <{width}}'
 
-            print('{:05}'.format(i + 1) + ".\t[" + game_name + "](" + store_url_fixed_width + ")")
+            # Append the ranking to the output text file
+            with open(output_filename, 'a', encoding="utf8") as outfile:
+                print('{:05}'.format(i + 1) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
 
     # Find the rank of the game called Contradiction
     appidContradiction = "373390"
@@ -87,5 +89,3 @@ res = differential_evolution(functionToMinimize, bounds=[(1, pow(10, 10))])
 alphaOptim = res.x
 
 functionToMinimize(alphaOptim, True)
-
-# TODO save to output_filename
