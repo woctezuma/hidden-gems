@@ -21,6 +21,15 @@ output_filename = "dict_top_rated_games_on_steam.txt"
 
 import urllib.request, json
 
+filter_out_user_chosen_tags = False
+
+if filter_out_user_chosen_tags:
+    # Any game which is tagged the following tags will be filtered out from the dictionary (and won't appear on the ranking)
+    tags_to_filter_out = set(["Visual Novel", "Anime", "VR", "Free to Play"])
+else:
+    # Empty set, so that no game is filered out
+    tags_to_filter_out = set()
+
 D = dict()
 
 verbose = False
@@ -61,9 +70,17 @@ with open(input_filename, 'r', encoding="utf8") as infile:
             num_players = data[appid]['players_forever']
             median_time = data[appid]['median_forever']
             average_time = data[appid]['average_forever']
+            tags_dict = data[appid]["tags"]
 
             stats_save = [name, wilson_score, num_owners, num_players, median_time, average_time]
-            D[appid] = stats_save
+
+            if len(tags_dict) == 0:
+                tags = set()
+            else:
+                tags = set(tags_dict.keys())
+
+            if len( tags_to_filter_out.intersection(tags) ) == 0:
+                D[appid] = stats_save
 
         except KeyError:
             if verbose:
