@@ -101,7 +101,7 @@ res = differential_evolution(functionToMinimize, bounds=[(1, upper_search_bound)
 alphaOptim = res.x
 
 # Quick print in order to check that the upper search bound is not too close to our optimal alpha
-# Otherwise, it could indicate the search has been biased the search by a poor choice of the upper search bound.
+# Otherwise, it could indicate the search has been biased by a poor choice of the upper search bound.
 print(alphaOptim / upper_search_bound)
 
 functionToMinimize(alphaOptim, True)
