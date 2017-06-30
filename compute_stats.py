@@ -14,6 +14,8 @@ from scipy.optimize import differential_evolution
 
 base_steam_store_url = "http://store.steampowered.com/app/"
 
+use_playtime_as_popularity_measure = False
+
 # Import the dictionary from the input file
 with open(input_filename, 'r', encoding="utf8") as infile:
     lines = infile.readlines()
@@ -32,13 +34,18 @@ def computeScoreGeneric(tuple, alpha):
     num_owners = tuple[2]
     num_players = tuple[3]
     median_playtime = tuple[4]
+    average_playtime = tuple[5]
 
     num_owners = float(num_owners)
     num_players = float(num_players)
     median_playtime = float(median_playtime)
+    average_playtime = float(average_playtime)
 
     quality_measure = wilson_score
     popularity_measure = num_players
+
+    if use_playtime_as_popularity_measure:
+        popularity_measure = average_playtime
 
     # Decreasing function
     decreasing_fun = lambda x: alpha / (alpha + x)
@@ -85,7 +92,16 @@ def functionToMinimize(alpha, verbose=False):
     return rankContradiction
 
 # Optimization procedure of the parameter alpha
-res = differential_evolution(functionToMinimize, bounds=[(1, pow(10, 10))])
+upper_search_bound = pow(10, 10) # maximal possible value of alpha is 10 billion people
+
+if use_playtime_as_popularity_measure:
+    upper_search_bound = 1.5 * pow(10, 6) # maximal possible value of alpha is 25000 hours
+
+res = differential_evolution(functionToMinimize, bounds=[(1, upper_search_bound)])
 alphaOptim = res.x
+
+# Quick print in order to check that the upper search bound is not too close to our optimal alpha
+# Otherwise, it could indicate the search has been biased the search by a poor choice of the upper search bound.
+print(alphaOptim / upper_search_bound)
 
 functionToMinimize(alphaOptim, True)

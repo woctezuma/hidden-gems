@@ -60,8 +60,9 @@ with open(input_filename, 'r', encoding="utf8") as infile:
             num_owners = data[appid]['owners']
             num_players = data[appid]['players_forever']
             median_time = data[appid]['median_forever']
+            average_time = data[appid]['average_forever']
 
-            stats_save = [name, wilson_score, num_owners, num_players, median_time]
+            stats_save = [name, wilson_score, num_owners, num_players, median_time, average_time]
             D[appid] = stats_save
 
         except KeyError:
@@ -70,7 +71,7 @@ with open(input_filename, 'r', encoding="utf8") as infile:
             continue
 
 # First line of the text file containing the output dictionary
-leading_comment = "# Dictionary with key=appid and value=list of name, Wilson score, #owners, #players, median playtime"
+leading_comment = "# Dictionary with key=appid and value=list of name, Wilson score, #owners, #players, median playtime, average playtime"
 
 # Save the dictionary to a text file
 with open(output_filename, 'w', encoding="utf8") as outfile:
