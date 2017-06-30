@@ -21,6 +21,8 @@ import json
 
 D = dict()
 
+verbose = False
+
 with open(json_filename, 'r', encoding="utf8") as in_json_file:
     data = json.load(in_json_file)
 
@@ -36,22 +38,23 @@ with open(input_filename, 'r', encoding="utf8") as infile:
 
         wilson_score = float(wilson_score_str.strip("%"))/100
 
-        if True:
-            print("\n" + name + "\t" + str(wilson_score) + "\n" + appid)
+        try:
+            num_owners = data[appid]['owners']
+            num_players = data[appid]['players_forever']
+            median_time = data[appid]['median_forever']
 
-            try:
-                num_owners = data[appid]['owners']
-                num_players = data[appid]['players_forever']
-                median_time = data[appid]['median_forever']
+            stats_save = [name, wilson_score, num_owners, num_players, median_time]
+            D[appid] = stats_save
 
-                stats_save = [name, wilson_score, num_owners, num_players, median_time]
+        except KeyError:
+            if verbose:
+                print("\nAppID:" + appid + "\tWilson score:" + str(wilson_score) + "\tName:" + name)
+            continue
 
-                print(stats_save)
+# First line of the text file containing the output dictionary
+leading_comment = "# Dictionary with key=appid and value=list of name, Wilson score, #owners, #players, median playtime"
 
-                D[appid] = stats_save
-            except KeyError:
-                continue
-
-print(D)
-
-# TODO save to output_filename
+# Save the dictionary to a text file
+with open(output_filename, 'w', encoding="utf8") as outfile:
+    print(leading_comment, file=outfile)
+    print(D, file=outfile)
