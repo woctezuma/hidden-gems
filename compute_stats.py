@@ -56,14 +56,17 @@ def computeScoreGeneric(tuple, alpha):
 
     return score
 
-# Goal: find the optimal values for alpha by maximizing the rank of the game "Contradiction"
+# Goal: find the optimal value for alpha by minimizing the rank of a game chosen as a reference of a "hidden gem"
+appidContradiction = "373390"
 
-def functionToMinimize(alpha, verbose=False):
+def rankGames(alpha, verbose = False, appidGameUsedAsReferenceForHiddenGem = appidContradiction):
     # Objective: rank all the Steam games, given a parameter alpha.
     #
     # Input:    - alpha is the only parameter of the ranking, and could be chosen up to one's tastes, or optimized
     #           - optional verbosity boolean
-    # Output:   rank of the game called "Contradiction"
+    #           - optional appID of a game chosen as a reference of a "hidden gem".
+    #             By default, this is the game called "Contradiction" (appID=373390).
+    # Output:   rank of the game used as a reference of a "hidden gem"
 
     computeScore = lambda x: computeScoreGeneric(x, alpha)
 
@@ -89,12 +92,11 @@ def functionToMinimize(alpha, verbose=False):
             with open(output_filename, 'a', encoding="utf8") as outfile:
                 print('{:05}'.format(i + 1) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
 
-    # Find the rank of the game called Contradiction
-    appidContradiction = "373390"
-    nameContradiction = D[appidContradiction][0]
-    rankContradiction = sortedGameNames.index(nameContradiction) + 1
+    # Find the rank of the game used as a reference of a "hidden gem"
+    nameGameUsedAsReferenceForHiddenGem = D[appidGameUsedAsReferenceForHiddenGem][0]
+    rankGameUsedAsReferenceForHiddenGem = sortedGameNames.index(nameGameUsedAsReferenceForHiddenGem) + 1
 
-    return rankContradiction
+    return rankGameUsedAsReferenceForHiddenGem
 
 # Optimization procedure of the parameter alpha
 upper_search_bound = pow(10, 10) # maximal possible value of alpha is 10 billion people
@@ -102,6 +104,7 @@ upper_search_bound = pow(10, 10) # maximal possible value of alpha is 10 billion
 if use_playtime_as_popularity_measure:
     upper_search_bound = 1.5 * pow(10, 6) # maximal possible value of alpha is 25000 hours
 
+functionToMinimize = lambda x : rankGames(x, False)
 res = differential_evolution(functionToMinimize, bounds=[(1, upper_search_bound)])
 alphaOptim = res.x
 
@@ -109,4 +112,4 @@ alphaOptim = res.x
 # Otherwise, it could indicate the search has been biased by a poor choice of the upper search bound.
 print(alphaOptim / upper_search_bound)
 
-functionToMinimize(alphaOptim, True)
+rankGames(alphaOptim, True)
