@@ -21,12 +21,16 @@ output_filename = "dict_top_rated_games_on_steam.txt"
 import urllib.request, json
 from compute_wilson_score import computeWilsonScore
 
+# Optional boolean to decide whether we want to compute the Wilson score by ourselves, instead of using SteamDB's scores
+compute_our_own_wilson_score = False
+# This allows to specify a different confidence, which can turn out to be interesting.
+quantile_for_our_own_wilson_score = 0.95
+
+# Booleans to decide whether we want to filter out and filter in games based on their Steam tags
 filter_out_user_chosen_tags = False
 filter_in_user_chosen_tags = False
 
-compute_our_own_wilson_score = False
-quantile_for_our_own_wilson_score = 0.95
-
+# Tags to filter out
 if filter_out_user_chosen_tags:
     # Any game which is tagged with the following tags will be filtered out from the dictionary (and won't appear on the ranking)
     tags_to_filter_out = set(["Visual Novel", "Anime", "VR", "Free to Play"])
@@ -34,6 +38,7 @@ else:
     # Empty set, so that no game is filered out
     tags_to_filter_out = set()
 
+# Tags to filter in
 if filter_in_user_chosen_tags:
     # Only games which are tagged with the following tags will be filtered into the dictionary (so that only such games will appear on the ranking)
     tags_to_filter_in = set(["Rogue-lite", "Rogue-like"])
@@ -45,7 +50,6 @@ else:
 
 # This is the appID of the game called "Contradiction".
 appidContradiction = "373390"
-
 # This is the appID of the game which will be later used as a reference of a "hidden gem", so we will make sure that
 # this game appears in the output dictionary, despite filter-out and filter-in.
 appidGameUsedAsDefaultReferenceForHiddenGem = appidContradiction

@@ -14,13 +14,15 @@ from scipy.optimize import differential_evolution
 
 base_steam_store_url = "http://store.steampowered.com/app/"
 
+# Boolean to decide whether printing the ranking of the top 1000 games, rather than the ranking of the whole Steam
+# catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
 print_top_thousand_games = True
 
+# Boolean to switch the popularity measure from number of players to average playtime. Not super relevant a posteriori.
 use_playtime_as_popularity_measure = False
 
 # This is the appID of the game called "Contradiction".
 appidContradiction = "373390"
-
 # This is the appID of the game which will be used as a reference of a "hidden gem"
 appidGameUsedAsDefaultReferenceForHiddenGem = appidContradiction
 
