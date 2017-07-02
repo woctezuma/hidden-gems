@@ -18,7 +18,7 @@ To run the code, you will need:
 * data from SteamDB: `top_rated_games_on_steam.txt` (manually pasted)
 * data from SteamSpy: `steamspy.json` (automatically downloaded if the file is missing)
 
-The data is included along the code in this repository, as downloaded on June 30th. 
+The data is included along the code in this repository, as downloaded on June 30, 2017.
 
 ## Requirements ##
 
@@ -27,7 +27,7 @@ This code is written in Python 3.
 [SciPy](https://www.scipy.org/) is required for an optimization procedure (which can be skipped if you manually input a value for the parameter `alpha`).
 To install SciPy on Windows, I suggest you download the binaries linked to the Intel® Math Kernel Library:
 * [NumPy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy)
-* [SciPy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy).
+* [SciPy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy)
 
 ## Usage ##
 1. `create_dict_using_json.py` merges data from SteamDB and SteamSpy
