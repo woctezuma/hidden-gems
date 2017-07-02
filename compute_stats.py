@@ -23,8 +23,8 @@ base_steam_store_url = "http://store.steampowered.com/app/"
 print_subset_of_top_games = True
 num_top_games_to_print = 1000
 
-# Boolean to switch the popularity measure from number of players to average playtime. Not super relevant a posteriori.
-use_playtime_as_popularity_measure = False
+# Boolean to switch the popularity measure from number of players to any alternative which you might want to test.
+use_alternative_popularity_measure = False
 
 # Import the dictionary from the input file
 with open(input_filename, 'r', encoding="utf8") as infile:
@@ -60,7 +60,7 @@ def computeScoreGeneric(tuple, alpha):
     quality_measure = wilson_score
     popularity_measure = num_players
 
-    if use_playtime_as_popularity_measure:
+    if use_alternative_popularity_measure:
         popularity_measure = average_playtime
 
     # Decreasing function
@@ -152,7 +152,7 @@ def rankGames(alpha, verbose = False, appid_reference_set = {373390}):
 # Optimization procedure of the parameter alpha
 upper_search_bound = pow(10, 8) # maximal possible value of alpha is 8 billion people
 
-if use_playtime_as_popularity_measure:
+if use_alternative_popularity_measure:
     upper_search_bound = 1.5 * pow(10, 6) # maximal possible value of alpha is 25000 hours
 
 functionToMinimize = lambda x : rankGames(x, False, appid_default_reference_set)
