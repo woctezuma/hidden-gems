@@ -115,20 +115,24 @@ with open(input_filename, 'r', encoding="utf8") as infile:
             else:
                 tags = set(tags_dict.keys())
 
+            # Check filter-out
+            boolPassFilterOut = bool(len(tags_to_filter_out.intersection(tags)) == 0)
+            # Check filter-in: either there is no filter-in, or there is filter-in and at least one of the desired tags
+            boolPassFilterIn = bool(len(tags_to_filter_in) == 0) or bool(len(tags_to_filter_in.intersection(tags)) != 0)
+            boolGameShouldAppearInRanking = (boolPassFilterOut and boolPassFilterIn)
+            # We save the boolean due to the presence of a reference game, which we have to include in the dictionary,
+            # but which may not appear in the final ranking due to the tag filters.
+            stats_save.append(boolGameShouldAppearInRanking)
+
             # Make sure the output dictionary includes the game which will be chosen as a reference of a "hidden gem"
             if appid == appidGameUsedAsDefaultReferenceForHiddenGem:
                 print("Game used as a reference:\t" + name + "\t(appID=" + appid + ")")
+                # If a game is the reference game, we have include it in the dictionary
                 D[appid] = stats_save
             else:
-                # For every other game, check the filter-out and filter-in tags
-                if len( tags_to_filter_out.intersection(tags) ) == 0:
-                    if len(tags_to_filter_in) == 0:
-                        # Either there is no filter-in
-                        D[appid] = stats_save
-                    else:
-                        if len(tags_to_filter_in.intersection(tags)) != 0:
-                            # Or there is filter-in, and there is at least one of the desired tags
-                            D[appid] = stats_save
+                # If a game is not the reference game, then it may only appear in the ranking if it passes the tag filters.
+                if boolGameShouldAppearInRanking:
+                    D[appid] = stats_save
 
         except KeyError:
             if verbose:
@@ -136,7 +140,7 @@ with open(input_filename, 'r', encoding="utf8") as infile:
             continue
 
 # First line of the text file containing the output dictionary
-leading_comment = "# Dictionary with key=appid and value=list of name, Wilson score, #owners, #players, median playtime, average playtime"
+leading_comment = "# Dictionary with key=appid and value=list of name, Wilson score, #owners, #players, median playtime, average playtime, boolean whether to include the game in the ranking"
 
 # Save the dictionary to a text file
 with open(output_filename, 'w', encoding="utf8") as outfile:
