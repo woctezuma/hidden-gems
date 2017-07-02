@@ -18,6 +18,12 @@ print_top_thousand_games = True
 
 use_playtime_as_popularity_measure = False
 
+# This is the appID of the game called "Contradiction".
+appidContradiction = "373390"
+
+# This is the appID of the game which will be used as a reference of a "hidden gem"
+appidGameUsedAsDefaultReferenceForHiddenGem = appidContradiction
+
 # Import the dictionary from the input file
 with open(input_filename, 'r', encoding="utf8") as infile:
     lines = infile.readlines()
@@ -57,7 +63,6 @@ def computeScoreGeneric(tuple, alpha):
     return score
 
 # Goal: find the optimal value for alpha by minimizing the rank of a game chosen as a reference of a "hidden gem"
-appidContradiction = "373390"
 
 def rankGames(alpha, verbose = False, appidGameUsedAsReferenceForHiddenGem = appidContradiction):
     # Objective: rank all the Steam games, given a parameter alpha.
@@ -104,7 +109,7 @@ upper_search_bound = pow(10, 10) # maximal possible value of alpha is 10 billion
 if use_playtime_as_popularity_measure:
     upper_search_bound = 1.5 * pow(10, 6) # maximal possible value of alpha is 25000 hours
 
-functionToMinimize = lambda x : rankGames(x, False)
+functionToMinimize = lambda x : rankGames(x, False, appidGameUsedAsDefaultReferenceForHiddenGem)
 res = differential_evolution(functionToMinimize, bounds=[(1, upper_search_bound)])
 alphaOptim = res.x
 
@@ -112,4 +117,4 @@ alphaOptim = res.x
 # Otherwise, it could indicate the search has been biased by a poor choice of the upper search bound.
 print(alphaOptim / upper_search_bound)
 
-rankGames(alphaOptim, True)
+rankGames(alphaOptim, True, appidGameUsedAsDefaultReferenceForHiddenGem)
