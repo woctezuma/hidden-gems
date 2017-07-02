@@ -19,8 +19,12 @@ steamspy_url = "http://steamspy.com/api.php?request=all"
 output_filename = "dict_top_rated_games_on_steam.txt"
 
 import urllib.request, json
+from compute_wilson_score import computeWilsonScore
 
 filter_out_user_chosen_tags = False
+
+compute_our_own_wilson_score = False
+quantile_for_our_own_wilson_score = 0.95
 
 if filter_out_user_chosen_tags:
     # Any game which is tagged the following tags will be filtered out from the dictionary (and won't appear on the ranking)
@@ -60,9 +64,21 @@ with open(input_filename, 'r', encoding="utf8") as infile:
 
         appid = stripped_items[1]
         name = stripped_items[2]
-        wilson_score_str = stripped_items[-2]
 
-        wilson_score = float(wilson_score_str.strip("%"))/100
+        toInteger = lambda str : int(str.replace(',',''))
+
+        num_positives = toInteger(stripped_items[3])
+        num_negatives = toInteger(stripped_items[4])
+
+        toPercentage = lambda str : float(str.strip("%"))/100
+
+        wilson_score_from_SteamDB = toPercentage(stripped_items[-2])
+        steam_score = toPercentage(stripped_items[-1])
+
+        if compute_our_own_wilson_score:
+            wilson_score = computeWilsonScore(num_positives, num_negatives, quantile_for_our_own_wilson_score)
+        else:
+            wilson_score = wilson_score_from_SteamDB
 
         try:
             num_owners = data[appid]['owners']
