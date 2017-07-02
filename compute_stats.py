@@ -12,6 +12,7 @@ output_filename = "hidden_gems.txt"
 
 from scipy.optimize import differential_evolution
 from math import log10
+import numpy as np
 
 base_steam_store_url = "http://store.steampowered.com/app/"
 
@@ -27,7 +28,6 @@ use_playtime_as_popularity_measure = False
 appidContradiction = "373390"
 # This is the appID of the game which will be used as a reference of a "hidden gem"
 appid_default_reference_set = {appidContradiction}
-
 # A set of appID to use several games as references of "hidden gems" for the rogue-lite/rogue-like tags
 #appid_default_reference_set = {"561740", "333300", "329970", "323220"}
 
@@ -141,12 +141,16 @@ def rankGames(alpha, verbose = False, appid_reference_set = {appidContradiction}
                 print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
 
     ranks_of_reference_hidden_gems = [v[0] for k, v in reference_dict.items()]
-    summarizing_function = lambda x : min(x)
+    summarizing_function = lambda x : np.average(x)
     scalar_summarizing_ranks_of_reference_hidden_gems = summarizing_function(ranks_of_reference_hidden_gems)
+
+    if verbose:
+        print('Objective function to minimize:\t', scalar_summarizing_ranks_of_reference_hidden_gems)
+
     return scalar_summarizing_ranks_of_reference_hidden_gems
 
 # Optimization procedure of the parameter alpha
-upper_search_bound = pow(10, 10) # maximal possible value of alpha is 10 billion people
+upper_search_bound = pow(10, 8) # maximal possible value of alpha is 8 billion people
 
 if use_playtime_as_popularity_measure:
     upper_search_bound = 1.5 * pow(10, 6) # maximal possible value of alpha is 25000 hours
