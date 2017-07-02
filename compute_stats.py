@@ -57,11 +57,14 @@ def computeScoreGeneric(tuple, alpha):
     num_positive_reviews = float(num_positive_reviews)
     num_negative_reviews = float(num_negative_reviews)
 
+    num_reviews = num_positive_reviews + num_negative_reviews
+
     quality_measure = wilson_score
     popularity_measure = num_players
 
     if use_alternative_popularity_measure:
-        popularity_measure = average_playtime
+        # Overlooked games are not enough played by their owners:
+        popularity_measure = (num_owners - num_players)
 
     # Decreasing function
     decreasing_fun = lambda x: alpha / (alpha + x)
@@ -150,13 +153,15 @@ def rankGames(alpha, verbose = False, appid_reference_set = {373390}):
     return scalar_summarizing_ranks_of_reference_hidden_gems
 
 # Optimization procedure of the parameter alpha
+lower_search_bound = 1 # minimal possible value of alpha is 1 people
 upper_search_bound = pow(10, 8) # maximal possible value of alpha is 8 billion people
 
 if use_alternative_popularity_measure:
-    upper_search_bound = 1.5 * pow(10, 6) # maximal possible value of alpha is 25000 hours
+    lower_search_bound = 1
+    upper_search_bound = pow(10, 8)
 
 functionToMinimize = lambda x : rankGames(x, False, appid_default_reference_set)
-res = differential_evolution(functionToMinimize, bounds=[(1, upper_search_bound)])
+res = differential_evolution(functionToMinimize, bounds=[(lower_search_bound, upper_search_bound)])
 alphaOptim = res.x
 
 # Quick print in order to check that the upper search bound is not too close to our optimal alpha
