@@ -90,7 +90,7 @@ def rankGames(alpha, verbose = False, appid_reference_set = {373390}):
         rankGameUsedAsReferenceForHiddenGem = sortedGameNames.index(nameGameUsedAsReferenceForHiddenGem) + 1
 
         # Find whether the reference game should appear in the ranking (it might not due to tag filters)
-        boolReferenceGameShouldAppearInRanking = D[appid_reference][6]
+        boolReferenceGameShouldAppearInRanking = D[appid_reference][-1]
 
         reference_dict[appid_reference] = [rankGameUsedAsReferenceForHiddenGem, boolReferenceGameShouldAppearInRanking]
 
