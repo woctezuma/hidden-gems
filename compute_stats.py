@@ -17,7 +17,8 @@ base_steam_store_url = "http://store.steampowered.com/app/"
 
 # Boolean to decide whether printing the ranking of the top 1000 games, rather than the ranking of the whole Steam
 # catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
-print_top_thousand_games = True
+print_subset_of_top_games = True
+num_top_games_to_print = 1000
 
 # Boolean to switch the popularity measure from number of players to average playtime. Not super relevant a posteriori.
 use_playtime_as_popularity_measure = False
@@ -46,6 +47,7 @@ def computeScoreGeneric(tuple, alpha):
     num_players = tuple[3]
     median_playtime = tuple[4]
     average_playtime = tuple[5]
+    boolGameShouldAppearInRanking = tuple[6]
 
     num_owners = float(num_owners)
     num_players = float(num_players)
@@ -83,11 +85,22 @@ def rankGames(alpha, verbose = False, appidGameUsedAsReferenceForHiddenGem = app
 
     sortedGameNames = list(map(lambda x: x[0], sortedValues))
 
+    # Find the rank of the game used as a reference of a "hidden gem"
+    nameGameUsedAsReferenceForHiddenGem = D[appidGameUsedAsReferenceForHiddenGem][0]
+    rankGameUsedAsReferenceForHiddenGem = sortedGameNames.index(nameGameUsedAsReferenceForHiddenGem) + 1
+
+    # Find whether the reference game should appear in the ranking (it might not due to tag filters)
+    boolReferenceGameShouldAppearInRanking = D[appidGameUsedAsReferenceForHiddenGem][6]
+
     # Display the ranking in a format parsable by Github Gist
     if verbose:
         num_games_to_print = len(sortedGameNames)
-        if print_top_thousand_games:
-            num_games_to_print = min(1000, num_games_to_print)
+        if print_subset_of_top_games:
+            num_games_to_print = min(num_top_games_to_print, num_games_to_print)
+
+        if ~boolReferenceGameShouldAppearInRanking and bool(rankGameUsedAsReferenceForHiddenGem <= num_games_to_print):
+            num_games_to_print += 1
+
         for i in range(num_games_to_print):
             game_name = sortedGameNames[i]
             appid = [k for k, v in D.items() if v[0] == game_name][0]
@@ -96,13 +109,18 @@ def rankGames(alpha, verbose = False, appidGameUsedAsReferenceForHiddenGem = app
             width = 40
             store_url_fixed_width = f'{store_url: <{width}}'
 
+            current_rank = i + 1
+
+            if ~boolReferenceGameShouldAppearInRanking and bool(current_rank == rankGameUsedAsReferenceForHiddenGem):
+                assert(appid == appidGameUsedAsReferenceForHiddenGem)
+                continue
+
+            if ~boolReferenceGameShouldAppearInRanking and bool(current_rank > rankGameUsedAsReferenceForHiddenGem):
+                current_rank -= 1
+
             # Append the ranking to the output text file
             with open(output_filename, 'a', encoding="utf8") as outfile:
-                print('{:05}'.format(i + 1) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
-
-    # Find the rank of the game used as a reference of a "hidden gem"
-    nameGameUsedAsReferenceForHiddenGem = D[appidGameUsedAsReferenceForHiddenGem][0]
-    rankGameUsedAsReferenceForHiddenGem = sortedGameNames.index(nameGameUsedAsReferenceForHiddenGem) + 1
+                print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
 
     return rankGameUsedAsReferenceForHiddenGem
 
