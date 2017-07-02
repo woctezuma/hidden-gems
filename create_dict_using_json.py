@@ -52,7 +52,12 @@ else:
 appidContradiction = "373390"
 # This is the appID of the game which will be later used as a reference of a "hidden gem", so we will make sure that
 # this game appears in the output dictionary, despite filter-out and filter-in.
-appidGameUsedAsDefaultReferenceForHiddenGem = appidContradiction
+appid_default_reference_set = {appidContradiction}
+
+if filter_in_user_chosen_tags:
+    # A set of appID to use several games as references of "hidden gems" for the rogue-lite/rogue-like tags
+    # Reference: http://www.neogaf.com/forum/showpost.php?p=242425098&postcount=6922
+    appid_default_reference_set = {"561740", "333300", "329970", "323220"}
 
 D = dict()
 
@@ -125,7 +130,7 @@ with open(input_filename, 'r', encoding="utf8") as infile:
             stats_save.append(boolGameShouldAppearInRanking)
 
             # Make sure the output dictionary includes the game which will be chosen as a reference of a "hidden gem"
-            if appid == appidGameUsedAsDefaultReferenceForHiddenGem:
+            if appid in appid_default_reference_set:
                 print("Game used as a reference:\t" + name + "\t(appID=" + appid + ")")
                 # If a game is the reference game, we have include it in the dictionary
                 D[appid] = stats_save

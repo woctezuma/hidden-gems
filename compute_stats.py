@@ -26,7 +26,10 @@ use_playtime_as_popularity_measure = False
 # This is the appID of the game called "Contradiction".
 appidContradiction = "373390"
 # This is the appID of the game which will be used as a reference of a "hidden gem"
-appidGameUsedAsDefaultReferenceForHiddenGem = appidContradiction
+appid_default_reference_set = {appidContradiction}
+
+# A set of appID to use several games as references of "hidden gems" for the rogue-lite/rogue-like tags
+#appid_default_reference_set = {"561740", "333300", "329970", "323220"}
 
 # Import the dictionary from the input file
 with open(input_filename, 'r', encoding="utf8") as infile:
@@ -67,16 +70,16 @@ def computeScoreGeneric(tuple, alpha):
 
     return score
 
-# Goal: find the optimal value for alpha by minimizing the rank of a game chosen as a reference of a "hidden gem"
+# Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
 
-def rankGames(alpha, verbose = False, appidGameUsedAsReferenceForHiddenGem = appidContradiction):
+def rankGames(alpha, verbose = False, appid_reference_set = {appidContradiction}):
     # Objective: rank all the Steam games, given a parameter alpha.
     #
     # Input:    - alpha is the only parameter of the ranking, and could be chosen up to one's tastes, or optimized
     #           - optional verbosity boolean
-    #           - optional appID of a game chosen as a reference of a "hidden gem".
-    #             By default, this is the game called "Contradiction" (appID=373390).
-    # Output:   rank of the game used as a reference of a "hidden gem"
+    #           - optional set of appID of games chosen as references of a "hidden gem".
+    #             By default, this is set containing only one game called "Contradiction" (appID=373390).
+    # Output:   scalar value summarizing ranks of games used as references of "hidden gems"
 
     computeScore = lambda x: computeScoreGeneric(x, alpha)
 
@@ -85,12 +88,16 @@ def rankGames(alpha, verbose = False, appidGameUsedAsReferenceForHiddenGem = app
 
     sortedGameNames = list(map(lambda x: x[0], sortedValues))
 
-    # Find the rank of the game used as a reference of a "hidden gem"
-    nameGameUsedAsReferenceForHiddenGem = D[appidGameUsedAsReferenceForHiddenGem][0]
-    rankGameUsedAsReferenceForHiddenGem = sortedGameNames.index(nameGameUsedAsReferenceForHiddenGem) + 1
+    reference_dict = {}
+    for appid_reference in appid_reference_set:
+        # Find the rank of this game used as a reference of a "hidden gem"
+        nameGameUsedAsReferenceForHiddenGem = D[appid_reference][0]
+        rankGameUsedAsReferenceForHiddenGem = sortedGameNames.index(nameGameUsedAsReferenceForHiddenGem) + 1
 
-    # Find whether the reference game should appear in the ranking (it might not due to tag filters)
-    boolReferenceGameShouldAppearInRanking = D[appidGameUsedAsReferenceForHiddenGem][6]
+        # Find whether the reference game should appear in the ranking (it might not due to tag filters)
+        boolReferenceGameShouldAppearInRanking = D[appid_reference][6]
+
+        reference_dict[appid_reference] = [rankGameUsedAsReferenceForHiddenGem, boolReferenceGameShouldAppearInRanking]
 
     # Display the ranking in a format parsable by Github Gist
     if verbose:
@@ -98,11 +105,16 @@ def rankGames(alpha, verbose = False, appidGameUsedAsReferenceForHiddenGem = app
         if print_subset_of_top_games:
             num_games_to_print = min(num_top_games_to_print, num_games_to_print)
 
-        if (not boolReferenceGameShouldAppearInRanking) and bool(rankGameUsedAsReferenceForHiddenGem <= num_games_to_print):
-            num_games_to_print += 1
+        for appid_reference in reference_dict.keys():
+            rankGameUsedAsReferenceForHiddenGem = reference_dict[appid_reference][0]
+            boolReferenceGameShouldAppearInRanking = reference_dict[appid_reference][1]
+            if (not boolReferenceGameShouldAppearInRanking) and bool(rankGameUsedAsReferenceForHiddenGem <= num_games_to_print):
+                num_games_to_print += 1
 
         # Check
         num_games_to_print = min(len(sortedGameNames), num_games_to_print)
+
+        rank_decrease = 0
 
         for i in range(num_games_to_print):
             game_name = sortedGameNames[i]
@@ -114,18 +126,24 @@ def rankGames(alpha, verbose = False, appidGameUsedAsReferenceForHiddenGem = app
 
             current_rank = i + 1
 
-            if (not boolReferenceGameShouldAppearInRanking) and bool(current_rank == rankGameUsedAsReferenceForHiddenGem):
-                assert(appid == appidGameUsedAsReferenceForHiddenGem)
-                continue
+            if appid in reference_dict.keys():
+                rankGameUsedAsReferenceForHiddenGem = reference_dict[appid_reference][0]
+                boolReferenceGameShouldAppearInRanking = reference_dict[appid_reference][1]
+                if (not boolReferenceGameShouldAppearInRanking):
+                    assert( current_rank == rankGameUsedAsReferenceForHiddenGem )
+                    rank_decrease += 1
+                    continue
 
-            if (not boolReferenceGameShouldAppearInRanking) and bool(current_rank > rankGameUsedAsReferenceForHiddenGem):
-                current_rank -= 1
+            current_rank -= rank_decrease
 
             # Append the ranking to the output text file
             with open(output_filename, 'a', encoding="utf8") as outfile:
                 print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
 
-    return rankGameUsedAsReferenceForHiddenGem
+    ranks_of_reference_hidden_gems = [v[0] for k, v in reference_dict.items()]
+    summarizing_function = lambda x : min(x)
+    scalar_summarizing_ranks_of_reference_hidden_gems = summarizing_function(ranks_of_reference_hidden_gems)
+    return scalar_summarizing_ranks_of_reference_hidden_gems
 
 # Optimization procedure of the parameter alpha
 upper_search_bound = pow(10, 10) # maximal possible value of alpha is 10 billion people
@@ -133,7 +151,7 @@ upper_search_bound = pow(10, 10) # maximal possible value of alpha is 10 billion
 if use_playtime_as_popularity_measure:
     upper_search_bound = 1.5 * pow(10, 6) # maximal possible value of alpha is 25000 hours
 
-functionToMinimize = lambda x : rankGames(x, False, appidGameUsedAsDefaultReferenceForHiddenGem)
+functionToMinimize = lambda x : rankGames(x, False, appid_default_reference_set)
 res = differential_evolution(functionToMinimize, bounds=[(1, upper_search_bound)])
 alphaOptim = res.x
 
@@ -141,4 +159,5 @@ alphaOptim = res.x
 # Otherwise, it could indicate the search has been biased by a poor choice of the upper search bound.
 print("alpha = 10^%.2f" % log10(alphaOptim))
 
-rankGames(alphaOptim, True, appidGameUsedAsDefaultReferenceForHiddenGem)
+with open(output_filename, 'w', encoding="utf8") as outfile:
+    rankGames(alphaOptim, True, appid_default_reference_set)
