@@ -11,6 +11,7 @@ input_filename = "dict_top_rated_games_on_steam.txt"
 output_filename = "hidden_gems.txt"
 
 from scipy.optimize import differential_evolution
+from math import log10
 
 base_steam_store_url = "http://store.steampowered.com/app/"
 
@@ -117,6 +118,6 @@ alphaOptim = res.x
 
 # Quick print in order to check that the upper search bound is not too close to our optimal alpha
 # Otherwise, it could indicate the search has been biased by a poor choice of the upper search bound.
-print(alphaOptim / upper_search_bound)
+print("alpha = 10^%.2f" % log10(alphaOptim))
 
 rankGames(alphaOptim, True, appidGameUsedAsDefaultReferenceForHiddenGem)
