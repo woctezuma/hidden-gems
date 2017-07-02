@@ -14,6 +14,15 @@ Data source:
 
 The quality measure comes from [SteamDB](https://steamdb.info/stats/gameratings/) and the popularity measure comes from [SteamSpy API](http://steamspy.com/api.php).
 
+Requirements:
+
+This code is written in Python 3.
+
+[SciPy](https://www.scipy.org/) is required for an optimization procedure (which can be skipped if you manually input a value for the parameter `alpha`).
+To install SciPy on Windows, I suggest you download the binaries linked to the Intel® Math Kernel Library:
+* [NumPy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy)
+* [SciPy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy).
+
 Usage:
 1. `create_dict_using_json.py` merges data from SteamDB and SteamSpy
 2. `compute_stats.py` creates the ranking by optimizing the free parameter alpha
