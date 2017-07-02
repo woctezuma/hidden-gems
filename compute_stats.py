@@ -54,6 +54,8 @@ def computeScoreGeneric(tuple, alpha):
     num_players = float(num_players)
     median_playtime = float(median_playtime)
     average_playtime = float(average_playtime)
+    num_positive_reviews = float(num_positive_reviews)
+    num_negative_reviews = float(num_negative_reviews)
 
     quality_measure = wilson_score
     popularity_measure = num_players
