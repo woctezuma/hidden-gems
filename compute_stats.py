@@ -98,8 +98,11 @@ def rankGames(alpha, verbose = False, appidGameUsedAsReferenceForHiddenGem = app
         if print_subset_of_top_games:
             num_games_to_print = min(num_top_games_to_print, num_games_to_print)
 
-        if ~boolReferenceGameShouldAppearInRanking and bool(rankGameUsedAsReferenceForHiddenGem <= num_games_to_print):
+        if (not boolReferenceGameShouldAppearInRanking) and bool(rankGameUsedAsReferenceForHiddenGem <= num_games_to_print):
             num_games_to_print += 1
+
+        # Check
+        num_games_to_print = min(len(sortedGameNames), num_games_to_print)
 
         for i in range(num_games_to_print):
             game_name = sortedGameNames[i]
@@ -111,11 +114,12 @@ def rankGames(alpha, verbose = False, appidGameUsedAsReferenceForHiddenGem = app
 
             current_rank = i + 1
 
-            if ~boolReferenceGameShouldAppearInRanking and bool(current_rank == rankGameUsedAsReferenceForHiddenGem):
+            if (not boolReferenceGameShouldAppearInRanking) and bool(current_rank == rankGameUsedAsReferenceForHiddenGem):
                 assert(appid == appidGameUsedAsReferenceForHiddenGem)
+                print(current_rank)
                 continue
 
-            if ~boolReferenceGameShouldAppearInRanking and bool(current_rank > rankGameUsedAsReferenceForHiddenGem):
+            if (not boolReferenceGameShouldAppearInRanking) and bool(current_rank > rankGameUsedAsReferenceForHiddenGem):
                 current_rank -= 1
 
             # Append the ranking to the output text file
