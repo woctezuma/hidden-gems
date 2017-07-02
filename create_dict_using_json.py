@@ -40,8 +40,8 @@ else:
 
 # This is the appID of the game called "Contradiction".
 appidContradiction = "373390"
-# This is the appID of the game which will be later used as a reference of a "hidden gem", so we will make sure that
-# this game appears in the output dictionary, despite filter-out and filter-in.
+# This is a set including appID of games which will serve as references of "hidden gems", so we will make sure that
+# these games appear in the output dictionary, despite filter-out and filter-in.
 appid_default_reference_set = {appidContradiction}
 
 # Tags to filter in

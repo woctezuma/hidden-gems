@@ -13,6 +13,8 @@ output_filename = "hidden_gems.txt"
 from scipy.optimize import differential_evolution
 from math import log10
 import numpy as np
+# Import a variable (and execute create_dict_using_json.py, maybe because I have not embedded the code in functions)
+from create_dict_using_json import appid_default_reference_set
 
 base_steam_store_url = "http://store.steampowered.com/app/"
 
@@ -23,13 +25,6 @@ num_top_games_to_print = 1000
 
 # Boolean to switch the popularity measure from number of players to average playtime. Not super relevant a posteriori.
 use_playtime_as_popularity_measure = False
-
-# This is the appID of the game called "Contradiction".
-appidContradiction = "373390"
-# This is the appID of the game which will be used as a reference of a "hidden gem"
-appid_default_reference_set = {appidContradiction}
-# A set of appID to use several games as references of "hidden gems" for the rogue-lite/rogue-like tags
-#appid_default_reference_set = {"561740", "333300", "329970", "323220"}
 
 # Import the dictionary from the input file
 with open(input_filename, 'r', encoding="utf8") as infile:
@@ -72,7 +67,7 @@ def computeScoreGeneric(tuple, alpha):
 
 # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
 
-def rankGames(alpha, verbose = False, appid_reference_set = {appidContradiction}):
+def rankGames(alpha, verbose = False, appid_reference_set = {373390}):
     # Objective: rank all the Steam games, given a parameter alpha.
     #
     # Input:    - alpha is the only parameter of the ranking, and could be chosen up to one's tastes, or optimized
