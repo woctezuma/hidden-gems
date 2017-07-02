@@ -116,7 +116,6 @@ def rankGames(alpha, verbose = False, appidGameUsedAsReferenceForHiddenGem = app
 
             if (not boolReferenceGameShouldAppearInRanking) and bool(current_rank == rankGameUsedAsReferenceForHiddenGem):
                 assert(appid == appidGameUsedAsReferenceForHiddenGem)
-                print(current_rank)
                 continue
 
             if (not boolReferenceGameShouldAppearInRanking) and bool(current_rank > rankGameUsedAsReferenceForHiddenGem):
