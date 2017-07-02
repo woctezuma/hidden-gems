@@ -91,8 +91,8 @@ with open(input_filename, 'r', encoding="utf8") as infile:
 
         toInteger = lambda str : int(str.replace(',',''))
 
-        num_positives = toInteger(stripped_items[3])
-        num_negatives = toInteger(stripped_items[4])
+        num_positive_reviews = toInteger(stripped_items[3])
+        num_negative_reviews = toInteger(stripped_items[4])
 
         toPercentage = lambda str : float(str.strip("%"))/100
 
@@ -100,7 +100,7 @@ with open(input_filename, 'r', encoding="utf8") as infile:
         steam_score = toPercentage(stripped_items[-1])
 
         if compute_our_own_wilson_score:
-            wilson_score = computeWilsonScore(num_positives, num_negatives, quantile_for_our_own_wilson_score)
+            wilson_score = computeWilsonScore(num_positive_reviews, num_negative_reviews, quantile_for_our_own_wilson_score)
         else:
             wilson_score = wilson_score_from_SteamDB
 
@@ -111,7 +111,7 @@ with open(input_filename, 'r', encoding="utf8") as infile:
             average_time = data[appid]['average_forever']
             tags_dict = data[appid]["tags"]
 
-            stats_save = [name, wilson_score, num_owners, num_players, median_time, average_time]
+            stats_save = [name, wilson_score, num_owners, num_players, median_time, average_time, num_positive_reviews, num_negative_reviews]
 
             if len(tags_dict) == 0:
                 tags = set()
