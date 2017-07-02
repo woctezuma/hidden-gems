@@ -27,6 +27,7 @@ def computeWilsonScore(num_pos, num_neg, confidence=0.95):
     else:
         tabulated_confidence_list = list(quantile_normal_dist_dict.keys())
         sorted(tabulated_confidence_list)
+        confidence = min(confidence, tabulated_confidence_list[-1])
         diff_list = [(c-confidence) for c in tabulated_confidence_list]
         index = min(i for i in range(len(diff_list)) if diff_list[i]>=0)
         tabulated_confidence = tabulated_confidence_list[index]
