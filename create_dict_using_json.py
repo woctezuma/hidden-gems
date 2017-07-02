@@ -38,26 +38,24 @@ else:
     # Empty set, so that no game is filered out
     tags_to_filter_out = set()
 
-# Tags to filter in
-if filter_in_user_chosen_tags:
-    # Only games which are tagged with the following tags will be filtered into the dictionary (so that only such games will appear on the ranking)
-    tags_to_filter_in = set(["Rogue-lite", "Rogue-like"])
-else:
-    # Ideally, we should use here the universal set, which would include every tag available on the Steam store.
-    tags_to_filter_in = set()
-    # However, there is no such set as a universal set in Python, and it is not practical to list every tag,
-    # so we use the empty set instead, and rely on a little jig, far below in the code, to filter-in with if/else statements.
-
 # This is the appID of the game called "Contradiction".
 appidContradiction = "373390"
 # This is the appID of the game which will be later used as a reference of a "hidden gem", so we will make sure that
 # this game appears in the output dictionary, despite filter-out and filter-in.
 appid_default_reference_set = {appidContradiction}
 
+# Tags to filter in
 if filter_in_user_chosen_tags:
+    # Only games which are tagged with the following tags will be filtered into the dictionary (so that only such games will appear on the ranking)
+    tags_to_filter_in = set(["Rogue-lite", "Rogue-like"])
     # A set of appID to use several games as references of "hidden gems" for the rogue-lite/rogue-like tags
     # Reference: http://www.neogaf.com/forum/showpost.php?p=242425098&postcount=6922
     appid_default_reference_set = {"561740", "333300", "329970", "323220"}
+else:
+    # Ideally, we should use here the universal set, which would include every tag available on the Steam store.
+    tags_to_filter_in = set()
+    # However, there is no such set as a universal set in Python, and it is not practical to list every tag,
+    # so we use the empty set instead, and rely on a little jig, far below in the code, to filter-in with if/else statements.
 
 D = dict()
 
