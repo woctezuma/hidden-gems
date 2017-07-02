@@ -45,7 +45,10 @@ def computeScoreGeneric(tuple, alpha):
     num_players = tuple[3]
     median_playtime = tuple[4]
     average_playtime = tuple[5]
-    boolGameShouldAppearInRanking = tuple[6]
+    num_positive_reviews = tuple[6]
+    num_negative_reviews = tuple[7]
+
+    boolGameShouldAppearInRanking = tuple[-1]
 
     num_owners = float(num_owners)
     num_players = float(num_players)
