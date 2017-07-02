@@ -14,6 +14,8 @@ from scipy.optimize import differential_evolution
 
 base_steam_store_url = "http://store.steampowered.com/app/"
 
+print_top_thousand_games = True
+
 use_playtime_as_popularity_measure = False
 
 # Import the dictionary from the input file
@@ -72,7 +74,10 @@ def functionToMinimize(alpha, verbose=False):
 
     # Display the ranking in a format parsable by Github Gist
     if verbose:
-        for i in range(len(sortedGameNames)):
+        num_games_to_print = len(sortedGameNames)
+        if print_top_thousand_games:
+            num_games_to_print = min(1000, num_games_to_print)
+        for i in range(num_games_to_print):
             game_name = sortedGameNames[i]
             appid = [k for k, v in D.items() if v[0] == game_name][0]
             store_url = base_steam_store_url + appid
