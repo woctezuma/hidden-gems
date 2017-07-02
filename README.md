@@ -14,6 +14,11 @@ The score of a game is defined as the product of a quality measure (its Wilson s
 
 The quality measure comes from [SteamDB](https://steamdb.info/stats/gameratings/) and the popularity measure comes from [SteamSpy API](http://steamspy.com/api.php).
 
+To run the code, you will need:
+* data from SteamDB: `top_rated_games_on_steam.txt` (manually pasted)
+* data from SteamSpy: `steamspy.json` (automatically downloaded if the file is missing)
+The data is included along the code in this repository, as downloaded on June 30th. 
+
 ## Requirements ##
 
 This code is written in Python 3.

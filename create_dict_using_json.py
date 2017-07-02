@@ -2,7 +2,7 @@
 #
 # Input:
 #
-# - a text file, copied from SteamDB, named "top_rated_games_on_steam.txt"
+# - a text file, manually copied from SteamDB, named "top_rated_games_on_steam.txt"
 input_filename = "top_rated_games_on_steam.txt"
 steamdb_url = "https://steamdb.info/stats/gameratings/?all"
 # NB: To download & copy the content of input_filename by yourself, you need to log in using your own Steam account on
@@ -11,8 +11,7 @@ steamdb_url = "https://steamdb.info/stats/gameratings/?all"
 # - a json file, downloaded from SteamSpy, named "steamspy.json"
 json_filename = "steamspy.json"
 steamspy_url = "http://steamspy.com/api.php?request=all"
-# NB: To download & copy the content of json_filename by yourself, you need to use the API of SteamSpy on
-#     steamspy_url and then click on the "Save" button.
+# NB: If json_filename is missing, the current script will attempt to download and cache it from steamspy_url.
 #
 # Output:
 #
