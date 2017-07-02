@@ -22,16 +22,33 @@ import urllib.request, json
 from compute_wilson_score import computeWilsonScore
 
 filter_out_user_chosen_tags = False
+filter_in_user_chosen_tags = False
 
 compute_our_own_wilson_score = False
 quantile_for_our_own_wilson_score = 0.95
 
 if filter_out_user_chosen_tags:
-    # Any game which is tagged the following tags will be filtered out from the dictionary (and won't appear on the ranking)
+    # Any game which is tagged with the following tags will be filtered out from the dictionary (and won't appear on the ranking)
     tags_to_filter_out = set(["Visual Novel", "Anime", "VR", "Free to Play"])
 else:
     # Empty set, so that no game is filered out
     tags_to_filter_out = set()
+
+if filter_in_user_chosen_tags:
+    # Only games which are tagged with the following tags will be filtered into the dictionary (so that only such games will appear on the ranking)
+    tags_to_filter_in = set(["Rogue-lite", "Rogue-like"])
+else:
+    # Ideally, we should use here the universal set, which would include every tag available on the Steam store.
+    tags_to_filter_in = set()
+    # However, there is no such set as a universal set in Python, and it is not practical to list every tag,
+    # so we use the empty set instead, and rely on a little jig, far below in the code, to filter-in with if/else statements.
+
+# This is the appID of the game called "Contradiction".
+appidContradiction = "373390"
+
+# This is the appID of the game which will be later used as a reference of a "hidden gem", so we will make sure that
+# this game appears in the output dictionary, despite filter-out and filter-in.
+appidGameUsedAsDefaultReferenceForHiddenGem = appidContradiction
 
 D = dict()
 
@@ -94,8 +111,20 @@ with open(input_filename, 'r', encoding="utf8") as infile:
             else:
                 tags = set(tags_dict.keys())
 
-            if len( tags_to_filter_out.intersection(tags) ) == 0:
+            # Make sure the output dictionary includes the game which will be chosen as a reference of a "hidden gem"
+            if appid == appidGameUsedAsDefaultReferenceForHiddenGem:
+                print("Game used as a reference:\t" + name + "\t(appID=" + appid + ")")
                 D[appid] = stats_save
+            else:
+                # For every other game, check the filter-out and filter-in tags
+                if len( tags_to_filter_out.intersection(tags) ) == 0:
+                    if len(tags_to_filter_in) == 0:
+                        # Either there is no filter-in
+                        D[appid] = stats_save
+                    else:
+                        if len(tags_to_filter_in.intersection(tags)) != 0:
+                            # Or there is filter-in, and there is at least one of the desired tags
+                            D[appid] = stats_save
 
         except KeyError:
             if verbose:
