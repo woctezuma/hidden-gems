@@ -38,6 +38,7 @@ To install these on Windows, I suggest you download the binaries linked to the I
 * [updated ranking](https://gist.github.com/woctezuma/9e3005006361dbd09b7f5b416b5e6869), using data from June 30, a week after the Steam summer sales have started.
 * [updated ranking with tag filtering-out](https://gist.github.com/woctezuma/ed649b5ffe4d1c3d0699ddef9bec34c9), filtering out a few tags (VR, Anime, Visual Novel, and Free To Play),
 * [updated ranking with tag filtering-in](https://gist.github.com/woctezuma/b3081eff4f1e215c3deb1e1f3b707eff), constraining the ranking to the Rogue-like/lite genre (filtering in, so to say).
+* [updated ranking with tag filtering-out and 80% confidence Wilson score](https://gist.github.com/woctezuma/20c4b30dce9ca82d3efa9b944ab92932), filtering out tags (VR, Anime, Visual Novel, F2P).
 
 ## References ##
 * [a NeoGAF post](http://www.neogaf.com/forum/showpost.php?p=241218621&postcount=5840) explaining the method,
