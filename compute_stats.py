@@ -63,7 +63,9 @@ def computeScoreGeneric(tuple, alpha):
     popularity_measure = num_players
 
     if use_alternative_popularity_measure:
-        # Overlooked games are not enough played by their owners:
+        # Assumption: popular games are played a lot, but they are owned by a lot more people than they are played.
+        # For instance, we expect popular games to be bought by many during sales, due to marketing and word-of-mouth,
+        # and then many of these purchasers won't even launch the game.
         popularity_measure = (num_owners - num_players)
 
     # Decreasing function
