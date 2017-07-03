@@ -39,8 +39,6 @@ To install these on Windows, I suggest you download the binaries linked to the I
 * [updated ranking with tag filtering-out](https://gist.github.com/woctezuma/ed649b5ffe4d1c3d0699ddef9bec34c9), filtering out a few tags (VR, Anime, Visual Novel, and Free To Play),
 * [updated ranking with tag filtering-in](https://gist.github.com/woctezuma/b3081eff4f1e215c3deb1e1f3b707eff), constraining the ranking to the Rogue-like/lite genre (filtering in, so to say).
 
-NB: I have computed the ranking based on playtime as well, but it does not seem like a good popularity measure a posteriori. Typically, it could be skewed by people idling for trading cards, plus the time to finish a game can differ widely between games.
-
 ## References ##
 * [a NeoGAF post](http://www.neogaf.com/forum/showpost.php?p=241218621&postcount=5840) explaining the method,
 * [a NeoGAF post](http://www.neogaf.com/forum/showpost.php?p=241224894&postcount=5869) explaining the idea behind the optimization of the only free parameter.
