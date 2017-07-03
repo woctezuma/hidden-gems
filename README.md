@@ -34,7 +34,7 @@ To install these on Windows, I suggest you download the binaries linked to the I
 2. `compute_stats.py` creates the ranking by optimizing the free parameter alpha
 
 ## Results ##
-* [ranking](https://gist.github.com/woctezuma/9cea3a93fd5cba2f1b876864a0dc8854), using players total (forever) as a popularity measure.
+* [original ranking](https://gist.github.com/woctezuma/9cea3a93fd5cba2f1b876864a0dc8854), featured on PC Gamer, based on data downloaded prior to the Steam summer sales, using players total as a popularity measure.
 * [updated ranking](https://gist.github.com/woctezuma/9e3005006361dbd09b7f5b416b5e6869), using data from June 30, a week after the Steam summer sales have started.
 * [updated ranking with tag filtering-out](https://gist.github.com/woctezuma/ed649b5ffe4d1c3d0699ddef9bec34c9), filtering out a few tags (VR, Anime, Visual Novel, and Free To Play),
 * [updated ranking with tag filtering-in](https://gist.github.com/woctezuma/b3081eff4f1e215c3deb1e1f3b707eff), constraining the ranking to the Rogue-like/lite genre (filtering in, so to say).
