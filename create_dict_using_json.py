@@ -34,6 +34,9 @@ filter_in_user_chosen_tags = False
 if filter_out_user_chosen_tags:
     # Any game which is tagged with the following tags will be filtered out from the dictionary (and won't appear on the ranking)
     tags_to_filter_out = set(["Visual Novel", "Anime", "VR", "Free to Play"])
+    # A set of tags to better suit the tastes of someone who provided feedback: accept Anime but not Early Access and VR
+    # Reference: http://www.neogaf.com/forum/showpost.php?p=241227942&postcount=5880
+    # tags_to_filter_out = set(["Early Access", "VR", "Free to Play"])
 else:
     # Empty set, so that no game is filered out
     tags_to_filter_out = set()
@@ -43,6 +46,9 @@ appidContradiction = "373390"
 # This is a set including appID of games which will serve as references of "hidden gems", so we will make sure that
 # these games appear in the output dictionary, despite filter-out and filter-in.
 appid_default_reference_set = {appidContradiction}
+# A set of appID to use several games as references of hidden "hidden gems" (not a typo, twice hidden)
+# Reference: http://www.neogaf.com/forum/showpost.php?p=241232835&postcount=5886
+# appid_default_reference_set = {appidContradiction, "320090", "363980"}
 
 # Tags to filter in
 if filter_in_user_chosen_tags:
