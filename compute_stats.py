@@ -63,6 +63,8 @@ def computeScoreGeneric(tuple, alpha):
     popularity_measure = num_players
 
     if use_alternative_popularity_measure:
+        # Sanity check
+        num_owners = max(num_owners, num_players)
         # Assumption: popular games are played a lot, but they are owned by a lot more people than they are played.
         # For instance, we expect popular games to be bought by many during sales, due to marketing and word-of-mouth,
         # and then many of these purchasers won't even launch the game.
