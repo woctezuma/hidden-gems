@@ -134,8 +134,8 @@ def rankGames(alpha, verbose = False, appid_reference_set = {373390}):
             current_rank = i + 1
 
             if appid in reference_dict.keys():
-                rankGameUsedAsReferenceForHiddenGem = reference_dict[appid_reference][0]
-                boolReferenceGameShouldAppearInRanking = reference_dict[appid_reference][1]
+                rankGameUsedAsReferenceForHiddenGem = reference_dict[appid][0]
+                boolReferenceGameShouldAppearInRanking = reference_dict[appid][1]
                 if (not boolReferenceGameShouldAppearInRanking):
                     assert( current_rank == rankGameUsedAsReferenceForHiddenGem )
                     rank_decrease += 1
