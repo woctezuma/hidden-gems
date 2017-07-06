@@ -11,7 +11,6 @@ input_filename = "dict_top_rated_games_on_steam.txt"
 output_filename = "hidden_gems.txt"
 
 from scipy.optimize import differential_evolution
-from scipy.optimize import minimize
 from math import log10
 import numpy as np
 # Import a variable (and execute create_dict_using_json.py, maybe because I have not embedded the code in functions)
@@ -25,12 +24,7 @@ print_subset_of_top_games = True
 num_top_games_to_print = 1000
 
 # Boolean to switch the scoring method to any alternative which you might want to test.
-# Typically: - the quality measure becomes the median playtime, instead of the Wilson score.
-#            - the popularity measure can be based either on the number of players, or on the number of reviews.
 use_alternative_scoring_method = False
-# Integer to switch between 3 alternative popularity measures for the alternative scoring
-switch_between_alternative_popularity_measures = 3 # 1: #players ; 2: #reviews ; 3: #additional_reviews ; 4: mix of players and reviews
-assert( switch_between_alternative_popularity_measures in range(1, 5) )
 
 # Import the dictionary from the input file
 with open(input_filename, 'r', encoding="utf8") as infile:
@@ -47,6 +41,12 @@ def computeScoreGeneric(tuple, parameter_list):
     # Output:   game score
 
     alpha = parameter_list[0]
+
+    # Expected maximal playtime for a Steam game.
+    if len(parameter_list) < 2:
+        expected_maximal_playtime_in_hours = 20
+    else:
+        expected_maximal_playtime_in_hours = parameter_list[1]
 
     game_name = tuple[0]
     wilson_score = tuple[1]
@@ -72,41 +72,10 @@ def computeScoreGeneric(tuple, parameter_list):
     popularity_measure = num_players
 
     if use_alternative_scoring_method:
-        # Convert playtime from minutes to hours
-        playtime_measure = median_playtime/60
-
-        # Expected maximal playtime for a Steam game.
-        if len(parameter_list) < 2:
-            expected_maximal_playtime_in_hours = 20
-        else:
-            expected_maximal_playtime_in_hours = parameter_list[1]
-        # This allows to: i) get a value between 0 and 1, and ii) cap the playtime, to avoid promoting idler games.
-        normalized_playtime_measure = playtime_measure/expected_maximal_playtime_in_hours
-        my_cap = 1
-        normalized_playtime_measure_capped = min(my_cap, normalized_playtime_measure)
-
-        # Expected minimal number of reviews for a Steam game.
-        if len(parameter_list) < 3:
-            expected_minimal_number_of_reviews = 50
-        else:
-            expected_minimal_number_of_reviews = parameter_list[2]
-        # This allows to consider equally every game with #reviews lower than expected_minimal_number_of_reviews.
-        additional_reviews = max(0, num_reviews - expected_minimal_number_of_reviews) + expected_minimal_number_of_reviews
-
-        quality_measure = normalized_playtime_measure_capped
-
-        if switch_between_alternative_popularity_measures == 1:
-            # 1st option
-            popularity_measure = num_players
-        elif switch_between_alternative_popularity_measures == 2:
-            # 2nd option
-            popularity_measure = num_reviews
-        elif switch_between_alternative_popularity_measures == 3:
-            # 3rd option
-            popularity_measure = additional_reviews
-        else:
-            # 4th option
-            popularity_measure = np.sqrt( (1+max(0, num_players))*(1+max(0, num_reviews)) )
+        # Convert from minutes to hours
+        playtime = average_playtime/60
+        # Compute ratio between 0 and 1
+        quality_measure = max(1, playtime/expected_maximal_playtime_in_hours)
 
     # Decreasing function
     decreasing_fun = lambda x: alpha / (alpha + x)
@@ -203,10 +172,7 @@ my_bounds = [(lower_search_bound, upper_search_bound)]
 
 if use_alternative_scoring_method:
     functionToMinimize = lambda x_list: rankGames(x_list, False, appid_default_reference_set)
-    if switch_between_alternative_popularity_measures in [1, 2, 4]:
-        my_bounds = [(1, pow(10, 6)), (2, 50)] # 2 parameters if popularity measure = #players, or raw #reviews, or mix of both
-    else:
-        my_bounds = [(1, pow(10, 6)), (2, 50), (0, 150)] # 3 parameters if popularity measure = #additional_reviews
+    my_bounds = [(lower_search_bound, upper_search_bound), (2, 50)]
 
 res = differential_evolution(functionToMinimize, bounds=my_bounds)
 
