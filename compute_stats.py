@@ -29,7 +29,7 @@ use_alternative_scoring_method = False
 # Expected maximal playtime for a Steam game.
 expected_maximal_playtime_in_minutes = 1200
 # Expected minimal number of reviews for a Steam game.
-expected_minimal_number_of_reviews = 150
+expected_minimal_number_of_reviews = 50
 
 # Import the dictionary from the input file
 with open(input_filename, 'r', encoding="utf8") as infile:
@@ -42,15 +42,10 @@ def computeScoreGeneric(tuple, parameter_list):
     #
     # Input:    - a tuple is a list consisting of all retrieved information regarding one game
     #           - parameter_list is a list of parameters to calibrate the ranking.
-    #               i) alpha (parameter_list[0]) could be chosen up to one's tastes, or optimized,
-    #               ii) optional beta (parameter_list[1]) is only used if the alternative scoring method is selected.
+    #             Currently, there is only one parameter, alpha, which could be chosen up to one's tastes, or optimized.
     # Output:   game score
 
     alpha = parameter_list[0]
-    if len(parameter_list) > 1:
-        beta = parameter_list[1]
-    else:
-        beta = np.NaN
 
     game_name = tuple[0]
     wilson_score = tuple[1]
@@ -78,17 +73,13 @@ def computeScoreGeneric(tuple, parameter_list):
     if use_alternative_scoring_method:
         playtime_measure = median_playtime
 
-        # The following allows to cap the playtime, to avoid promoting idler games.
-        playtime_measure = min(playtime_measure, expected_maximal_playtime_in_minutes)
-        # playtime_measure /= expected_maximal_playtime_in_minutes
+        # This allows to: i) get a value between 0 and 1, and ii) cap the playtime, to avoid promoting idler games.
+        normalized_playtime_measure = min(1, playtime_measure/expected_maximal_playtime_in_minutes)
 
-        # The following allows to consider equally every game with #reviews lower than expected_minimal_number_of_reviews.
-        additional_reviews = max(0, num_reviews - expected_minimal_number_of_reviews) + expected_minimal_number_of_reviews
+        # This allows to consider equally every game with #reviews lower than expected_minimal_number_of_reviews.
+        additional_reviews = max(0, num_reviews - expected_minimal_number_of_reviews)
 
-        # Increasing function
-        increasing_fun = lambda x: (beta + x) / beta
-
-        quality_measure = increasing_fun(playtime_measure)
+        quality_measure = normalized_playtime_measure
         popularity_measure = additional_reviews
 
     # Decreasing function
@@ -177,20 +168,12 @@ def rankGames(parameter_list, verbose = False, appid_reference_set = {373390}):
 
     return scalar_summarizing_ranks_of_reference_hidden_gems
 
-if not(use_alternative_scoring_method):
-    # Bounds for the optimization procedure of the parameter alpha
-    lower_search_bound = 1  # minimal possible value of alpha is 1 people
-    upper_search_bound = pow(10, 8)  # maximal possible value of alpha is 8 billion people
+# Bounds for the optimization procedure of the parameter alpha
+lower_search_bound = 1  # minimal possible value of alpha is 1 people
+upper_search_bound = pow(10, 8)  # maximal possible value of alpha is 8 billion people
 
-    functionToMinimize = lambda x : rankGames([x], False, appid_default_reference_set)
-    my_bounds = [(lower_search_bound, upper_search_bound)]
-else:
-    # Bounds for the optimization procedure of the parameters alpha and beta
-    lower_search_bound = 1
-    upper_search_bound = pow(10, 5)
-
-    functionToMinimize = lambda x_list: rankGames(x_list, False, appid_default_reference_set)
-    my_bounds = [(lower_search_bound, upper_search_bound), (lower_search_bound, upper_search_bound)]
+functionToMinimize = lambda x : rankGames([x], False, appid_default_reference_set)
+my_bounds = [(lower_search_bound, upper_search_bound)]
 
 res = differential_evolution(functionToMinimize, bounds=my_bounds)
 
@@ -203,10 +186,6 @@ else:
 # Otherwise, it could indicate the search has been biased by a poor choice of the upper search bound.
 alphaOptim = optimal_parameters[0]
 print("alpha = 10^%.2f" % log10(alphaOptim))
-
-if len(optimal_parameters) > 1 :
-    betaOptim = optimal_parameters[1]
-    print("beta = 10^%.2f" % log10(betaOptim))
 
 with open(output_filename, 'w', encoding="utf8") as outfile:
     rankGames(optimal_parameters, True, appid_default_reference_set)
