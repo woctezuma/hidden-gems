@@ -11,6 +11,7 @@ input_filename = "dict_top_rated_games_on_steam.txt"
 output_filename = "hidden_gems.txt"
 
 from scipy.optimize import differential_evolution
+from scipy.optimize import minimize
 from math import log10
 import numpy as np
 # Import a variable (and execute create_dict_using_json.py, maybe because I have not embedded the code in functions)
@@ -24,7 +25,9 @@ print_subset_of_top_games = True
 num_top_games_to_print = 1000
 
 # Boolean to switch the popularity measure from number of players to any alternative which you might want to test.
-use_alternative_popularity_measure = False
+use_alternative_scoring_method = False
+# Expected playtime from a Steam game. This is a parameter introduced only for the alternative scoring method.
+expected_playtime_in_minutes = 300
 
 # Import the dictionary from the input file
 with open(input_filename, 'r', encoding="utf8") as infile:
@@ -32,12 +35,20 @@ with open(input_filename, 'r', encoding="utf8") as infile:
     # The dictionary is on the second line
     D = eval(lines[1])
 
-def computeScoreGeneric(tuple, alpha):
+def computeScoreGeneric(tuple, parameter_list):
     # Objective: compute a score for one Steam game.
     #
     # Input:    - a tuple is a list consisting of all retrieved information regarding one game
-    #           - alpha is the only parameter of the ranking, and could be chosen up to one's tastes, or optimized
+    #           - parameter_list is a list of parameters to calibrate the ranking.
+    #               i) alpha (parameter_list[0]) could be chosen up to one's tastes, or optimized,
+    #               ii) optional beta (parameter_list[1]) is only used if the alternative scoring method is selected.
     # Output:   game score
+
+    alpha = parameter_list[0]
+    if len(parameter_list) > 1:
+        beta = parameter_list[1]
+    else:
+        beta = np.NaN
 
     game_name = tuple[0]
     wilson_score = tuple[1]
@@ -62,13 +73,14 @@ def computeScoreGeneric(tuple, alpha):
     quality_measure = wilson_score
     popularity_measure = num_players
 
-    if use_alternative_popularity_measure:
-        # Sanity check
-        num_owners = max(num_owners, num_players)
-        # Assumption: popular games are played a lot, but they are owned by a lot more people than they are played.
-        # For instance, we expect popular games to be bought by many during sales, due to marketing and word-of-mouth,
-        # and then many of these purchasers won't even launch the game.
-        popularity_measure = (num_owners - num_players)
+    if use_alternative_scoring_method:
+        additional_playtime = max(0, average_playtime - expected_playtime_in_minutes)
+
+        # Increasing function
+        increasing_fun = lambda x: (beta + x) / beta
+
+        quality_measure = increasing_fun(additional_playtime)
+        popularity_measure = num_reviews
 
     # Decreasing function
     decreasing_fun = lambda x: alpha / (alpha + x)
@@ -79,16 +91,16 @@ def computeScoreGeneric(tuple, alpha):
 
 # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
 
-def rankGames(alpha, verbose = False, appid_reference_set = {373390}):
+def rankGames(parameter_list, verbose = False, appid_reference_set = {373390}):
     # Objective: rank all the Steam games, given a parameter alpha.
     #
-    # Input:    - alpha is the only parameter of the ranking, and could be chosen up to one's tastes, or optimized
+    # Input:    - parameter_list is a list of parameters to calibrate the ranking.
     #           - optional verbosity boolean
     #           - optional set of appID of games chosen as references of a "hidden gem".
     #             By default, this is set containing only one game called "Contradiction" (appID=373390).
     # Output:   scalar value summarizing ranks of games used as references of "hidden gems"
 
-    computeScore = lambda x: computeScoreGeneric(x, alpha)
+    computeScore = lambda x: computeScoreGeneric(x, parameter_list)
 
     # Rank all the Steam games
     sortedValues = sorted(D.values(), key=computeScore, reverse=True)
@@ -160,17 +172,39 @@ def rankGames(alpha, verbose = False, appid_reference_set = {373390}):
 lower_search_bound = 1 # minimal possible value of alpha is 1 people
 upper_search_bound = pow(10, 8) # maximal possible value of alpha is 8 billion people
 
-if use_alternative_popularity_measure:
-    lower_search_bound = 1
-    upper_search_bound = pow(10, 8)
+if not(use_alternative_scoring_method):
+    functionToMinimize = lambda x : rankGames([x], False, appid_default_reference_set)
+    res = differential_evolution(functionToMinimize, bounds=[(lower_search_bound, upper_search_bound)])
+    alphaOptim = res.x
 
-functionToMinimize = lambda x : rankGames(x, False, appid_default_reference_set)
-res = differential_evolution(functionToMinimize, bounds=[(lower_search_bound, upper_search_bound)])
-alphaOptim = res.x
+    optimal_parameters = [alphaOptim]
+
+else:
+    alpha_min = lower_search_bound
+    alpha_max = upper_search_bound
+
+    beta_min = lower_search_bound
+    beta_max = upper_search_bound
+
+    initial_guess = np.array([(alpha_min+alpha_max)/2, (beta_min+beta_max)/2])
+
+    methodName = "L-BFGS-B"
+
+    functionToMinimize = lambda x_list: rankGames(x_list, False, appid_default_reference_set)
+    res = minimize(functionToMinimize, initial_guess,
+                   bounds=[(alpha_min, alpha_max), (beta_min, beta_max)], method=methodName)
+    alphaOptim = res.x[0]
+    betaOptim = res.x[1]
+
+    optimal_parameters = [alphaOptim, betaOptim]
 
 # Quick print in order to check that the upper search bound is not too close to our optimal alpha
 # Otherwise, it could indicate the search has been biased by a poor choice of the upper search bound.
 print("alpha = 10^%.2f" % log10(alphaOptim))
 
+if len(optimal_parameters) > 1 :
+    betaOptim = optimal_parameters[1]
+    print("beta = %.2f" % betaOptim)
+
 with open(output_filename, 'w', encoding="utf8") as outfile:
-    rankGames(alphaOptim, True, appid_default_reference_set)
+    rankGames(optimal_parameters, True, appid_default_reference_set)
