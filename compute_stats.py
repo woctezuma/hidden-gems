@@ -29,8 +29,8 @@ num_top_games_to_print = 1000
 #            - the popularity measure can be based either on the number of players, or on the number of reviews.
 use_alternative_scoring_method = False
 # Integer to switch between 3 alternative popularity measures for the alternative scoring
-switch_between_alternative_popularity_measures = 3
-assert( switch_between_alternative_popularity_measures in range(1, 4) )
+switch_between_alternative_popularity_measures = 3 # 1: #players ; 2: #reviews ; 3: #additional_reviews ; 4: mix of players and reviews
+assert( switch_between_alternative_popularity_measures in range(1, 5) )
 
 # Import the dictionary from the input file
 with open(input_filename, 'r', encoding="utf8") as infile:
@@ -99,9 +99,12 @@ def computeScoreGeneric(tuple, parameter_list):
         elif switch_between_alternative_popularity_measures == 2:
             # 2nd option
             popularity_measure = num_reviews
-        else:
+        elif switch_between_alternative_popularity_measures == 3:
             # 3rd option
             popularity_measure = additional_reviews
+        else:
+            # 4th option
+            popularity_measure = np.sqrt( (1+max(0, num_players))*(1+max(0, num_reviews)) )
 
     # Decreasing function
     decreasing_fun = lambda x: alpha / (alpha + x)
@@ -198,8 +201,8 @@ my_bounds = [(lower_search_bound, upper_search_bound)]
 
 if use_alternative_scoring_method:
     functionToMinimize = lambda x_list: rankGames(x_list, False, appid_default_reference_set)
-    if switch_between_alternative_popularity_measures in [1, 2]:
-        my_bounds = [(1, pow(10, 6)), (2, 50)] # 2 parameters if popularity measure = #players, or raw #reviews
+    if switch_between_alternative_popularity_measures in [1, 2, 4]:
+        my_bounds = [(1, pow(10, 6)), (2, 50)] # 2 parameters if popularity measure = #players, or raw #reviews, or mix of both
     else:
         my_bounds = [(1, pow(10, 6)), (2, 50), (0, 150)] # 3 parameters if popularity measure = #additional_reviews
 
