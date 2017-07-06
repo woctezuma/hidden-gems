@@ -24,7 +24,9 @@ base_steam_store_url = "http://store.steampowered.com/app/"
 print_subset_of_top_games = True
 num_top_games_to_print = 1000
 
-# Boolean to switch the popularity measure from number of players to any alternative which you might want to test.
+# Boolean to switch the scoring method to any alternative which you might want to test.
+# Typically: - the quality measure becomes the median playtime, instead of the Wilson score.
+#            - the popularity measure becomes the number of reviews, instead of the number of players.
 use_alternative_scoring_method = False
 # Expected maximal playtime for a Steam game.
 expected_maximal_playtime_in_minutes = 1200
