@@ -81,7 +81,9 @@ def computeScoreGeneric(tuple, parameter_list):
         else:
             expected_maximal_playtime_in_hours = parameter_list[1]
         # This allows to: i) get a value between 0 and 1, and ii) cap the playtime, to avoid promoting idler games.
-        normalized_playtime_measure = min(1, playtime_measure/expected_maximal_playtime_in_hours)
+        normalized_playtime_measure = playtime_measure/expected_maximal_playtime_in_hours
+        my_cap = 1
+        normalized_playtime_measure_capped = min(my_cap, normalized_playtime_measure)
 
         # Expected minimal number of reviews for a Steam game.
         if len(parameter_list) < 3:
@@ -91,7 +93,7 @@ def computeScoreGeneric(tuple, parameter_list):
         # This allows to consider equally every game with #reviews lower than expected_minimal_number_of_reviews.
         additional_reviews = max(0, num_reviews - expected_minimal_number_of_reviews) + expected_minimal_number_of_reviews
 
-        quality_measure = normalized_playtime_measure
+        quality_measure = normalized_playtime_measure_capped
 
         if switch_between_alternative_popularity_measures == 1:
             # 1st option
