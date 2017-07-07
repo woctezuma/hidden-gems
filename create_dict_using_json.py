@@ -51,7 +51,7 @@ appid_default_reference_set = {appidContradiction}
 # appid_default_reference_set = {appidContradiction, "320090", "363980"}
 # A set of all the appID which people have suggested to me as examples of hidden gems, or hidden² gems
 appid_default_reference_set = {appidContradiction, "320090", "363980", "561740", "333300", "329970", "323220",
-                               "534290", "440880"}
+                               "534290", "440880", "402040", "233980"}
 
 # Tags to filter in
 if filter_in_user_chosen_tags:
