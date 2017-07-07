@@ -49,6 +49,8 @@ appid_default_reference_set = {appidContradiction}
 # A set of appID to use several games as references of hidden "hidden gems" (not a typo, twice hidden)
 # Reference: http://www.neogaf.com/forum/showpost.php?p=241232835&postcount=5886
 # appid_default_reference_set = {appidContradiction, "320090", "363980"}
+# A set of all the appID which people have suggested to me as examples of hidden gems, or hidden² gems
+appid_default_reference_set = {appidContradiction, "320090", "363980", "561740", "333300", "329970", "323220"}
 
 # Tags to filter in
 if filter_in_user_chosen_tags:
