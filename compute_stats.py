@@ -14,7 +14,7 @@ from scipy.optimize import differential_evolution
 from math import log10
 import numpy as np
 # Import a variable (and execute create_dict_using_json.py, maybe because I have not embedded the code in functions)
-from create_dict_using_json import appid_default_reference_set
+from create_dict_using_json import appid_default_reference_set, use_hidden_squared_gems_as_examples
 
 base_steam_store_url = "http://store.steampowered.com/app/"
 
@@ -24,7 +24,9 @@ print_subset_of_top_games = True
 num_top_games_to_print = 1000
 
 # Boolean to switch the scoring method to any alternative which you might want to test.
-use_alternative_scoring_method = True
+use_alternative_scoring_method = False
+if use_alternative_scoring_method:
+    assert( use_hidden_squared_gems_as_examples )
 
 # Import the dictionary from the input file
 with open(input_filename, 'r', encoding="utf8") as infile:
@@ -122,14 +124,17 @@ def rankGames(parameter_list, verbose = False, appid_reference_set = {373390}):
 
     reference_dict = {}
     for appid_reference in appid_reference_set:
-        # Find the rank of this game used as a reference of a "hidden gem"
-        nameGameUsedAsReferenceForHiddenGem = D[appid_reference][0]
-        rankGameUsedAsReferenceForHiddenGem = sortedGameNames.index(nameGameUsedAsReferenceForHiddenGem) + 1
+        try:
+            # Find the rank of this game used as a reference of a "hidden gem"
+            nameGameUsedAsReferenceForHiddenGem = D[appid_reference][0]
+            rankGameUsedAsReferenceForHiddenGem = sortedGameNames.index(nameGameUsedAsReferenceForHiddenGem) + 1
 
-        # Find whether the reference game should appear in the ranking (it might not due to tag filters)
-        boolReferenceGameShouldAppearInRanking = D[appid_reference][-1]
+            # Find whether the reference game should appear in the ranking (it might not due to tag filters)
+            boolReferenceGameShouldAppearInRanking = D[appid_reference][-1]
 
-        reference_dict[appid_reference] = [rankGameUsedAsReferenceForHiddenGem, boolReferenceGameShouldAppearInRanking]
+            reference_dict[appid_reference] = [rankGameUsedAsReferenceForHiddenGem, boolReferenceGameShouldAppearInRanking]
+        except KeyError:
+            continue
 
     # Display the ranking in a format parsable by Github Gist
     if verbose:
