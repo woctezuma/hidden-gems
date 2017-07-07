@@ -50,7 +50,8 @@ appid_default_reference_set = {appidContradiction}
 # Reference: http://www.neogaf.com/forum/showpost.php?p=241232835&postcount=5886
 # appid_default_reference_set = {appidContradiction, "320090", "363980"}
 # A set of all the appID which people have suggested to me as examples of hidden gems, or hidden² gems
-appid_default_reference_set = {appidContradiction, "320090", "363980", "561740", "333300", "329970", "323220"}
+appid_default_reference_set = {appidContradiction, "320090", "363980", "561740", "333300", "329970", "323220",
+                               "534290", "440880"}
 
 # Tags to filter in
 if filter_in_user_chosen_tags:
