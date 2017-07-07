@@ -42,7 +42,8 @@ filter_in_user_chosen_tags = False
 # Tags to filter out
 if filter_out_user_chosen_tags:
     # Any game which is tagged with the following tags will be filtered out from the dictionary (and won't appear on the ranking)
-    tags_to_filter_out = set(["Visual Novel", "Anime", "VR", "Free to Play"])
+    tags_to_filter_out = set(["Visual Novel", "Anime", "VR", "Free to Play",
+                              "Match 3", "Hidden Object", "Text-Based", "Touch-Friendly", "Agriculture", "Otome"])
     # A set of tags to better suit the tastes of someone who provided feedback: accept Anime but not Early Access and VR
     # Reference: http://www.neogaf.com/forum/showpost.php?p=241227942&postcount=5880
     # tags_to_filter_out = set(["Early Access", "VR", "Free to Play"])
