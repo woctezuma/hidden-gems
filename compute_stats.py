@@ -44,7 +44,7 @@ def computeScoreGeneric(tuple, parameter_list):
 
     # Expected minimal playtime for a hidden gem.
     if len(parameter_list) < 2:
-        expected_minimal_playtime_in_hours = 20
+        expected_minimal_playtime_in_hours = 10
     else:
         expected_minimal_playtime_in_hours = parameter_list[1]
 
