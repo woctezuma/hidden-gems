@@ -54,6 +54,12 @@ def computeScoreGeneric(tuple, parameter_list):
     else:
         expected_maximal_num_reviews = parameter_list[2]
 
+    # Expected maximal playtime difference for a hidden gem.
+    if len(parameter_list) < 4:
+        expected_maximal_playtime_difference_in_hours = 10
+    else:
+        expected_maximal_playtime_difference_in_hours = parameter_list[3]
+
     game_name = tuple[0]
     wilson_score = tuple[1]
     num_owners = tuple[2]
@@ -79,9 +85,12 @@ def computeScoreGeneric(tuple, parameter_list):
 
     if use_alternative_scoring_method:
         # Convert from minutes to hours
-        playtime = average_playtime/60
+        avg_playtime_hours = average_playtime/60
+        median_playtime_hours = median_playtime/ 60
         # Compute ratio between 0 and 1
-        if (playtime > expected_minimal_playtime_in_hours) and (num_reviews <= expected_maximal_num_reviews):
+        if (avg_playtime_hours > expected_minimal_playtime_in_hours)\
+                and (num_reviews <= expected_maximal_num_reviews)\
+                and (np.abs(median_playtime_hours-avg_playtime_hours) <= expected_maximal_playtime_difference_in_hours):
             quality_measure = wilson_score
         else:
             quality_measure = 0
@@ -181,7 +190,7 @@ my_bounds = [(lower_search_bound, upper_search_bound)]
 
 if use_alternative_scoring_method:
     functionToMinimize = lambda x_list: rankGames(x_list, False, appid_default_reference_set)
-    my_bounds = [(lower_search_bound, upper_search_bound), (2, 10), (50, 200)]
+    my_bounds = [(lower_search_bound, upper_search_bound), (2, 10), (50, 200), (2, 10)]
 
 res = differential_evolution(functionToMinimize, bounds=my_bounds)
 
