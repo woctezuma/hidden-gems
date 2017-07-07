@@ -22,12 +22,12 @@ import urllib.request, json
 from compute_wilson_score import computeWilsonScore
 
 # Optional boolean to decide whether we want to compute the Wilson score by ourselves, instead of using SteamDB's scores
-compute_our_own_wilson_score = False
+compute_our_own_wilson_score = True
 # This allows to specify a different confidence, which can turn out to be interesting.
-quantile_for_our_own_wilson_score = 0.95
+quantile_for_our_own_wilson_score = 0.8
 
 # Booleans to decide whether we want to filter out and filter in games based on their Steam tags
-filter_out_user_chosen_tags = False
+filter_out_user_chosen_tags = True
 filter_in_user_chosen_tags = False
 
 # Tags to filter out
