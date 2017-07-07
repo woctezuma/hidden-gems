@@ -21,13 +21,22 @@ output_filename = "dict_top_rated_games_on_steam.txt"
 import urllib.request, json
 from compute_wilson_score import computeWilsonScore
 
+# Boolean to switch between hidden gems and hidden hidden gems (yes, twice hidden)
+use_hidden_squared_gems_as_examples = False
+max_num_reviews_for_hidden_squared_gems = 150
+
 # Optional boolean to decide whether we want to compute the Wilson score by ourselves, instead of using SteamDB's scores
-compute_our_own_wilson_score = True
+compute_our_own_wilson_score = False
 # This allows to specify a different confidence, which can turn out to be interesting.
-quantile_for_our_own_wilson_score = 0.8
+quantile_for_our_own_wilson_score = 0.95
+
+if use_hidden_squared_gems_as_examples:
+    # Lower the confidence so that Wilson score is less punitive towards games with few reviews
+    compute_our_own_wilson_score = True
+    quantile_for_our_own_wilson_score = 0.8
 
 # Booleans to decide whether we want to filter out and filter in games based on their Steam tags
-filter_out_user_chosen_tags = True
+filter_out_user_chosen_tags = False
 filter_in_user_chosen_tags = False
 
 # Tags to filter out
@@ -138,9 +147,14 @@ with open(input_filename, 'r', encoding="utf8") as infile:
 
             # Make sure the output dictionary includes the game which will be chosen as a reference of a "hidden gem"
             if appid in appid_default_reference_set:
-                print("Game used as a reference:\t" + name + "\t(appID=" + appid + ")")
-                # If a game is the reference game, we have include it in the dictionary
-                D[appid] = stats_save
+                # If we look for hidden squared gems, then we don't want to use examples with many reviews,
+                # because these games would be examples of hidden gems, but not examples of "hidden hidden" gems.
+                num_reviews = num_positive_reviews + num_negative_reviews
+                if use_hidden_squared_gems_as_examples and (num_reviews <= max_num_reviews_for_hidden_squared_gems):
+                    print("Game used as a reference:\t" + name + "\t(appID=" + appid + ")")
+                    # If a game is the reference game, we have include it in the dictionary
+                    D[appid] = stats_save
+
             else:
                 # If a game is not the reference game, then it may only appear in the ranking if it passes the tag filters.
                 if boolGameShouldAppearInRanking:
