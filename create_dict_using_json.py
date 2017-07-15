@@ -151,7 +151,7 @@ with open(input_filename, 'r', encoding="utf8") as infile:
                 # If we look for hidden squared gems, then we don't want to use examples with many reviews,
                 # because these games would be examples of hidden gems, but not examples of "hidden hidden" gems.
                 num_reviews = num_positive_reviews + num_negative_reviews
-                if use_hidden_squared_gems_as_examples and (num_reviews <= max_num_reviews_for_hidden_squared_gems):
+                if not(use_hidden_squared_gems_as_examples) or (num_reviews <= max_num_reviews_for_hidden_squared_gems):
                     print("Game used as a reference:\t" + name + "\t(appID=" + appid + ")")
                     # If a game is the reference game, we have include it in the dictionary
                     D[appid] = stats_save
