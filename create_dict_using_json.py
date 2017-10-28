@@ -26,7 +26,7 @@ use_hidden_squared_gems_as_examples = False
 max_num_reviews_for_hidden_squared_gems = 150
 
 # Optional boolean to decide whether we want to compute the Wilson score by ourselves, instead of using SteamDB's scores
-compute_our_own_wilson_score = False
+compute_our_own_wilson_score = True
 # This allows to specify a different confidence, which can turn out to be interesting.
 quantile_for_our_own_wilson_score = 0.95
 
