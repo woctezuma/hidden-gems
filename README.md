@@ -18,7 +18,7 @@ To run the code, you will need:
 * data from SteamDB: `top_rated_games_on_steam.txt` (manually pasted)
 * data from SteamSpy: `steamspy.json` (automatically downloaded if the file is missing)
 
-The data is included along the code in this repository, as downloaded on June 30, 2017.
+The data is included along the code in this repository, as downloaded on October 28, 2017.
 
 ## Requirements ##
 
@@ -41,6 +41,7 @@ To install these on Windows, I suggest you download the binaries linked to the I
 * [updated ranking with tag filtering-out and 80% confidence Wilson score](https://gist.github.com/woctezuma/20c4b30dce9ca82d3efa9b944ab92932), filtering out tags (VR, Anime, Visual Novel, F2P).
 * [ranking of card games](https://gist.github.com/woctezuma/3ef6465180e3d28e9167bce03507b721), filtering out F2P, Early Access, etc.
 * [alternative updated ranking with tag filtering-in](https://gist.github.com/woctezuma/fd2fc2b766e7e94605e4be5cf7de03ad), intended to favor hidden gems among "hidden gems", so hidden² gems.
+* [updated rankings for the 2017 Halloween sale](https://gist.github.com/woctezuma/b5954f2d31989fdaf71eef53027f3cac)
 
 ## References ##
 * [a NeoGAF post](http://www.neogaf.com/forum/showpost.php?p=241218621&postcount=5840) explaining the method,
