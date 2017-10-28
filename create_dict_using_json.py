@@ -105,23 +105,23 @@ with open(input_filename, 'r', encoding="utf8") as infile:
         items = line.strip().split("\t")
         stripped_items = list(map(str.strip, items))
 
-        appid = stripped_items[1]
-        name = stripped_items[2]
+        appid = stripped_items[0]
+        name = stripped_items[1]
 
         toInteger = lambda str : int(str.replace(',',''))
 
-        num_positive_reviews = toInteger(stripped_items[3])
-        num_negative_reviews = toInteger(stripped_items[4])
+        num_positive_reviews = toInteger(stripped_items[2])
+        num_negative_reviews = toInteger(stripped_items[3])
 
         toPercentage = lambda str : float(str.strip("%"))/100
 
-        wilson_score_from_SteamDB = toPercentage(stripped_items[-2])
-        steam_score = toPercentage(stripped_items[-1])
+        arbitrary_score_from_SteamDB = toPercentage(stripped_items[-1])
 
         if compute_our_own_wilson_score:
             wilson_score = computeWilsonScore(num_positive_reviews, num_negative_reviews, quantile_for_our_own_wilson_score)
         else:
-            wilson_score = wilson_score_from_SteamDB
+            # This is not the Wilson score anymore. See this blog post: https://steamdb.info/blog/steamdb-rating/
+            wilson_score = arbitrary_score_from_SteamDB
 
         try:
             num_owners = data[appid]['owners']
