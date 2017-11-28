@@ -44,6 +44,10 @@ def createLocalDictionary(data, output_filename, appid_default_reference_set = {
         else:
             stats_save = [name, wilson_score, num_owners, num_players, median_time, average_time, num_positive_reviews,
                           num_negative_reviews]
+
+            boolGameShouldAppearInRanking = True
+            stats_save.append(boolGameShouldAppearInRanking)
+
             D[appid] = stats_save
 
     # First line of the text file containing the output dictionary
