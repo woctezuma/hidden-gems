@@ -51,7 +51,7 @@ def createLocalDictionary(data, output_filename, appid_default_reference_set = {
             D[appid] = stats_save
 
     # First line of the text file containing the output dictionary
-    leading_comment = "# Dictionary with key=appid and value=list of name, Wilson score, #owners, #players, median playtime, average playtime, boolean whether to include the game in the ranking"
+    leading_comment = "# Dictionary with key=appid and value=list of name, Wilson score, #owners, #players, median playtime, average playtime, #positive reviews, #negative reviews, boolean whether to include the game in the ranking"
 
     # Save the dictionary to a text file
     with open(output_filename, 'w', encoding="utf8") as outfile:
