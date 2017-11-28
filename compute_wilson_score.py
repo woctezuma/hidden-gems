@@ -1,3 +1,5 @@
+# Objective: compute the Wilson score given the numbers of positive and negative reviews
+
 from math import sqrt
 
 # Quantiles of the normal distribution
