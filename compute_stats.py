@@ -14,7 +14,7 @@ from scipy.optimize import differential_evolution
 from math import log10
 import numpy as np
 # Import a variable (and execute create_dict_using_json.py, maybe because I have not embedded the code in functions)
-from create_dict_using_json import appid_default_reference_set, use_hidden_squared_gems_as_examples
+from create_dict_using_json import appidContradiction, appid_default_reference_set
 
 base_steam_store_url = "http://store.steampowered.com/app/"
 
@@ -22,11 +22,6 @@ base_steam_store_url = "http://store.steampowered.com/app/"
 # catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
 print_subset_of_top_games = True
 num_top_games_to_print = 1000
-
-# Boolean to switch the scoring method to any alternative which you might want to test.
-use_alternative_scoring_method = False
-if use_alternative_scoring_method:
-    assert( use_hidden_squared_gems_as_examples )
 
 # Import the dictionary from the input file
 with open(input_filename, 'r', encoding="utf8") as infile:
@@ -85,18 +80,6 @@ def computeScoreGeneric(tuple, parameter_list):
     quality_measure = wilson_score
     popularity_measure = num_players
 
-    if use_alternative_scoring_method:
-        # Convert from minutes to hours
-        avg_playtime_hours = average_playtime/60
-        median_playtime_hours = median_playtime/ 60
-        # Compute ratio between 0 and 1
-        if (avg_playtime_hours > expected_minimal_playtime_in_hours)\
-                and (num_reviews <= expected_maximal_num_reviews)\
-                and (np.abs(median_playtime_hours-avg_playtime_hours) <= expected_maximal_playtime_difference_in_hours):
-            quality_measure = wilson_score
-        else:
-            quality_measure = 0
-
     # Decreasing function
     decreasing_fun = lambda x: alpha / (alpha + x)
 
@@ -106,7 +89,7 @@ def computeScoreGeneric(tuple, parameter_list):
 
 # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
 
-def rankGames(parameter_list, verbose = False, appid_reference_set = {373390}):
+def rankGames(parameter_list, verbose = False, appid_reference_set = {appidContradiction}):
     # Objective: rank all the Steam games, given a parameter alpha.
     #
     # Input:    - parameter_list is a list of parameters to calibrate the ranking.
@@ -192,10 +175,6 @@ upper_search_bound = pow(10, 8)  # maximal possible value of alpha is 8 billion 
 
 functionToMinimize = lambda x : rankGames([x], False, appid_default_reference_set)
 my_bounds = [(lower_search_bound, upper_search_bound)]
-
-if use_alternative_scoring_method:
-    functionToMinimize = lambda x_list: rankGames(x_list, False, appid_default_reference_set)
-    my_bounds = [(lower_search_bound, upper_search_bound), (2, 10), (50, 200), (2, 10)]
 
 res = differential_evolution(functionToMinimize, bounds=my_bounds)
 
