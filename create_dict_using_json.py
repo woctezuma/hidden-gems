@@ -1,8 +1,8 @@
 # Objective: store information regarding every Steam game in a dictionary.
 
-from appids import appid_hidden_gems_reference_set
+from appids import appidContradiction
 
-def createLocalDictionary(data, output_filename, appid_reference_set = appid_hidden_gems_reference_set,
+def createLocalDictionary(data, output_filename, appid_reference_set = {appidContradiction},
                                                  quantile_for_our_own_wilson_score = 0.95):
     # Objective: compute a score for one Steam game.
     #
@@ -53,6 +53,7 @@ def createLocalDictionary(data, output_filename, appid_reference_set = appid_hid
         print(D, file=outfile)
 
 if __name__ == "__main__":
+    from appids import appid_hidden_gems_reference_set
     from download_json import downloadSteamSpyData
     import time
 
