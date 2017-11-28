@@ -1,33 +1,6 @@
 # Objective: compute a score for each Steam game and then rank all the games while favoring hidden gems.
-#
-# Input:
-#
-# a dictionary stored in a text file named "dict_top_rated_games_on_steam.txt"
-input_filename = "dict_top_rated_games_on_steam.txt"
-#
-# Output:
-#
-# a ranking in a text file named "hidden_gems.txt"
-output_filename = "hidden_gems.txt"
 
-from scipy.optimize import differential_evolution
-from math import log10
-import numpy as np
-# Import a variable (and execute create_dict_using_json.py, maybe because I have not embedded the code in functions)
-from create_dict_using_json import appidContradiction, appid_default_reference_set
-
-base_steam_store_url = "http://store.steampowered.com/app/"
-
-# Boolean to decide whether printing the ranking of the top 1000 games, rather than the ranking of the whole Steam
-# catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
-print_subset_of_top_games = True
-num_top_games_to_print = 1000
-
-# Import the dictionary from the input file
-with open(input_filename, 'r', encoding="utf8") as infile:
-    lines = infile.readlines()
-    # The dictionary is on the second line
-    D = eval(lines[1])
+from appids import appidContradiction
 
 def computeScoreGeneric(tuple, parameter_list):
     # Objective: compute a score for one Steam game.
@@ -38,24 +11,6 @@ def computeScoreGeneric(tuple, parameter_list):
     # Output:   game score
 
     alpha = parameter_list[0]
-
-    # Expected minimal playtime for a hidden gem.
-    if len(parameter_list) < 2:
-        expected_minimal_playtime_in_hours = 10
-    else:
-        expected_minimal_playtime_in_hours = parameter_list[1]
-
-    # Expected maximal number of reviews for a hidden gem.
-    if len(parameter_list) < 3:
-        expected_maximal_num_reviews = 50
-    else:
-        expected_maximal_num_reviews = parameter_list[2]
-
-    # Expected maximal playtime difference for a hidden gem.
-    if len(parameter_list) < 4:
-        expected_maximal_playtime_difference_in_hours = 10
-    else:
-        expected_maximal_playtime_difference_in_hours = parameter_list[3]
 
     game_name = tuple[0]
     wilson_score = tuple[1]
@@ -87,16 +42,26 @@ def computeScoreGeneric(tuple, parameter_list):
 
     return score
 
-# Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
-
-def rankGames(parameter_list, verbose = False, appid_reference_set = {appidContradiction}):
+def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidContradiction},
+              num_top_games_to_print = 1000):
     # Objective: rank all the Steam games, given a parameter alpha.
     #
-    # Input:    - parameter_list is a list of parameters to calibrate the ranking.
+    # Input:    - local dictionary of data extracted from SteamSpy
+    #           - parameter_list is a list of parameters to calibrate the ranking.
     #           - optional verbosity boolean
-    #           - optional set of appID of games chosen as references of a "hidden gem".
-    #             By default, this is set containing only one game called "Contradiction" (appID=373390).
+    #           - optional set of appID of games chosen as references of a "hidden gem". By default, only "Contradiction".
+    #           - optional number of top games to print if the ranking is only partially displayed
+    #             By default, only the top 1000 games are displayed.
+    #             If set to None, the ranking will be fully displayed.
     # Output:   scalar value summarizing ranks of games used as references of "hidden gems"
+
+    import numpy as np
+
+    base_steam_store_url = "http://store.steampowered.com/app/"
+
+    # Boolean to decide whether printing the ranking of the top 1000 games, rather than the ranking of the whole Steam
+    # catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
+    print_subset_of_top_games = bool( not(num_top_games_to_print is None) )
 
     computeScore = lambda x: computeScoreGeneric(x, parameter_list)
 
@@ -169,25 +134,61 @@ def rankGames(parameter_list, verbose = False, appid_reference_set = {appidContr
 
     return scalar_summarizing_ranks_of_reference_hidden_gems
 
-# Bounds for the optimization procedure of the parameter alpha
-lower_search_bound = 1  # minimal possible value of alpha is 1 people
-upper_search_bound = pow(10, 8)  # maximal possible value of alpha is 8 billion people
+def optimizeForAlpha(D, verbose = True, appid_reference_set = {appidContradiction},
+                        lower_search_bound = 1, # minimal possible value of alpha is 1 people
+                        upper_search_bound = pow(10, 8) # maximal possible value of alpha is 8 billion people
+                     ):
+    # Objective: find the optimal value of the parameter alpha
+    #
+    # Input:    - local dictionary of data extracted from SteamSpy
+    #           - optional verbosity boolean
+    #           - optional set of appID of games chosen as references of a "hidden gem". By default, only "Contradiction".
+    #           - optional lower bound for the optimization procedure of the parameter alpha
+    #           - optional upper bound for the optimization procedure of the parameter alpha
+    # Output:   list of optimal parameters (by default, only one parameter is optimized: alpha)
 
-functionToMinimize = lambda x : rankGames([x], False, appid_default_reference_set)
-my_bounds = [(lower_search_bound, upper_search_bound)]
+    from math import log10
+    from scipy.optimize import differential_evolution
 
-res = differential_evolution(functionToMinimize, bounds=my_bounds)
+    # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
+    functionToMinimize = lambda x: rankGames(D, [x], False, appid_reference_set)
 
-if len(res.x) == 1:
-    optimal_parameters = [ res.x ]
-else:
-    optimal_parameters = res.x
-    print(optimal_parameters)
+    # Bounds for the optimization procedure of the parameter alpha
+    my_bounds = [(lower_search_bound, upper_search_bound)]
 
-# Quick print in order to check that the upper search bound is not too close to our optimal alpha
-# Otherwise, it could indicate the search has been biased by a poor choice of the upper search bound.
-alphaOptim = optimal_parameters[0]
-print("alpha = 10^%.2f" % log10(alphaOptim))
+    res = differential_evolution(functionToMinimize, bounds=my_bounds)
 
-with open(output_filename, 'w', encoding="utf8") as outfile:
-    rankGames(optimal_parameters, True, appid_default_reference_set)
+    if len(res.x) == 1:
+        optimal_parameters = [res.x]
+    else:
+        optimal_parameters = res.x
+        if verbose:
+            print(optimal_parameters)
+
+    if verbose:
+        # Quick print in order to check that the upper search bound is not too close to our optimal alpha
+        # Otherwise, it could indicate the search has been biased by a poor choice of the upper search bound.
+        alphaOptim = optimal_parameters[0]
+        print("alpha = 10^%.2f" % log10(alphaOptim))
+
+    return optimal_parameters
+
+if __name__ == "__main__":
+    from appids import appid_hidden_gems_reference_set
+
+    # A local dictionary was stored in the following text file
+    input_filename = "dict_top_rated_games_on_steam.txt"
+
+    # A ranking will be stored in the following text file
+    output_filename = "hidden_gems.txt"
+
+    # Import the local dictionary from the input file
+    with open(input_filename, 'r', encoding="utf8") as infile:
+        lines = infile.readlines()
+        # The dictionary is on the second line
+        D = eval(lines[1])
+
+    optimal_parameters = optimizeForAlpha(D, True, appid_hidden_gems_reference_set)
+
+    with open(output_filename, 'w', encoding="utf8") as outfile:
+        rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set)
