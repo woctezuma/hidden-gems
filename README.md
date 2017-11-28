@@ -12,13 +12,9 @@ The score of a game is defined as the product of a quality measure (its Wilson s
 
 ## Data source ##
 
-The quality measure comes from [SteamDB](https://steamdb.info/stats/gameratings/) and the popularity measure comes from [SteamSpy API](http://steamspy.com/api.php).
+The quality measure and the popularity measure come from [SteamSpy API](http://steamspy.com/api.php).
 
-To run the code, you will need:
-* data from SteamDB: `top_rated_games_on_steam.txt` (manually pasted)
-* data from SteamSpy: `steamspy.json` (automatically downloaded if the file is missing)
-
-The data is included along the code in this repository, as downloaded on October 28, 2017.
+To run the code, you will need data from SteamSpy, as a file ending with `_steamspy.json` (automatically downloaded at runtime if the file is missing for the current day).
 
 ## Requirements ##
 
@@ -30,7 +26,7 @@ To install these on Windows, I suggest you download the binaries linked to the I
 * [SciPy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy)
 
 ## Usage ##
-1. `create_dict_using_json.py` merges data from SteamDB and SteamSpy
+1. `create_dict_using_json.py` retrieves data from SteamSpy
 2. `compute_stats.py` creates the ranking by optimizing the free parameter alpha
 
 ## Results ##
