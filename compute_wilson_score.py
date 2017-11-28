@@ -22,6 +22,9 @@ quantile_normal_dist_dict = {
 def computeWilsonScore(num_pos, num_neg, confidence=0.95):
     # Reference: https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval
 
+    assert (num_pos >= 0)
+    assert (num_neg >= 0)
+
     if confidence in quantile_normal_dist_dict.keys():
         tabulated_confidence = confidence
     else:
@@ -40,10 +43,15 @@ def computeWilsonScore(num_pos, num_neg, confidence=0.95):
 
     mean = (num_pos + z2/2) / den
 
-    inside_sqrt = num_pos*num_neg/(num_pos+num_neg) + z2/4
-    delta = (z_quantile * sqrt(inside_sqrt)) / den
+    try:
+        inside_sqrt = num_pos*num_neg/(num_pos+num_neg) + z2/4
+        delta = (z_quantile * sqrt(inside_sqrt)) / den
+        wilson_score = mean - delta
+    except ZeroDivisionError:
+        assert (num_pos == 0)
+        assert (num_neg == 0)
+        wilson_score = None
 
-    wilson_score = mean - delta
     return wilson_score
 
 if __name__ == "__main__":
