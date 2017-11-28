@@ -1,20 +1,14 @@
 # Objective: store information regarding every Steam game in a dictionary.
 
-# This is the appID of the game called "Contradiction".
-appidContradiction = "373390"
-# This is a set including appID of games which will serve as references of "hidden gems", so we will make sure that
-# these games appear in the output dictionary, despite filter-out and filter-in.
-# Reference: http://www.neogaf.com/forum/showpost.php?p=241232835&postcount=5886
-appid_default_reference_set = {appidContradiction, "320090", "363980", "561740", "333300", "329970", "323220",
-                               "534290", "440880", "402040", "233980"}
+from appids import appid_hidden_gems_reference_set
 
-def createLocalDictionary(data, output_filename, appid_default_reference_set = {appidContradiction},
+def createLocalDictionary(data, output_filename, appid_reference_set = appid_hidden_gems_reference_set,
                                                  quantile_for_our_own_wilson_score = 0.95):
     # Objective: compute a score for one Steam game.
     #
     # Input:    - data:                         SteamSpy's data.
     #           - output_filename:              filename to which the local dictionary will be written to.
-    #           - appid_default_reference_set:  a set of appID of games which are examples of "hidden gems".
+    #           - appid_reference_set:  a set of appID of games which are examples of "hidden gems".
     #                                           By default, the appID of the game called "Contradiction".
     #           - quantile_for_our_own_wilson_score: this allows to specify a different confidence for the Wilson score.
     # Output:   none (the local dictionary is written to output_filename)
@@ -35,7 +29,7 @@ def createLocalDictionary(data, output_filename, appid_default_reference_set = {
         wilson_score = computeWilsonScore(num_positive_reviews, num_negative_reviews, quantile_for_our_own_wilson_score)
 
         # Make sure the output dictionary includes the game which will be chosen as a reference of a "hidden gem"
-        if appid in appid_default_reference_set:
+        if appid in appid_reference_set:
             assert( not(wilson_score is None) )
             print("Game used as a reference:\t" + name + "\t(appID=" + appid + ")")
 
@@ -77,4 +71,4 @@ if __name__ == "__main__":
     # A dictionary will be stored in the following text file
     output_filename = "dict_top_rated_games_on_steam.txt"
 
-    createLocalDictionary(data, output_filename, appid_default_reference_set)
+    createLocalDictionary(data, output_filename, appid_hidden_gems_reference_set)
