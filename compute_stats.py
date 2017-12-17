@@ -43,7 +43,7 @@ def computeScoreGeneric(tuple, parameter_list):
     return score
 
 def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidContradiction},
-              num_top_games_to_print = 1000):
+              num_top_games_to_print = 1000, filtered_appIDs_to_show = set()):
     # Objective: rank all the Steam games, given a parameter alpha.
     #
     # Input:    - local dictionary of data extracted from SteamSpy
@@ -53,6 +53,9 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
     #           - optional number of top games to print if the ranking is only partially displayed
     #             By default, only the top 1000 games are displayed.
     #             If set to None, the ranking will be fully displayed.
+    #           - optional set of appID of games to show (and only these games are shown).
+    #             Typically used to focus on appIDs for specific genres or tags.
+    #             If set to None, the behavior is unintuitive yet exceptional: every game is shown, there is no filtering of appIDs.
     # Output:   scalar value summarizing ranks of games used as references of "hidden gems"
 
     import numpy as np
@@ -62,6 +65,9 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
     # Boolean to decide whether printing the ranking of the top 1000 games, rather than the ranking of the whole Steam
     # catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
     print_subset_of_top_games = bool( not(num_top_games_to_print is None) )
+
+    # Boolean to decide whether there is a filtering of appIDs (computed by the user, typically to filter-in genres or tags).
+    print_filtered_appIDs_only = bool( not(filtered_appIDs_to_show is None) )
 
     computeScore = lambda x: computeScoreGeneric(x, parameter_list)
 
@@ -121,9 +127,10 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
 
             current_rank -= rank_decrease
 
-            # Append the ranking to the output text file
-            with open(output_filename, 'a', encoding="utf8") as outfile:
-                print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
+            if not(print_filtered_appIDs_only) or bool(appid in filtered_appIDs_to_show):
+                # Append the ranking to the output text file
+                with open(output_filename, 'a', encoding="utf8") as outfile:
+                    print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
 
     ranks_of_reference_hidden_gems = [v[0] for k, v in reference_dict.items()]
     summarizing_function = lambda x : np.average(x)
@@ -190,5 +197,21 @@ if __name__ == "__main__":
 
     optimal_parameters = optimizeForAlpha(D, True, appid_hidden_gems_reference_set)
 
+    num_top_games_to_print = 1000
+
+    filtered_keyword = ""
+    # filtered_keyword = "Software"
+
+    if filtered_keyword == "":
+        filtered_appIDs_to_show = None
+    else:
+        from download_json import downloadSteamSpyData
+
+        dataGenre = downloadSteamSpyData("genre_"+filtered_keyword+"_steamspy.json", filtered_keyword, None)
+        dataTag = downloadSteamSpyData("tag_"+filtered_keyword+"_steamspy.json", None, filtered_keyword)
+
+        # Merge appIDs which genres or tags include the chosen keyword
+        filtered_appIDs_to_show = set(dataGenre.keys()).union(set(dataTag.keys()))
+
     with open(output_filename, 'w', encoding="utf8") as outfile:
-        rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set)
+        rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set, num_top_games_to_print, filtered_appIDs_to_show)
