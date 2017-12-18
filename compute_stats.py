@@ -43,7 +43,7 @@ def computeScoreGeneric(tuple, parameter_list):
     return score
 
 def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidContradiction},
-              num_top_games_to_print = 1000, filtered_appIDs_to_show = set()):
+              num_top_games_to_print = 1000, filtered_appIDs_to_show = set(), filtered_appIDs_to_hide = set()):
     # Objective: rank all the Steam games, given a parameter alpha.
     #
     # Input:    - local dictionary of data extracted from SteamSpy
@@ -55,7 +55,10 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
     #             If set to None, the ranking will be fully displayed.
     #           - optional set of appID of games to show (and only these games are shown).
     #             Typically used to focus on appIDs for specific genres or tags.
-    #             If set to None, the behavior is unintuitive yet exceptional: every game is shown, there is no filtering of appIDs.
+    #             If set to None, the behavior is unintuitive yet exceptional: every game is shown, there is no filtering-in of appIDs.
+    #           - optional set of appID of games to hide.
+    #             Typically used to exclude appIDs for specific genres or tags.
+    #             If set to None, the behavior is intuitive: no game is specifically hidden, there is no filtering-out of appIDs.
     # Output:   scalar value summarizing ranks of games used as references of "hidden gems"
 
     import numpy as np
@@ -66,8 +69,11 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
     # catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
     print_subset_of_top_games = bool( not(num_top_games_to_print is None) )
 
-    # Boolean to decide whether there is a filtering of appIDs (computed by the user, typically to filter-in genres or tags).
-    print_filtered_appIDs_only = bool( not(filtered_appIDs_to_show is None) )
+    # Boolean to decide whether there is a filtering-in of appIDs (typically to filter-in genres or tags).
+    print_filtered_appIDs_only = bool( not(filtered_appIDs_to_show is None) and not(len(filtered_appIDs_to_show)==0) )
+
+    # Boolean to decide whether there is a filtering-out of appIDs (typically to filter-out genres or tags).
+    hide_filtered_appIDs_only = bool( not(filtered_appIDs_to_hide is None) and not(len(filtered_appIDs_to_hide)==0) )
 
     computeScore = lambda x: computeScoreGeneric(x, parameter_list)
 
@@ -128,9 +134,10 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
             current_rank -= rank_decrease
 
             if not(print_filtered_appIDs_only) or bool(appid in filtered_appIDs_to_show):
-                # Append the ranking to the output text file
-                with open(output_filename, 'a', encoding="utf8") as outfile:
-                    print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
+                if not(hide_filtered_appIDs_only) or bool(not(appid in filtered_appIDs_to_hide)):
+                    # Append the ranking to the output text file
+                    with open(output_filename, 'a', encoding="utf8") as outfile:
+                        print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
 
     ranks_of_reference_hidden_gems = [v[0] for k, v in reference_dict.items()]
     summarizing_function = lambda x : np.average(x)
@@ -182,6 +189,7 @@ def optimizeForAlpha(D, verbose = True, appid_reference_set = {appidContradictio
 
 if __name__ == "__main__":
     from appids import appid_hidden_gems_reference_set
+    from download_json import getAppidByKeywordListToInclude, getAppidByKeywordListToExclude
 
     # A local dictionary was stored in the following text file
     input_filename = "dict_top_rated_games_on_steam.txt"
@@ -195,23 +203,29 @@ if __name__ == "__main__":
         # The dictionary is on the second line
         D = eval(lines[1])
 
-    optimal_parameters = optimizeForAlpha(D, True, appid_hidden_gems_reference_set)
+    perform_optimization_at_runtime = True
 
+    if perform_optimization_at_runtime:
+        optimal_parameters = optimizeForAlpha(D, True, appid_hidden_gems_reference_set)
+    else:
+        # Optimal parameter as computed on December 18, 2018
+        optimal_parameters = [ pow(10, 6.46) ]
+
+    # Maximal length of the ranking. The higher the value, the longer it takes to compute and print the ranking.
+    # If set to None, there is no limit, so the whole Steam catalog is ranked.
     num_top_games_to_print = 1000
 
-    filtered_keyword = ""
-    # filtered_keyword = "Software"
+    # Filter-in games which meta-data includes ALL the following keywords
+    # Caveat: the more keywords, the fewer games are filtered-in! cf. intersection of sets in the code
+    # To avoid filtering-in, please use an empty list.
+    keywords_to_include = ["Rogue-Like"]
+    filtered_in_appIDs = getAppidByKeywordListToInclude(keywords_to_include)
 
-    if filtered_keyword == "":
-        filtered_appIDs_to_show = None
-    else:
-        from download_json import downloadSteamSpyData
-
-        dataGenre = downloadSteamSpyData("genre_"+filtered_keyword+"_steamspy.json", filtered_keyword, None)
-        dataTag = downloadSteamSpyData("tag_"+filtered_keyword+"_steamspy.json", None, filtered_keyword)
-
-        # Merge appIDs which genres or tags include the chosen keyword
-        filtered_appIDs_to_show = set(dataGenre.keys()).union(set(dataTag.keys()))
+    # Filter-out games which meta-data includes ANY of the following keywords
+    # NB: the more keywords, the more games are excluded. cf. union of sets in the code
+    # To avoid filtering-out, please use an empty list.
+    keywords_to_exclude = ["Visual Novel", "Anime"]
+    filtered_out_appIDs = getAppidByKeywordListToExclude(keywords_to_exclude)
 
     with open(output_filename, 'w', encoding="utf8") as outfile:
-        rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set, num_top_games_to_print, filtered_appIDs_to_show)
+        rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set, num_top_games_to_print, filtered_in_appIDs, filtered_out_appIDs)
