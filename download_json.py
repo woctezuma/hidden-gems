@@ -46,6 +46,57 @@ def downloadSteamSpyData(json_filename = "steamspy.json", genre = None, tag = No
 
     return data
 
+def getAppidByKeyword(keyword):
+    import time
+
+    json_filename_suffixe = "_steamspy.json"
+
+    # Get current day as yyyymmdd format
+    date_format = "%Y%m%d"
+    current_date = time.strftime(date_format)
+
+    # Database filename
+    json_filename = current_date + json_filename_suffixe
+
+    # Download data which meta-data includes this keyword as genre
+    dataGenre = downloadSteamSpyData("genre_" + keyword + "_" + json_filename, keyword, None)
+    # Download data which meta-data includes this keyword as tag
+    dataTag = downloadSteamSpyData("tag_" + keyword + "_" + json_filename, None, keyword)
+
+    # Merge appIDs which genres or tags include the chosen keyword
+    appIDs = set(dataGenre.keys()).union(set(dataTag.keys()))
+
+    return appIDs
+
+def getAppidByKeywordListToInclude(keywordList):
+    appIDs = None # This variable will be initialized during the first iteration.
+    is_first_iteration = True
+
+    for keyword in keywordList:
+        current_appIDs = getAppidByKeyword(keyword)
+        if len(current_appIDs) == 0:
+            print("The keyword " + keyword + " does not return any appID.")
+        if is_first_iteration:
+            appIDs = current_appIDs
+            is_first_iteration = False
+        else:
+            # Intersection of appIDs so that the result are appIDs which correspond to every keyword
+            appIDs = appIDs.intersection(current_appIDs)
+
+    return appIDs
+
+def getAppidByKeywordListToExclude(keywordList):
+    appIDs = set() # This is the true initialization of this variable.
+
+    for keyword in keywordList:
+        current_appIDs = getAppidByKeyword(keyword)
+        if len(current_appIDs) == 0:
+            print("The keyword " + keyword + " does not return any appID.")
+        # Union of appIDs so that the result are appIDs which correspond to at least one keyword
+        appIDs = appIDs.union(current_appIDs)
+
+    return appIDs
+
 if __name__ == "__main__":
     import time
 
