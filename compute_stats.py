@@ -97,9 +97,16 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
         except KeyError:
             continue
 
+    ranks_of_reference_hidden_gems = [v[0] for k, v in reference_dict.items()]
+    summarizing_function = lambda x : np.average(x)
+    scalar_summarizing_ranks_of_reference_hidden_gems = summarizing_function(ranks_of_reference_hidden_gems)
+
     # Save the ranking for later display
     ranking_list = []
     if verbose:
+        print('Objective function to minimize:\t', scalar_summarizing_ranks_of_reference_hidden_gems)
+
+        # Populate the variable ranking_list
         num_games_to_print = len(sortedGameNames)
         if print_subset_of_top_games:
             num_games_to_print = min(num_top_games_to_print, num_games_to_print)
@@ -135,13 +142,6 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
                 if not(hide_filtered_appIDs_only) or bool(not(appid in filtered_appIDs_to_hide)):
                     # Append the ranking info
                     ranking_list.append([current_rank, game_name, appid])
-
-    ranks_of_reference_hidden_gems = [v[0] for k, v in reference_dict.items()]
-    summarizing_function = lambda x : np.average(x)
-    scalar_summarizing_ranks_of_reference_hidden_gems = summarizing_function(ranks_of_reference_hidden_gems)
-
-    if verbose:
-        print('Objective function to minimize:\t', scalar_summarizing_ranks_of_reference_hidden_gems)
 
     return (scalar_summarizing_ranks_of_reference_hidden_gems, ranking_list)
 
