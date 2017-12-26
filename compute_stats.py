@@ -59,11 +59,12 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
     #           - optional set of appID of games to hide.
     #             Typically used to exclude appIDs for specific genres or tags.
     #             If set to None, the behavior is intuitive: no game is specifically hidden, there is no filtering-out of appIDs.
-    # Output:   scalar value summarizing ranks of games used as references of "hidden gems"
+    # Output:   a 2-tuple consisting of:
+    #           - a scalar value summarizing ranks of games used as references of "hidden gems"
+    #           - the ranking to be ultimately displayed. A list of 3-tuple: (rank, game_name, appid).
+    #             If verbose was set to None, the returned ranking is empty.
 
     import numpy as np
-
-    base_steam_store_url = "http://store.steampowered.com/app/"
 
     # Boolean to decide whether printing the ranking of the top 1000 games, rather than the ranking of the whole Steam
     # catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
@@ -96,7 +97,8 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
         except KeyError:
             continue
 
-    # Display the ranking in a format parsable by Github Gist
+    # Save the ranking for later display
+    ranking_list = []
     if verbose:
         num_games_to_print = len(sortedGameNames)
         if print_subset_of_top_games:
@@ -116,10 +118,6 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
         for i in range(num_games_to_print):
             game_name = sortedGameNames[i]
             appid = [k for k, v in D.items() if v[0] == game_name][0]
-            store_url = base_steam_store_url + appid
-
-            width = 40
-            store_url_fixed_width = f'{store_url: <{width}}'
 
             current_rank = i + 1
 
@@ -135,9 +133,8 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
 
             if not(print_filtered_appIDs_only) or bool(appid in filtered_appIDs_to_show):
                 if not(hide_filtered_appIDs_only) or bool(not(appid in filtered_appIDs_to_hide)):
-                    # Append the ranking to the output text file
-                    with open(output_filename, 'a', encoding="utf8") as outfile:
-                        print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
+                    # Append the ranking info
+                    ranking_list.append([current_rank, game_name, appid])
 
     ranks_of_reference_hidden_gems = [v[0] for k, v in reference_dict.items()]
     summarizing_function = lambda x : np.average(x)
@@ -146,7 +143,7 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
     if verbose:
         print('Objective function to minimize:\t', scalar_summarizing_ranks_of_reference_hidden_gems)
 
-    return scalar_summarizing_ranks_of_reference_hidden_gems
+    return (scalar_summarizing_ranks_of_reference_hidden_gems, ranking_list)
 
 def optimizeForAlpha(D, verbose = True, appid_reference_set = {appidContradiction},
                         lower_search_bound = 1, # minimal possible value of alpha is 1 people
@@ -165,7 +162,7 @@ def optimizeForAlpha(D, verbose = True, appid_reference_set = {appidContradictio
     from scipy.optimize import differential_evolution
 
     # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
-    functionToMinimize = lambda x: rankGames(D, [x], False, appid_reference_set)
+    functionToMinimize = lambda x: rankGames(D, [x], False, appid_reference_set)[0]
 
     # Bounds for the optimization procedure of the parameter alpha
     my_bounds = [(lower_search_bound, upper_search_bound)]
@@ -187,6 +184,25 @@ def optimizeForAlpha(D, verbose = True, appid_reference_set = {appidContradictio
 
     return optimal_parameters
 
+def saveRankingToFile(output_filename, ranking_list, only_show_appid = False, width = 40):
+    # Save the ranking to the output text file
+
+    base_steam_store_url = "http://store.steampowered.com/app/"
+
+    with open(output_filename, 'w', encoding="utf8") as outfile:
+        for current_ranking_info in ranking_list:
+            current_rank = current_ranking_info[0]
+            game_name = current_ranking_info[1]
+            appid = current_ranking_info[-1]
+
+            store_url = base_steam_store_url + appid
+            store_url_fixed_width = f'{store_url: <{width}}'
+
+            if only_show_appid:
+                print(appid, file=outfile)
+            else:
+                print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
+
 if __name__ == "__main__":
     from appids import appid_hidden_gems_reference_set
     from download_json import getAppidByKeywordListToInclude, getAppidByKeywordListToExclude
@@ -194,8 +210,11 @@ if __name__ == "__main__":
     # A local dictionary was stored in the following text file
     input_filename = "dict_top_rated_games_on_steam.txt"
 
-    # A ranking will be stored in the following text file
+    # A ranking, in a format parsable by Github Gist, will be stored in the following text file
     output_filename = "hidden_gems.txt"
+
+    # A ranking, as a list of appids, will be stored in the following text file
+    output_filename_only_appids = "hidden_gems_only_appids.txt"
 
     # Import the local dictionary from the input file
     with open(input_filename, 'r', encoding="utf8") as infile:
@@ -227,5 +246,10 @@ if __name__ == "__main__":
     keywords_to_exclude = ["Visual Novel", "Anime"]
     filtered_out_appIDs = getAppidByKeywordListToExclude(keywords_to_exclude)
 
-    with open(output_filename, 'w', encoding="utf8") as outfile:
-        rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set, num_top_games_to_print, filtered_in_appIDs, filtered_out_appIDs)
+    (objective_function, ranking) = rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set, num_top_games_to_print, filtered_in_appIDs, filtered_out_appIDs)
+
+    only_show_appid = False
+    saveRankingToFile(output_filename, ranking, only_show_appid)
+
+    only_show_appid = True
+    saveRankingToFile(output_filename_only_appids, ranking, only_show_appid)
