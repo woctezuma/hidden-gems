@@ -214,7 +214,7 @@ if __name__ == "__main__":
     output_filename = "hidden_gems.txt"
 
     # A ranking, as a list of appids, will be stored in the following text file
-    output_filename_only_appids = "hidden_gems_only_appids.txt"
+    output_filename_only_appids = "idlist.txt"
 
     # Import the local dictionary from the input file
     with open(input_filename, 'r', encoding="utf8") as infile:
