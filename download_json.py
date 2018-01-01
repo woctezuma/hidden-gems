@@ -4,6 +4,23 @@ from urllib.request import urlopen
 import json
 import pathlib
 
+def getTodaysSteamSpyData():
+    import time
+
+    json_filename_suffixe = "_steamspy.json"
+
+    # Get current day as yyyymmdd format
+    date_format = "%Y%m%d"
+    current_date = time.strftime(date_format)
+
+    # Database filename
+    json_filename = current_date + json_filename_suffixe
+
+    # SteamSpy's data in JSON format
+    data = downloadSteamSpyData(json_filename)
+
+    return data
+
 def downloadSteamSpyData(json_filename = "steamspy.json", genre = None, tag = None):
 
     # Data folder
@@ -98,16 +115,4 @@ def getAppidByKeywordListToExclude(keywordList):
     return appIDs
 
 if __name__ == "__main__":
-    import time
-
-    json_filename_suffixe = "_steamspy.json"
-
-    # Get current day as yyyymmdd format
-    date_format = "%Y%m%d"
-    current_date = time.strftime(date_format)
-
-    # Database filename
-    json_filename = current_date + json_filename_suffixe
-
-    # SteamSpy's data in JSON format
-    data = downloadSteamSpyData(json_filename)
+    getTodaysSteamSpyData()
