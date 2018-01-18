@@ -232,18 +232,18 @@ if __name__ == "__main__":
 
     # Maximal length of the ranking. The higher the value, the longer it takes to compute and print the ranking.
     # If set to None, there is no limit, so the whole Steam catalog is ranked.
-    num_top_games_to_print = 1000
+    num_top_games_to_print = 250 # 1000
 
     # Filter-in games which meta-data includes ALL the following keywords
     # Caveat: the more keywords, the fewer games are filtered-in! cf. intersection of sets in the code
     # To avoid filtering-in, please use an empty list.
-    keywords_to_include = ["Rogue-Like"]
+    keywords_to_include = [] # ["Rogue-Like"]
     filtered_in_appIDs = getAppidByKeywordListToInclude(keywords_to_include)
 
     # Filter-out games which meta-data includes ANY of the following keywords
     # NB: the more keywords, the more games are excluded. cf. union of sets in the code
     # To avoid filtering-out, please use an empty list.
-    keywords_to_exclude = ["Visual Novel", "Anime"]
+    keywords_to_exclude = [] # ["Visual Novel", "Anime"]
     filtered_out_appIDs = getAppidByKeywordListToExclude(keywords_to_exclude)
 
     (objective_function, ranking) = rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set, num_top_games_to_print, filtered_in_appIDs, filtered_out_appIDs)
