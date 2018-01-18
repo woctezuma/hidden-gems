@@ -211,7 +211,7 @@ if __name__ == "__main__":
     input_filename = "dict_top_rated_games_on_steam.txt"
 
     # A ranking, in a format parsable by Github Gist, will be stored in the following text file
-    output_filename = "hidden_gems.txt"
+    output_filename = "hidden_gems.md"
 
     # A ranking, as a list of appids, will be stored in the following text file
     output_filename_only_appids = "idlist.txt"
