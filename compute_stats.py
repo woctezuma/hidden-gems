@@ -232,7 +232,7 @@ if __name__ == "__main__":
 
     # Maximal length of the ranking. The higher the value, the longer it takes to compute and print the ranking.
     # If set to None, there is no limit, so the whole Steam catalog is ranked.
-    num_top_games_to_print = 250 # 1000
+    num_top_games_to_print = 1000
 
     # Filter-in games which meta-data includes ALL the following keywords
     # Caveat: the more keywords, the fewer games are filtered-in! cf. intersection of sets in the code
