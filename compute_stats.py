@@ -91,7 +91,10 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
     # Rank all the Steam games
     sortedValues = sorted(D.values(), key=computeScore, reverse=True)
 
-    sortedGameNames = list(map(lambda x: x[0], sortedValues))
+    if language is None:
+        sortedGameNames = list(map(lambda x: x[0], sortedValues))
+    else:
+        sortedGameNames = list(map(lambda x: x['name'], sortedValues))
 
     reference_dict = {}
     for appid_reference in appid_reference_set:
