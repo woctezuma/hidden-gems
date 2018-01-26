@@ -203,10 +203,43 @@ def saveRankingToFile(output_filename, ranking_list, only_show_appid = False, wi
             else:
                 print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
 
-if __name__ == "__main__":
+def computeRanking(D, num_top_games_to_print = None, keywords_to_include = [], keywords_to_exclude = [],
+                   perform_optimization_at_runtime = True):
+    # Objective: compute a ranking of hidden gems
+    #
+    # Input:    - local dictionary of data extracted from SteamSpy
+    #           - maximal length of the ranking
+    #               The higher the value, the longer it takes to compute and print the ranking.
+    #               If set to None, there is no limit, so the whole Steam catalog is ranked.
+    #           - tags to filter-in
+    #               Warning because unintuitive: to avoid filtering-in, please use an empty list.
+    #           - tags to filter-out
+    #           - bool to decide whether to optimize alpha at run-time, or to rely on a hard-coded value instead
+    #
+    # Output:   ranking of hidden gems
+
     from appids import appid_hidden_gems_reference_set
     from download_json import getAppidByKeywordListToInclude, getAppidByKeywordListToExclude
 
+    if perform_optimization_at_runtime:
+        optimal_parameters = optimizeForAlpha(D, True, appid_hidden_gems_reference_set)
+    else:
+        # Optimal parameter as computed on December 18, 2018
+        optimal_parameters = [ pow(10, 6.46) ]
+
+    # Filter-in games which meta-data includes ALL the following keywords
+    # Caveat: the more keywords, the fewer games are filtered-in! cf. intersection of sets in the code
+    filtered_in_appIDs = getAppidByKeywordListToInclude(keywords_to_include)
+
+    # Filter-out games which meta-data includes ANY of the following keywords
+    # NB: the more keywords, the more games are excluded. cf. union of sets in the code
+    filtered_out_appIDs = getAppidByKeywordListToExclude(keywords_to_exclude)
+
+    (objective_function, ranking) = rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set, num_top_games_to_print, filtered_in_appIDs, filtered_out_appIDs)
+
+    return ranking
+
+if __name__ == "__main__":
     # A local dictionary was stored in the following text file
     input_filename = "dict_top_rated_games_on_steam.txt"
 
@@ -222,31 +255,18 @@ if __name__ == "__main__":
         # The dictionary is on the second line
         D = eval(lines[1])
 
-    perform_optimization_at_runtime = True
-
-    if perform_optimization_at_runtime:
-        optimal_parameters = optimizeForAlpha(D, True, appid_hidden_gems_reference_set)
-    else:
-        # Optimal parameter as computed on December 18, 2018
-        optimal_parameters = [ pow(10, 6.46) ]
-
     # Maximal length of the ranking. The higher the value, the longer it takes to compute and print the ranking.
     # If set to None, there is no limit, so the whole Steam catalog is ranked.
     num_top_games_to_print = 1000
 
-    # Filter-in games which meta-data includes ALL the following keywords
-    # Caveat: the more keywords, the fewer games are filtered-in! cf. intersection of sets in the code
-    # To avoid filtering-in, please use an empty list.
-    keywords_to_include = [] # ["Rogue-Like"]
-    filtered_in_appIDs = getAppidByKeywordListToInclude(keywords_to_include)
+    # Filtering-in
+    # Warning because unintuitive: to avoid filtering-in, please use an empty list!
+    keywords_to_include = []  # ["Rogue-Like"]
 
-    # Filter-out games which meta-data includes ANY of the following keywords
-    # NB: the more keywords, the more games are excluded. cf. union of sets in the code
-    # To avoid filtering-out, please use an empty list.
+    # Filtering-out
     keywords_to_exclude = [] # ["Visual Novel", "Anime"]
-    filtered_out_appIDs = getAppidByKeywordListToExclude(keywords_to_exclude)
 
-    (objective_function, ranking) = rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set, num_top_games_to_print, filtered_in_appIDs, filtered_out_appIDs)
+    ranking = computeRanking(D, num_top_games_to_print, keywords_to_include, keywords_to_exclude)
 
     only_show_appid = False
     saveRankingToFile(output_filename, ranking, only_show_appid)
