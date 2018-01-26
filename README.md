@@ -39,6 +39,10 @@ To install these on Windows, I suggest you download the binaries linked to the I
 * [alternative updated ranking with tag filtering-in](https://gist.github.com/woctezuma/fd2fc2b766e7e94605e4be5cf7de03ad), intended to favor hidden gems among "hidden gems", so hidden² gems,
 * [updated rankings for the 2017 Halloween sale](https://gist.github.com/woctezuma/b5954f2d31989fdaf71eef53027f3cac).
 
+## Perspectives ##
+
+The ranking of hidden gems is favorably biased towards high-quality games which have not been translated to many languages. To be insensitive to this bias, there are [regional rankings](https://github.com/woctezuma/steam-reviews/tree/master/regional_rankings) of hidden gems. The core of the method is the same, but the data is processed differently so that both the quality and popularity measures are constrained to players who speak the same language. For the quality measure, every review is downloaded, the language tag assigned to the review is taken into account, and the review language is also assessed with an external tool to confirm that the language tag is correct. For the popularity measure, we assume that for any given game, the distribution of players and reviewers is the same with respect to languages. 
+
 ## References ##
 * [a NeoGAF post](http://www.neogaf.com/forum/showpost.php?p=241218621&postcount=5840) explaining the method,
 * [a NeoGAF post](http://www.neogaf.com/forum/showpost.php?p=241224894&postcount=5869) explaining the idea behind the optimization of the only free parameter.
