@@ -2,35 +2,43 @@
 
 from appids import appidContradiction
 
-def computeScoreGeneric(tuple, parameter_list):
+def computeScoreGeneric(tuple, parameter_list, language = None):
     # Objective: compute a score for one Steam game.
     #
     # Input:    - a tuple is a list consisting of all retrieved information regarding one game
     #           - parameter_list is a list of parameters to calibrate the ranking.
     #             Currently, there is only one parameter, alpha, which could be chosen up to one's tastes, or optimized.
+    #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
     # Output:   game score
 
     alpha = parameter_list[0]
 
-    game_name = tuple[0]
-    wilson_score = tuple[1]
-    num_owners = tuple[2]
-    num_players = tuple[3]
-    median_playtime = tuple[4]
-    average_playtime = tuple[5]
-    num_positive_reviews = tuple[6]
-    num_negative_reviews = tuple[7]
+    if language is None:
 
-    boolGameShouldAppearInRanking = tuple[-1]
+        game_name = tuple[0]
+        wilson_score = tuple[1]
+        num_owners = tuple[2]
+        num_players = tuple[3]
+        median_playtime = tuple[4]
+        average_playtime = tuple[5]
+        num_positive_reviews = tuple[6]
+        num_negative_reviews = tuple[7]
 
-    num_owners = float(num_owners)
-    num_players = float(num_players)
-    median_playtime = float(median_playtime)
-    average_playtime = float(average_playtime)
-    num_positive_reviews = float(num_positive_reviews)
-    num_negative_reviews = float(num_negative_reviews)
+        boolGameShouldAppearInRanking = tuple[-1]
 
-    num_reviews = num_positive_reviews + num_negative_reviews
+        num_owners = float(num_owners)
+        num_players = float(num_players)
+        median_playtime = float(median_playtime)
+        average_playtime = float(average_playtime)
+        num_positive_reviews = float(num_positive_reviews)
+        num_negative_reviews = float(num_negative_reviews)
+
+        num_reviews = num_positive_reviews + num_negative_reviews
+
+    else:
+
+        wilson_score = tuple[language]['wilson_score']
+        num_players = tuple[language]['num_players']
 
     quality_measure = wilson_score
     popularity_measure = num_players
@@ -43,6 +51,7 @@ def computeScoreGeneric(tuple, parameter_list):
     return score
 
 def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidContradiction},
+              language = None,
               num_top_games_to_print = 1000, filtered_appIDs_to_show = set(), filtered_appIDs_to_hide = set()):
     # Objective: rank all the Steam games, given a parameter alpha.
     #
@@ -50,6 +59,7 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
     #           - parameter_list is a list of parameters to calibrate the ranking.
     #           - optional verbosity boolean
     #           - optional set of appID of games chosen as references of a "hidden gem". By default, only "Contradiction".
+    #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
     #           - optional number of top games to print if the ranking is only partially displayed
     #             By default, only the top 1000 games are displayed.
     #             If set to None, the ranking will be fully displayed.
@@ -76,7 +86,7 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
     # Boolean to decide whether there is a filtering-out of appIDs (typically to filter-out genres or tags).
     hide_filtered_appIDs_only = bool( not(filtered_appIDs_to_hide is None) and not(len(filtered_appIDs_to_hide)==0) )
 
-    computeScore = lambda x: computeScoreGeneric(x, parameter_list)
+    computeScore = lambda x: computeScoreGeneric(x, parameter_list, language)
 
     # Rank all the Steam games
     sortedValues = sorted(D.values(), key=computeScore, reverse=True)
@@ -146,6 +156,7 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
     return (scalar_summarizing_ranks_of_reference_hidden_gems, ranking_list)
 
 def optimizeForAlpha(D, verbose = True, appid_reference_set = {appidContradiction},
+                        language = None,
                         lower_search_bound = 1, # minimal possible value of alpha is 1 people
                         upper_search_bound = pow(10, 8) # maximal possible value of alpha is 8 billion people
                      ):
@@ -154,6 +165,7 @@ def optimizeForAlpha(D, verbose = True, appid_reference_set = {appidContradictio
     # Input:    - local dictionary of data extracted from SteamSpy
     #           - optional verbosity boolean
     #           - optional set of appID of games chosen as references of a "hidden gem". By default, only "Contradiction".
+    #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
     #           - optional lower bound for the optimization procedure of the parameter alpha
     #           - optional upper bound for the optimization procedure of the parameter alpha
     # Output:   list of optimal parameters (by default, only one parameter is optimized: alpha)
@@ -162,7 +174,7 @@ def optimizeForAlpha(D, verbose = True, appid_reference_set = {appidContradictio
     from scipy.optimize import differential_evolution
 
     # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
-    functionToMinimize = lambda x: rankGames(D, [x], False, appid_reference_set)[0]
+    functionToMinimize = lambda x: rankGames(D, [x], False, appid_reference_set, language)[0]
 
     # Bounds for the optimization procedure of the parameter alpha
     my_bounds = [(lower_search_bound, upper_search_bound)]
@@ -204,6 +216,7 @@ def saveRankingToFile(output_filename, ranking_list, only_show_appid = False, wi
                 print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
 
 def computeRanking(D, num_top_games_to_print = None, keywords_to_include = [], keywords_to_exclude = [],
+                   language = None,
                    perform_optimization_at_runtime = True):
     # Objective: compute a ranking of hidden gems
     #
@@ -214,6 +227,7 @@ def computeRanking(D, num_top_games_to_print = None, keywords_to_include = [], k
     #           - tags to filter-in
     #               Warning because unintuitive: to avoid filtering-in, please use an empty list.
     #           - tags to filter-out
+    #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
     #           - bool to decide whether to optimize alpha at run-time, or to rely on a hard-coded value instead
     #
     # Output:   ranking of hidden gems
@@ -222,7 +236,7 @@ def computeRanking(D, num_top_games_to_print = None, keywords_to_include = [], k
     from download_json import getAppidByKeywordListToInclude, getAppidByKeywordListToExclude
 
     if perform_optimization_at_runtime:
-        optimal_parameters = optimizeForAlpha(D, True, appid_hidden_gems_reference_set)
+        optimal_parameters = optimizeForAlpha(D, True, appid_hidden_gems_reference_set, language)
     else:
         # Optimal parameter as computed on December 18, 2018
         optimal_parameters = [ pow(10, 6.46) ]
@@ -235,7 +249,8 @@ def computeRanking(D, num_top_games_to_print = None, keywords_to_include = [], k
     # NB: the more keywords, the more games are excluded. cf. union of sets in the code
     filtered_out_appIDs = getAppidByKeywordListToExclude(keywords_to_exclude)
 
-    (objective_function, ranking) = rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set, num_top_games_to_print, filtered_in_appIDs, filtered_out_appIDs)
+    (objective_function, ranking) = rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set, language,
+                                              num_top_games_to_print, filtered_in_appIDs, filtered_out_appIDs)
 
     return ranking
 
