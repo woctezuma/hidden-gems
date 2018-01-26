@@ -92,19 +92,24 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
     sortedValues = sorted(D.values(), key=computeScore, reverse=True)
 
     if language is None:
-        sortedGameNames = list(map(lambda x: x[0], sortedValues))
+        name_index = 0
     else:
-        sortedGameNames = list(map(lambda x: x['name'], sortedValues))
+        name_index = 'name'
+
+    sortedGameNames = list(map(lambda x: x[name_index], sortedValues))
 
     reference_dict = {}
     for appid_reference in appid_reference_set:
         try:
             # Find the rank of this game used as a reference of a "hidden gem"
-            nameGameUsedAsReferenceForHiddenGem = D[appid_reference][0]
+            nameGameUsedAsReferenceForHiddenGem = D[appid_reference][name_index]
             rankGameUsedAsReferenceForHiddenGem = sortedGameNames.index(nameGameUsedAsReferenceForHiddenGem) + 1
 
             # Find whether the reference game should appear in the ranking (it might not due to tag filters)
-            boolReferenceGameShouldAppearInRanking = D[appid_reference][-1]
+            if language is None:
+                boolReferenceGameShouldAppearInRanking = D[appid_reference][-1]
+            else:
+                boolReferenceGameShouldAppearInRanking = True
 
             reference_dict[appid_reference] = [rankGameUsedAsReferenceForHiddenGem, boolReferenceGameShouldAppearInRanking]
         except KeyError:
@@ -137,7 +142,7 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
 
         for i in range(num_games_to_print):
             game_name = sortedGameNames[i]
-            appid = [k for k, v in D.items() if v[0] == game_name][0]
+            appid = [k for k, v in D.items() if v[name_index] == game_name][0]
 
             current_rank = i + 1
 
