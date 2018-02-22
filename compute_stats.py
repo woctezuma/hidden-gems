@@ -39,6 +39,7 @@ def computeScoreGeneric(tuple, parameter_list, language = None):
 
         wilson_score = tuple[language]['wilson_score']
         num_players = tuple[language]['num_players']
+        num_reviews = tuple[language]['num_reviews']
 
     quality_measure = wilson_score
     popularity_measure = num_players
@@ -223,7 +224,8 @@ def saveRankingToFile(output_filename, ranking_list, only_show_appid = False, wi
             else:
                 print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
 
-def computeRanking(D, num_top_games_to_print = None, keywords_to_include = [], keywords_to_exclude = [],
+
+def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), keywords_to_exclude=list(),
                    language = None,
                    perform_optimization_at_runtime = True):
     # Objective: compute a ranking of hidden gems
