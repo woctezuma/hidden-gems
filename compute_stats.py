@@ -213,7 +213,8 @@ def optimizeForAlpha(D, verbose = True, appid_reference_set = {appidContradictio
 
     return optimal_parameters
 
-def saveRankingToFile(output_filename, ranking_list, only_show_appid = False, width = 40):
+
+def saveRankingToFile(output_filename, ranking_list, only_show_appid=False, verbose=False, width=40):
     # Save the ranking to the output text file
 
     base_steam_store_url = "http://store.steampowered.com/app/"
@@ -229,8 +230,13 @@ def saveRankingToFile(output_filename, ranking_list, only_show_appid = False, wi
 
             if only_show_appid:
                 print(appid, file=outfile)
+                if verbose:
+                    print(appid)
             else:
-                print('{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")", file=outfile)
+                sentence = '{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")"
+                print(sentence, file=outfile)
+                if verbose:
+                    print(sentence)
 
 
 def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), keywords_to_exclude=list(),
@@ -318,9 +324,8 @@ if __name__ == "__main__":
     only_show_appid = False
     saveRankingToFile(output_filename, ranking, only_show_appid)
 
-    only_show_appid = True
-    saveRankingToFile(output_filename_only_appids, ranking, only_show_appid)
-    # Print to current display (useful with Travis integration on Github)
-    import sys
+    # If set to True, print to current display (useful with Travis integration on Github)
+    verbose = True
 
-    saveRankingToFile(sys.stdout, ranking, only_show_appid)
+    only_show_appid = True
+    saveRankingToFile(output_filename_only_appids, ranking, only_show_appid, verbose)
