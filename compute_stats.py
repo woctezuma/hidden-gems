@@ -321,11 +321,11 @@ if __name__ == "__main__":
     ranking = computeRanking(D, num_top_games_to_print, keywords_to_include, keywords_to_exclude,
                              language, perform_optimization_at_runtime, popularity_measure_str)
 
-    only_show_appid = False
-    saveRankingToFile(output_filename, ranking, only_show_appid)
-
     # If set to True, print to current display (useful with Travis integration on Github)
     verbose = True
 
+    only_show_appid = False
+    saveRankingToFile(output_filename, ranking, only_show_appid, verbose)
+
     only_show_appid = True
-    saveRankingToFile(output_filename_only_appids, ranking, only_show_appid, verbose)
+    saveRankingToFile(output_filename_only_appids, ranking, only_show_appid)
