@@ -261,7 +261,7 @@ def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), k
     else:
         if popularity_measure_str is None or popularity_measure_str == 'num_players':
             # Optimal parameter as computed on December 18, 2017
-            optimal_parameters = [pow(10, 6.46)]
+            optimal_parameters = [pow(10, 6.40)]
         else:
             assert (popularity_measure_str == 'num_reviews')
             # Optimal parameter as computed on February 22, 2018
@@ -310,7 +310,7 @@ if __name__ == "__main__":
 
     language = None
     perform_optimization_at_runtime = True
-    popularity_measure_str = 'num_reviews'  # Either 'num_players' or 'num_reviews'
+    popularity_measure_str = 'num_players'  # Either 'num_players' or 'num_reviews'
 
     ranking = computeRanking(D, num_top_games_to_print, keywords_to_include, keywords_to_exclude,
                              language, perform_optimization_at_runtime, popularity_measure_str)
