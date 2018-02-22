@@ -42,7 +42,7 @@ def computeScoreGeneric(tuple, parameter_list, language = None):
         num_reviews = tuple[language]['num_reviews']
 
     quality_measure = wilson_score
-    popularity_measure = num_players
+    popularity_measure = num_reviews
 
     # Decreasing function
     decreasing_fun = lambda x: alpha / (alpha + x)
