@@ -321,4 +321,6 @@ if __name__ == "__main__":
     only_show_appid = True
     saveRankingToFile(output_filename_only_appids, ranking, only_show_appid)
     # Print to current display (useful with Travis integration on Github)
-    saveRankingToFile(None, ranking, only_show_appid)
+    import sys
+
+    saveRankingToFile(sys.stdout, ranking, only_show_appid)
