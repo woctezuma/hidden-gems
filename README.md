@@ -1,4 +1,7 @@
-# Hidden Gems
+# Hidden Gems [![Build status][Build image]][Build]
+
+  [Build]: https://travis-ci.org/woctezuma/hidden-gems
+  [Build image]: https://travis-ci.org/woctezuma/hidden-gems.svg?branch=master
 
 This repository contains code to compute a ranking of Steam games, based on a score intended to favor "hidden gems".
 
