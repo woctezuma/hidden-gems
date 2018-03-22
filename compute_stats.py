@@ -18,12 +18,13 @@ def computeScoreGeneric(tuple, parameter_list, language=None, popularity_measure
 
         game_name = tuple[0]
         wilson_score = tuple[1]
-        num_owners = tuple[2]
-        num_players = tuple[3]
-        median_playtime = tuple[4]
-        average_playtime = tuple[5]
-        num_positive_reviews = tuple[6]
-        num_negative_reviews = tuple[7]
+        bayesian_rating = tuple[2]
+        num_owners = tuple[3]
+        num_players = tuple[4]
+        median_playtime = tuple[5]
+        average_playtime = tuple[6]
+        num_positive_reviews = tuple[7]
+        num_negative_reviews = tuple[8]
 
         boolGameShouldAppearInRanking = tuple[-1]
 
@@ -39,6 +40,7 @@ def computeScoreGeneric(tuple, parameter_list, language=None, popularity_measure
     else:
 
         wilson_score = tuple[language]['wilson_score']
+        bayesian_rating = tuple[language]['bayesian_rating']
         num_players = tuple[language]['num_players']
         num_reviews = tuple[language]['num_reviews']
 
