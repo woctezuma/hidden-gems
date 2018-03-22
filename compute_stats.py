@@ -281,12 +281,22 @@ def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), k
                                               popularity_measure_str, quality_measure_str)
     else:
         if popularity_measure_str is None or popularity_measure_str == 'num_players':
-            # Optimal parameter as computed on December 18, 2017
-            optimal_parameters = [pow(10, 6.40)]
+            if quality_measure_str is None or quality_measure_str == 'wilson_score':
+                # Optimal parameter as computed on December 18, 2017
+                optimal_parameters = [pow(10, 6.40)]
+            else:
+                assert (quality_measure_str == 'bayesian_rating')
+                # Optimal parameter as computed on March 22, 2018
+                optimal_parameters = [pow(10, 6.47)]
         else:
             assert (popularity_measure_str == 'num_reviews')
-            # Optimal parameter as computed on February 22, 2018
-            optimal_parameters = [pow(10, 4.65)]
+            if quality_measure_str is None or quality_measure_str == 'wilson_score':
+                # Optimal parameter as computed on February 22, 2018
+                optimal_parameters = [pow(10, 4.65)]
+            else:
+                assert (quality_measure_str == 'bayesian_rating')
+                # Optimal parameter as computed on March 22, 2018
+                optimal_parameters = [pow(10, 4.75)]
 
     # Filter-in games which meta-data includes ALL the following keywords
     # Caveat: the more keywords, the fewer games are filtered-in! cf. intersection of sets in the code
