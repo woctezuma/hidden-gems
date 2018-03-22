@@ -2,8 +2,9 @@
 
 from appids import appidContradiction
 
-def createLocalDictionary(data, output_filename, appid_reference_set = {appidContradiction},
-                                                 quantile_for_our_own_wilson_score = 0.95):
+
+def createLocalDictionary(data, output_filename, appid_reference_set={appidContradiction},
+                          quantile_for_our_own_wilson_score=0.95):
     # Objective: compute a score for one Steam game.
     #
     # Input:    - data:                         SteamSpy's data.
@@ -14,8 +15,26 @@ def createLocalDictionary(data, output_filename, appid_reference_set = {appidCon
     # Output:   none (the local dictionary is written to output_filename)
 
     from compute_wilson_score import computeWilsonScore
+    from compute_bayesian_rating import choose_prior, compute_bayesian_score
 
     D = dict()
+
+    # Construct observation structure used to compute a prior for the inference of a Bayesian rating
+    observations = dict()
+
+    for appid in data.keys():
+        num_positive_reviews = data[appid]["positive"]
+        num_negative_reviews = data[appid]["negative"]
+
+        num_votes = num_positive_reviews + num_negative_reviews
+
+        if num_votes > 0:
+            observations[appid] = dict()
+            observations[appid]['score'] = num_positive_reviews / num_votes
+            observations[appid]['num_votes'] = num_votes
+
+    prior = choose_prior(observations)
+    print(prior)
 
     for appid in data.keys():
         name = data[appid]['name']
@@ -28,15 +47,31 @@ def createLocalDictionary(data, output_filename, appid_reference_set = {appidCon
 
         wilson_score = computeWilsonScore(num_positive_reviews, num_negative_reviews, quantile_for_our_own_wilson_score)
 
+        num_votes = num_positive_reviews + num_negative_reviews
+
+        if num_votes > 0:
+
+            # Construct game structure used to compute Bayesian rating
+            game = dict()
+            game['score'] = num_positive_reviews / num_votes
+            game['num_votes'] = num_votes
+
+            bayesian_rating = compute_bayesian_score(game, prior)
+
+        else:
+            bayesian_rating = None
+
         # Make sure the output dictionary includes the game which will be chosen as a reference of a "hidden gem"
         if appid in appid_reference_set:
-            assert( not(wilson_score is None) )
+            assert (not (wilson_score is None))
+            assert (not (bayesian_rating is None))
             print("Game used as a reference:\t" + name + "\t(appID=" + appid + ")")
 
-        if wilson_score is None:
+        if wilson_score is None or bayesian_rating is None:
             print("Game with no review:\t" + name + "\t(appID=" + appid + ")")
         else:
-            stats_save = [name, wilson_score, num_owners, num_players, median_time, average_time, num_positive_reviews,
+            stats_save = [name, wilson_score, bayesian_rating, num_owners, num_players, median_time, average_time,
+                          num_positive_reviews,
                           num_negative_reviews]
 
             boolGameShouldAppearInRanking = True
@@ -45,12 +80,13 @@ def createLocalDictionary(data, output_filename, appid_reference_set = {appidCon
             D[appid] = stats_save
 
     # First line of the text file containing the output dictionary
-    leading_comment = "# Dictionary with key=appid and value=list of name, Wilson score, #owners, #players, median playtime, average playtime, #positive reviews, #negative reviews, boolean whether to include the game in the ranking"
+    leading_comment = "# Dictionary with key=appid and value=list of name, Wilson score, Bayesian rating, #owners, #players, median playtime, average playtime, #positive reviews, #negative reviews, boolean whether to include the game in the ranking"
 
     # Save the dictionary to a text file
     with open(output_filename, 'w', encoding="utf8") as outfile:
         print(leading_comment, file=outfile)
         print(D, file=outfile)
+
 
 if __name__ == "__main__":
     from appids import appid_hidden_gems_reference_set
