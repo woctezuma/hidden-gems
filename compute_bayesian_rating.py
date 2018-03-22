@@ -28,8 +28,8 @@ def choose_prior(observations, verbose=False):
         plt.show()
 
     # TODO: Important choices below. How do you choose a good prior? Median? Average?
-    prior['score'] = np.median(scores)
-    prior['num_votes'] = np.average(votes)
+    prior['score'] = np.average(scores)
+    prior['num_votes'] = np.median(votes)
 
     return prior
 
