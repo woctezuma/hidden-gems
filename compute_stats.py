@@ -3,7 +3,7 @@
 from appids import appidContradiction
 
 
-def computeScoreGeneric(tuple, parameter_list, language=None, popularity_measure_str=None):
+def computeScoreGeneric(tuple, parameter_list, language=None, popularity_measure_str=None, quality_measure_str=None):
     # Objective: compute a score for one Steam game.
     #
     # Input:    - a tuple is a list consisting of all retrieved information regarding one game
@@ -44,7 +44,11 @@ def computeScoreGeneric(tuple, parameter_list, language=None, popularity_measure
         num_players = tuple[language]['num_players']
         num_reviews = tuple[language]['num_reviews']
 
-    quality_measure = wilson_score
+    if quality_measure_str is None or quality_measure_str == 'wilson_score':
+        quality_measure = wilson_score
+    else:
+        quality_measure = bayesian_rating
+
     if popularity_measure_str is None or popularity_measure_str == 'num_players':
         popularity_measure = num_players
     else:
@@ -57,10 +61,12 @@ def computeScoreGeneric(tuple, parameter_list, language=None, popularity_measure
 
     return score
 
-def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidContradiction},
-              language = None,
+
+def rankGames(D, parameter_list, verbose=False, appid_reference_set={appidContradiction},
+              language=None,
               popularity_measure_str=None,
-              num_top_games_to_print = 1000, filtered_appIDs_to_show = set(), filtered_appIDs_to_hide = set()):
+              quality_measure_str=None,
+              num_top_games_to_print=1000, filtered_appIDs_to_show=set(), filtered_appIDs_to_hide=set()):
     # Objective: rank all the Steam games, given a parameter alpha.
     #
     # Input:    - local dictionary of data extracted from SteamSpy
@@ -87,15 +93,16 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
 
     # Boolean to decide whether printing the ranking of the top 1000 games, rather than the ranking of the whole Steam
     # catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
-    print_subset_of_top_games = bool( not(num_top_games_to_print is None) )
+    print_subset_of_top_games = bool(not (num_top_games_to_print is None))
 
     # Boolean to decide whether there is a filtering-in of appIDs (typically to filter-in genres or tags).
-    print_filtered_appIDs_only = bool( not(filtered_appIDs_to_show is None) and not(len(filtered_appIDs_to_show)==0) )
+    print_filtered_appIDs_only = bool(not (filtered_appIDs_to_show is None) and not (len(filtered_appIDs_to_show) == 0))
 
     # Boolean to decide whether there is a filtering-out of appIDs (typically to filter-out genres or tags).
-    hide_filtered_appIDs_only = bool( not(filtered_appIDs_to_hide is None) and not(len(filtered_appIDs_to_hide)==0) )
+    hide_filtered_appIDs_only = bool(not (filtered_appIDs_to_hide is None) and not (len(filtered_appIDs_to_hide) == 0))
 
-    computeScore = lambda x: computeScoreGeneric(x, parameter_list, language, popularity_measure_str)
+    computeScore = lambda x: computeScoreGeneric(x, parameter_list, language, popularity_measure_str,
+                                                 quality_measure_str)
 
     # Rank all the Steam games
     sortedValues = sorted(D.values(), key=computeScore, reverse=True)
@@ -120,12 +127,13 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
             else:
                 boolReferenceGameShouldAppearInRanking = True
 
-            reference_dict[appid_reference] = [rankGameUsedAsReferenceForHiddenGem, boolReferenceGameShouldAppearInRanking]
+            reference_dict[appid_reference] = [rankGameUsedAsReferenceForHiddenGem,
+                                               boolReferenceGameShouldAppearInRanking]
         except KeyError:
             continue
 
     ranks_of_reference_hidden_gems = [v[0] for k, v in reference_dict.items()]
-    summarizing_function = lambda x : np.average(x)
+    summarizing_function = lambda x: np.average(x)
     scalar_summarizing_ranks_of_reference_hidden_gems = summarizing_function(ranks_of_reference_hidden_gems)
 
     # Save the ranking for later display
@@ -141,7 +149,8 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
         for appid_reference in reference_dict.keys():
             rankGameUsedAsReferenceForHiddenGem = reference_dict[appid_reference][0]
             boolReferenceGameShouldAppearInRanking = reference_dict[appid_reference][1]
-            if (not boolReferenceGameShouldAppearInRanking) and bool(rankGameUsedAsReferenceForHiddenGem <= num_games_to_print):
+            if (not boolReferenceGameShouldAppearInRanking) and bool(
+                    rankGameUsedAsReferenceForHiddenGem <= num_games_to_print):
                 num_games_to_print += 1
 
         # Check
@@ -159,24 +168,26 @@ def rankGames(D, parameter_list, verbose = False, appid_reference_set = {appidCo
                 rankGameUsedAsReferenceForHiddenGem = reference_dict[appid][0]
                 boolReferenceGameShouldAppearInRanking = reference_dict[appid][1]
                 if (not boolReferenceGameShouldAppearInRanking):
-                    assert( current_rank == rankGameUsedAsReferenceForHiddenGem )
+                    assert (current_rank == rankGameUsedAsReferenceForHiddenGem)
                     rank_decrease += 1
                     continue
 
             current_rank -= rank_decrease
 
-            if not(print_filtered_appIDs_only) or bool(appid in filtered_appIDs_to_show):
-                if not(hide_filtered_appIDs_only) or bool(not(appid in filtered_appIDs_to_hide)):
+            if not (print_filtered_appIDs_only) or bool(appid in filtered_appIDs_to_show):
+                if not (hide_filtered_appIDs_only) or bool(not (appid in filtered_appIDs_to_hide)):
                     # Append the ranking info
                     ranking_list.append([current_rank, game_name, appid])
 
     return (scalar_summarizing_ranks_of_reference_hidden_gems, ranking_list)
 
-def optimizeForAlpha(D, verbose = True, appid_reference_set = {appidContradiction},
-                     language = None,
+
+def optimizeForAlpha(D, verbose=True, appid_reference_set={appidContradiction},
+                     language=None,
                      popularity_measure_str=None,
-                     lower_search_bound = 1,  # minimal possible value of alpha is 1 people
-                     upper_search_bound = pow(10, 8)  # maximal possible value of alpha is 8 billion people
+                     quality_measure_str=None,
+                     lower_search_bound=1,  # minimal possible value of alpha is 1 people
+                     upper_search_bound=pow(10, 8)  # maximal possible value of alpha is 8 billion people
                      ):
     # Objective: find the optimal value of the parameter alpha
     #
@@ -193,7 +204,8 @@ def optimizeForAlpha(D, verbose = True, appid_reference_set = {appidContradictio
     from scipy.optimize import differential_evolution
 
     # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
-    functionToMinimize = lambda x: rankGames(D, [x], False, appid_reference_set, language, popularity_measure_str)[0]
+    functionToMinimize = lambda x: \
+        rankGames(D, [x], False, appid_reference_set, language, popularity_measure_str, quality_measure_str)[0]
 
     # Bounds for the optimization procedure of the parameter alpha
     my_bounds = [(lower_search_bound, upper_search_bound)]
@@ -242,9 +254,10 @@ def saveRankingToFile(output_filename, ranking_list, only_show_appid=False, verb
 
 
 def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), keywords_to_exclude=list(),
-                   language = None,
+                   language=None,
                    perform_optimization_at_runtime=True,
-                   popularity_measure_str=None):
+                   popularity_measure_str=None,
+                   quality_measure_str=None):
     # Objective: compute a ranking of hidden gems
     #
     # Input:    - local dictionary of data extracted from SteamSpy
@@ -265,7 +278,7 @@ def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), k
 
     if perform_optimization_at_runtime:
         optimal_parameters = optimizeForAlpha(D, True, appid_hidden_gems_reference_set, language,
-                                              popularity_measure_str)
+                                              popularity_measure_str, quality_measure_str)
     else:
         if popularity_measure_str is None or popularity_measure_str == 'num_players':
             # Optimal parameter as computed on December 18, 2017
@@ -285,9 +298,11 @@ def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), k
 
     (objective_function, ranking) = rankGames(D, optimal_parameters, True, appid_hidden_gems_reference_set, language,
                                               popularity_measure_str,
+                                              quality_measure_str,
                                               num_top_games_to_print, filtered_in_appIDs, filtered_out_appIDs)
 
     return ranking
+
 
 if __name__ == "__main__":
     # A local dictionary was stored in the following text file
@@ -314,14 +329,15 @@ if __name__ == "__main__":
     keywords_to_include = []  # ["Rogue-Like"]
 
     # Filtering-out
-    keywords_to_exclude = [] # ["Visual Novel", "Anime"]
+    keywords_to_exclude = []  # ["Visual Novel", "Anime"]
 
     language = None
     perform_optimization_at_runtime = True
     popularity_measure_str = 'num_players'  # Either 'num_players' or 'num_reviews'
+    quality_measure_str = 'wilson_score'  # Either 'wilson_score' or 'bayesian_rating'
 
     ranking = computeRanking(D, num_top_games_to_print, keywords_to_include, keywords_to_exclude,
-                             language, perform_optimization_at_runtime, popularity_measure_str)
+                             language, perform_optimization_at_runtime, popularity_measure_str, quality_measure_str)
 
     # If set to True, print to current display (useful with Travis integration on Github)
     verbose = True
