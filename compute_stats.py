@@ -277,8 +277,9 @@ def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), k
     from download_json import getAppidByKeywordListToInclude, getAppidByKeywordListToExclude
 
     if perform_optimization_at_runtime:
+        lower_search_bound = 1 + max([game[language][popularity_measure_str] for game in D.values()])
         optimal_parameters = optimizeForAlpha(D, True, appid_hidden_gems_reference_set, language,
-                                              popularity_measure_str, quality_measure_str)
+                                              popularity_measure_str, quality_measure_str, lower_search_bound)
     else:
         if popularity_measure_str is None or popularity_measure_str == 'num_players':
             if quality_measure_str is None or quality_measure_str == 'wilson_score':
