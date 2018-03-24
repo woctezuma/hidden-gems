@@ -7,7 +7,7 @@ import numpy as np
 def choose_prior(observations, verbose=False):
     prior = dict()
 
-    scores = [game['score'] for game in observations.values()]
+    scores = [game['score'] for game in observations.values() if game['score'] is not None]
     votes = [game['num_votes'] for game in observations.values()]
 
     # Data visualization to help choose a good prior
