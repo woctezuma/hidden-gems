@@ -8,7 +8,7 @@ def choose_prior(observations, verbose=False):
     prior = dict()
 
     scores = [game['score'] for game in observations.values() if game['score'] is not None]
-    votes = [game['num_votes'] for game in observations.values()]
+    votes = [game['num_votes'] for game in observations.values() if game['num_votes'] is not None]
 
     # Data visualization to help choose a good prior
     if verbose:
