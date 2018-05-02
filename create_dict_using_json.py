@@ -39,7 +39,10 @@ def createLocalDictionary(data, output_filename, appid_reference_set={appidContr
     for appid in data.keys():
         name = data[appid]['name']
         num_owners = data[appid]['owners']
-        num_players = data[appid]['players_forever']
+        try:
+            num_players = data[appid]['players_forever']
+        except KeyError:
+            num_players = None
         median_time = data[appid]['median_forever']
         average_time = data[appid]['average_forever']
         num_positive_reviews = data[appid]["positive"]
