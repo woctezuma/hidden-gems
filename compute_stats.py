@@ -392,12 +392,12 @@ if __name__ == "__main__":
 
     language = None
     perform_optimization_at_runtime = True
-    popularity_measure_str = 'num_owners'  # Either 'num_players', 'num_owners', or 'num_reviews'
+    popularity_measure_str = 'num_reviews'  # Either 'num_players', 'num_owners', or 'num_reviews'
     # Warnings:
     # - 'num_players' is NOT available because SteamSpy API will not provide this piece of information anymore.
     # - 'num_owners' is ONLY available for the global ranking of hidden gems.
     #   For regional rankings, adjust the code in steam-reviews Github repository to make this piece of information available.
-    quality_measure_str = 'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+    quality_measure_str = 'wilson_score'  # Either 'wilson_score' or 'bayesian_rating'
 
     ranking = computeRanking(D, num_top_games_to_print, keywords_to_include, keywords_to_exclude,
                              language, perform_optimization_at_runtime, popularity_measure_str, quality_measure_str)
