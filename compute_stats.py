@@ -3,6 +3,14 @@
 from appids import appidContradiction
 
 
+def get_mid_of_interval(interval_as_str):
+    interval_as_str_formatted = [s.replace(',', '') for s in interval_as_str.split('..')]
+    lower_bound = float(interval_as_str_formatted[0])
+    upper_bound = float(interval_as_str_formatted[1])
+    mid_value = (lower_bound + upper_bound) / 2
+
+    return mid_value
+
 def computeScoreGeneric(tuple, parameter_list, language=None, popularity_measure_str=None, quality_measure_str=None):
     # Objective: compute a score for one Steam game.
     #
@@ -28,8 +36,14 @@ def computeScoreGeneric(tuple, parameter_list, language=None, popularity_measure
 
         boolGameShouldAppearInRanking = tuple[-1]
 
-        num_owners = float(num_owners)
-        num_players = float(num_players)
+        try:
+            num_owners = float(num_owners)
+        except ValueError:
+            num_owners = get_mid_of_interval(num_owners)
+        try:
+            num_players = float(num_players)
+        except TypeError:
+            num_players = None
         median_playtime = float(median_playtime)
         average_playtime = float(average_playtime)
         num_positive_reviews = float(num_positive_reviews)
@@ -41,6 +55,7 @@ def computeScoreGeneric(tuple, parameter_list, language=None, popularity_measure
 
         wilson_score = tuple[language]['wilson_score']
         bayesian_rating = tuple[language]['bayesian_rating']
+        num_owners = tuple[language]['num_owners']  # TODO add 'num_owners' to code for regional rankings of hidden gems
         num_players = tuple[language]['num_players']
         num_reviews = tuple[language]['num_reviews']
 
@@ -51,6 +66,8 @@ def computeScoreGeneric(tuple, parameter_list, language=None, popularity_measure
 
     if popularity_measure_str is None or popularity_measure_str == 'num_players':
         popularity_measure = num_players
+    elif popularity_measure_str == 'num_owners':
+        popularity_measure = num_owners
     else:
         popularity_measure = num_reviews
 
@@ -74,7 +91,7 @@ def rankGames(D, parameter_list, verbose=False, appid_reference_set={appidContra
     #           - optional verbosity boolean
     #           - optional set of appID of games chosen as references of a "hidden gem". By default, only "Contradiction".
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
-    #           - optional choice of popularity measure: either 'num_players' or 'num_reviews'
+    #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
     #           - optional number of top games to print if the ranking is only partially displayed
     #             By default, only the top 1000 games are displayed.
     #             If set to None, the ranking will be fully displayed.
@@ -195,7 +212,7 @@ def optimizeForAlpha(D, verbose=True, appid_reference_set={appidContradiction},
     #           - optional verbosity boolean
     #           - optional set of appID of games chosen as references of a "hidden gem". By default, only "Contradiction".
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
-    #           - optional choice of popularity measure: either 'num_players' or 'num_reviews'
+    #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
     #           - optional lower bound for the optimization procedure of the parameter alpha
     #           - optional upper bound for the optimization procedure of the parameter alpha
     # Output:   list of optimal parameters (by default, only one parameter is optimized: alpha)
@@ -269,7 +286,7 @@ def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), k
     #           - tags to filter-out
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
     #           - bool to decide whether to optimize alpha at run-time, or to rely on a hard-coded value instead
-    #           - optional choice of popularity measure: either 'num_players' or 'num_reviews'
+    #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
     #
     # Output:   ranking of hidden gems
 
@@ -278,12 +295,18 @@ def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), k
 
     if perform_optimization_at_runtime:
         if language is None:
+            index_num_owners = 3
             index_num_players = 4
             index_num_positive_reviews = 7
             index_num_negative_reviews = 8
 
             if popularity_measure_str is None or popularity_measure_str == 'num_players':
                 vec = [int(game[index_num_players]) for game in D.values()]
+            elif popularity_measure_str == 'num_owners':
+                try:
+                    vec = [int(game[index_num_owners]) for game in D.values()]
+                except ValueError:
+                    vec = [int(get_mid_of_interval(game[index_num_owners])) for game in D.values()]
             else:
                 assert (popularity_measure_str == 'num_reviews')
                 get_num_reviews = lambda game: int(game[index_num_positive_reviews]) + int(
@@ -305,6 +328,14 @@ def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), k
                 assert (quality_measure_str == 'bayesian_rating')
                 # Optimal parameter as computed on March 22, 2018
                 optimal_parameters = [pow(10, 6.47)]
+        elif popularity_measure_str == 'num_owners':
+            if quality_measure_str is None or quality_measure_str == 'wilson_score':
+                # Optimal parameter as computed on May 3, 2017
+                optimal_parameters = [pow(10, 8)]  # TODO improve by running optimization again with higher upper bound
+            else:
+                assert (quality_measure_str == 'bayesian_rating')
+                # Optimal parameter as computed on May 3, 2017
+                optimal_parameters = [pow(10, 8)]  # TODO improve by running optimization again with higher upper bound
         else:
             assert (popularity_measure_str == 'num_reviews')
             if quality_measure_str is None or quality_measure_str == 'wilson_score':
@@ -360,7 +391,7 @@ if __name__ == "__main__":
 
     language = None
     perform_optimization_at_runtime = True
-    popularity_measure_str = 'num_players'  # Either 'num_players' or 'num_reviews'
+    popularity_measure_str = 'num_owners'  # Either 'num_players', 'num_owners', or 'num_reviews'
     quality_measure_str = 'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
 
     ranking = computeRanking(D, num_top_games_to_print, keywords_to_include, keywords_to_exclude,
