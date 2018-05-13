@@ -1,7 +1,14 @@
-# Hidden Gems [![Build status][Build image]][Build]
+# Hidden Gems [![Build status][Build image]][Build] [![Updates][Dependency image]][PyUp] [![Python 3][Python3 image]][PyUp] [![Code coverage][Codecov image]][Codecov]
 
   [Build]: https://travis-ci.org/woctezuma/hidden-gems
   [Build image]: https://travis-ci.org/woctezuma/hidden-gems.svg?branch=master
+
+  [PyUp]: https://pyup.io/repos/github/woctezuma/hidden-gems/
+  [Dependency image]: https://pyup.io/repos/github/woctezuma/hidden-gems/shield.svg
+  [Python3 image]: https://pyup.io/repos/github/woctezuma/hidden-gems/python-3-shield.svg
+
+  [Codecov]: https://codecov.io/gh/woctezuma/hidden-gems
+  [Codecov image]: https://codecov.io/gh/woctezuma/hidden-gems/branch/master/graph/badge.svg
 
 This repository contains code to compute a ranking of Steam games, based on a score intended to favor "hidden gems".
 
