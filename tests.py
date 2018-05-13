@@ -1,7 +1,8 @@
 import unittest
 
-import create_dict_using_json
 import compute_stats
+import create_dict_using_json
+
 
 class TestCreateDictUsingJsonMethods(unittest.TestCase):
 
@@ -11,6 +12,8 @@ class TestCreateDictUsingJsonMethods(unittest.TestCase):
 class TestComputeStatsMethods(unittest.TestCase):
 
     def test_main(self):
+        create_dict_using_json.main()
+
         self.assertTrue(compute_stats.main())
 
 if __name__ == '__main__':
