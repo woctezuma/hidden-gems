@@ -91,7 +91,7 @@ def createLocalDictionary(data, output_filename, appid_reference_set={appidContr
         print(D, file=outfile)
 
 
-if __name__ == "__main__":
+def main():
     from appids import appid_hidden_gems_reference_set
     from download_json import downloadSteamSpyData
     import time
@@ -112,3 +112,9 @@ if __name__ == "__main__":
     output_filename = "dict_top_rated_games_on_steam.txt"
 
     createLocalDictionary(data, output_filename, appid_hidden_gems_reference_set)
+
+    return True
+
+
+if __name__ == "__main__":
+    main()

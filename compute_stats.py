@@ -363,7 +363,7 @@ def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), k
     return ranking
 
 
-if __name__ == "__main__":
+def main():
     # A local dictionary was stored in the following text file
     input_filename = "dict_top_rated_games_on_steam.txt"
 
@@ -410,3 +410,9 @@ if __name__ == "__main__":
 
     only_show_appid = True
     saveRankingToFile(output_filename_only_appids, ranking, only_show_appid)
+
+    return True
+
+
+if __name__ == "__main__":
+    main()
