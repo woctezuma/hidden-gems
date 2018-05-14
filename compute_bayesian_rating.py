@@ -5,10 +5,10 @@ import numpy as np
 
 
 def choose_prior(observations, verbose=False):
-    prior = dict()
+    bayes_prior = dict()
 
-    scores = [game['score'] for game in observations.values() if game['score'] is not None]
-    votes = [game['num_votes'] for game in observations.values() if game['num_votes'] is not None]
+    scores = [game_entry['score'] for game_entry in observations.values() if game_entry['score'] is not None]
+    votes = [game_entry['num_votes'] for game_entry in observations.values() if game_entry['num_votes'] is not None]
 
     # Data visualization to help choose a good prior
     if verbose:
@@ -28,15 +28,15 @@ def choose_prior(observations, verbose=False):
         plt.show()
 
     # TODO: Important choices below. How do you choose a good prior? Median? Average?
-    prior['score'] = np.average(scores)
-    prior['num_votes'] = np.median(votes)
+    bayes_prior['score'] = np.average(scores)
+    bayes_prior['num_votes'] = np.median(votes)
 
-    return prior
+    return bayes_prior
 
 
-def compute_bayesian_score(game, prior):
-    bayesian_score = (prior['num_votes'] * prior['score'] + game['num_votes'] * game['score']) \
-                     / (prior['num_votes'] + game['num_votes'])
+def compute_bayesian_score(game_entry, bayes_prior):
+    bayesian_score = (bayes_prior['num_votes'] * bayes_prior['score'] + game_entry['num_votes'] * game_entry['score']) \
+                     / (bayes_prior['num_votes'] + game_entry['num_votes'])
 
     return bayesian_score
 

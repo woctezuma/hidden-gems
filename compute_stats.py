@@ -12,7 +12,7 @@ def get_mid_of_interval(interval_as_str):
     return mid_value
 
 
-def computeScoreGeneric(tuple, parameter_list, language=None, popularity_measure_str=None, quality_measure_str=None):
+def compute_score_generic(tuple, parameter_list, language=None, popularity_measure_str=None, quality_measure_str=None):
     # Objective: compute a score for one Steam game.
     #
     # Input:    - a tuple is a list consisting of all retrieved information regarding one game
@@ -72,8 +72,9 @@ def computeScoreGeneric(tuple, parameter_list, language=None, popularity_measure
     else:
         popularity_measure = num_reviews
 
-    # Decreasing function
-    decreasing_fun = lambda x: alpha / (alpha + x)
+    def decreasing_fun(x):
+        # Decreasing function
+        return alpha / (alpha + x)
 
     score = quality_measure * decreasing_fun(popularity_measure)
 
@@ -90,7 +91,7 @@ def rankGames(D, parameter_list, verbose=False, appid_reference_set={appidContra
     # Input:    - local dictionary of data extracted from SteamSpy
     #           - parameter_list is a list of parameters to calibrate the ranking.
     #           - optional verbosity boolean
-    #           - optional set of appID of games chosen as references of a "hidden gem". By default, only "Contradiction".
+    #           - optional set of appID of games chosen as references of hidden gems. By default, only "Contradiction".
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
     #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
     #           - optional number of top games to print if the ranking is only partially displayed
@@ -98,10 +99,10 @@ def rankGames(D, parameter_list, verbose=False, appid_reference_set={appidContra
     #             If set to None, the ranking will be fully displayed.
     #           - optional set of appID of games to show (and only these games are shown).
     #             Typically used to focus on appIDs for specific genres or tags.
-    #             If set to None, the behavior is unintuitive yet exceptional: every game is shown, there is no filtering-in of appIDs.
+    #             If None, behavior is unintuitive yet exceptional: every game is shown, appIDs are not filtered-in.
     #           - optional set of appID of games to hide.
     #             Typically used to exclude appIDs for specific genres or tags.
-    #             If set to None, the behavior is intuitive: no game is specifically hidden, there is no filtering-out of appIDs.
+    #             If None, the behavior is intuitive: no game is specifically hidden, appIDs are not filtered-out.
     # Output:   a 2-tuple consisting of:
     #           - a scalar value summarizing ranks of games used as references of "hidden gems"
     #           - the ranking to be ultimately displayed. A list of 3-tuple: (rank, game_name, appid).
@@ -119,8 +120,8 @@ def rankGames(D, parameter_list, verbose=False, appid_reference_set={appidContra
     # Boolean to decide whether there is a filtering-out of appIDs (typically to filter-out genres or tags).
     hide_filtered_appIDs_only = bool(not (filtered_appIDs_to_hide is None) and not (len(filtered_appIDs_to_hide) == 0))
 
-    computeScore = lambda x: computeScoreGeneric(x, parameter_list, language, popularity_measure_str,
-                                                 quality_measure_str)
+    def computeScore(x):
+        return compute_score_generic(x, parameter_list, language, popularity_measure_str, quality_measure_str)
 
     # Rank all the Steam games
     sortedValues = sorted(D.values(), key=computeScore, reverse=True)
@@ -151,7 +152,10 @@ def rankGames(D, parameter_list, verbose=False, appid_reference_set={appidContra
             continue
 
     ranks_of_reference_hidden_gems = [v[0] for k, v in reference_dict.items()]
-    summarizing_function = lambda x: np.average(x)
+
+    def summarizing_function(x):
+        return np.average(x)
+
     scalar_summarizing_ranks_of_reference_hidden_gems = summarizing_function(ranks_of_reference_hidden_gems)
 
     # Save the ranking for later display
@@ -211,7 +215,7 @@ def optimizeForAlpha(D, verbose=True, appid_reference_set={appidContradiction},
     #
     # Input:    - local dictionary of data extracted from SteamSpy
     #           - optional verbosity boolean
-    #           - optional set of appID of games chosen as references of a "hidden gem". By default, only "Contradiction".
+    #           - optional set of appID of games chosen as references of hidden gems. By default, only "Contradiction".
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
     #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
     #           - optional lower bound for the optimization procedure of the parameter alpha
@@ -222,8 +226,8 @@ def optimizeForAlpha(D, verbose=True, appid_reference_set={appidContradiction},
     from scipy.optimize import differential_evolution
 
     # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
-    functionToMinimize = lambda x: \
-        rankGames(D, [x], False, appid_reference_set, language, popularity_measure_str, quality_measure_str)[0]
+    def functionToMinimize(x):
+        return rankGames(D, [x], False, appid_reference_set, language, popularity_measure_str, quality_measure_str)[0]
 
     # Bounds for the optimization procedure of the parameter alpha
     my_bounds = [(lower_search_bound, upper_search_bound)]
@@ -310,8 +314,10 @@ def computeRanking(D, num_top_games_to_print=None, keywords_to_include=list(), k
                     vec = [int(get_mid_of_interval(game[index_num_owners])) for game in D.values()]
             else:
                 assert (popularity_measure_str == 'num_reviews')
-                get_num_reviews = lambda game: int(game[index_num_positive_reviews]) + int(
-                    game[index_num_negative_reviews])
+
+                def get_num_reviews(game):
+                    return int(game[index_num_positive_reviews]) + int(game[index_num_negative_reviews])
+
                 vec = [get_num_reviews(game) for game in D.values()]
 
         else:
@@ -396,7 +402,7 @@ def main():
     # Warnings:
     # - 'num_players' is NOT available because SteamSpy API will not provide this piece of information anymore.
     # - 'num_owners' is ONLY available for the global ranking of hidden gems.
-    #   For regional rankings, adjust the code in steam-reviews Github repository to make this piece of information available.
+    #   For regional rankings, adjust the code in steam-reviews Github repository to make this piece of info available.
     quality_measure_str = 'wilson_score'  # Either 'wilson_score' or 'bayesian_rating'
 
     ranking = computeRanking(D, num_top_games_to_print, keywords_to_include, keywords_to_exclude,
