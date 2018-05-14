@@ -185,19 +185,19 @@ def rankGames(D, parameter_list, verbose=False, appid_reference_set={appidContra
             if appid in reference_dict.keys():
                 rankGameUsedAsReferenceForHiddenGem = reference_dict[appid][0]
                 boolReferenceGameShouldAppearInRanking = reference_dict[appid][1]
-                if (not boolReferenceGameShouldAppearInRanking):
+                if not boolReferenceGameShouldAppearInRanking:
                     assert (current_rank == rankGameUsedAsReferenceForHiddenGem)
                     rank_decrease += 1
                     continue
 
             current_rank -= rank_decrease
 
-            if not (print_filtered_appIDs_only) or bool(appid in filtered_appIDs_to_show):
-                if not (hide_filtered_appIDs_only) or bool(not (appid in filtered_appIDs_to_hide)):
+            if not print_filtered_appIDs_only or bool(appid in filtered_appIDs_to_show):
+                if not hide_filtered_appIDs_only or bool(not (appid in filtered_appIDs_to_hide)):
                     # Append the ranking info
                     ranking_list.append([current_rank, game_name, appid])
 
-    return (scalar_summarizing_ranks_of_reference_hidden_gems, ranking_list)
+    return scalar_summarizing_ranks_of_reference_hidden_gems, ranking_list
 
 
 def optimizeForAlpha(D, verbose=True, appid_reference_set={appidContradiction},
