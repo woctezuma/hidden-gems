@@ -1,8 +1,9 @@
 # Objective: download and cache data from SteamSpy
 
-from urllib.request import urlopen
 import json
 import pathlib
+from urllib.request import urlopen
+
 
 def getTodaysSteamSpyData():
     import time
@@ -21,8 +22,8 @@ def getTodaysSteamSpyData():
 
     return data
 
-def downloadSteamSpyData(json_filename = "steamspy.json", genre = None, tag = None):
 
+def downloadSteamSpyData(json_filename="steamspy.json", genre=None, tag=None):
     # Data folder
     data_path = "data/"
     # Reference of the following line: https://stackoverflow.com/a/14364249
@@ -34,12 +35,12 @@ def downloadSteamSpyData(json_filename = "steamspy.json", genre = None, tag = No
     steamspy_url = "http://steamspy.com/api.php?request=all"
 
     # Provide a possibility to download data for a given genre
-    if bool(not(genre is None)):
+    if bool(not (genre is None)):
         print("Focusing on genre " + genre)
         formatted_str = genre.replace(" ", "+")
         steamspy_url = "http://steamspy.com/api.php?request=genre&genre=" + formatted_str
     # Provide a possibility to download data for a given tag
-    elif bool(not(tag is None)):
+    elif bool(not (tag is None)):
         print("Focusing on tag " + tag)
         formatted_str = tag.replace(" ", "+")
         steamspy_url = "http://steamspy.com/api.php?request=tag&tag=" + formatted_str
@@ -63,6 +64,7 @@ def downloadSteamSpyData(json_filename = "steamspy.json", genre = None, tag = No
 
     return data
 
+
 def getAppidByKeyword(keyword):
     import time
 
@@ -85,8 +87,9 @@ def getAppidByKeyword(keyword):
 
     return appIDs
 
+
 def getAppidByKeywordListToInclude(keywordList):
-    appIDs = None # This variable will be initialized during the first iteration.
+    appIDs = None  # This variable will be initialized during the first iteration.
     is_first_iteration = True
 
     for keyword in keywordList:
@@ -102,8 +105,9 @@ def getAppidByKeywordListToInclude(keywordList):
 
     return appIDs
 
+
 def getAppidByKeywordListToExclude(keywordList):
-    appIDs = set() # This is the true initialization of this variable.
+    appIDs = set()  # This is the true initialization of this variable.
 
     for keyword in keywordList:
         current_appIDs = getAppidByKeyword(keyword)
@@ -113,6 +117,7 @@ def getAppidByKeywordListToExclude(keywordList):
         appIDs = appIDs.union(current_appIDs)
 
     return appIDs
+
 
 if __name__ == "__main__":
     getTodaysSteamSpyData()
