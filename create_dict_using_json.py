@@ -3,20 +3,21 @@
 from appids import appidContradiction
 
 
-def createLocalDictionary(data, output_filename, appid_reference_set={appidContradiction},
-                          quantile_for_our_own_wilson_score=0.95):
+def create_local_dictionary(data, output_filename, appid_reference_set={appidContradiction},
+                            quantile_for_our_wilson_score=0.95):
     # Objective: compute a score for one Steam game.
     #
     # Input:    - data:                         SteamSpy's data.
     #           - output_filename:              filename to which the local dictionary will be written to.
     #           - appid_reference_set:  a set of appID of games which are examples of "hidden gems".
     #                                           By default, the appID of the game called "Contradiction".
-    #           - quantile_for_our_own_wilson_score: this allows to specify a different confidence for the Wilson score.
+    #           - quantile_for_our_wilson_score: this allows to specify a different confidence for the Wilson score.
     # Output:   none (the local dictionary is written to output_filename)
 
-    from compute_wilson_score import computeWilsonScore
+    from compute_wilson_score import compute_wilson_score
     from compute_bayesian_rating import choose_prior, compute_bayesian_score
 
+    # noinspection PyPep8Naming
     D = dict()
 
     # Construct observation structure used to compute a prior for the inference of a Bayesian rating
@@ -48,7 +49,7 @@ def createLocalDictionary(data, output_filename, appid_reference_set={appidContr
         num_positive_reviews = data[appid]["positive"]
         num_negative_reviews = data[appid]["negative"]
 
-        wilson_score = computeWilsonScore(num_positive_reviews, num_negative_reviews, quantile_for_our_own_wilson_score)
+        wilson_score = compute_wilson_score(num_positive_reviews, num_negative_reviews, quantile_for_our_wilson_score)
 
         num_votes = num_positive_reviews + num_negative_reviews
 
@@ -77,8 +78,8 @@ def createLocalDictionary(data, output_filename, appid_reference_set={appidContr
                           num_positive_reviews,
                           num_negative_reviews]
 
-            boolGameShouldAppearInRanking = True
-            stats_save.append(boolGameShouldAppearInRanking)
+            bool_game_should_appear_in_ranking = True
+            stats_save.append(bool_game_should_appear_in_ranking)
 
             D[appid] = stats_save
 
@@ -95,7 +96,7 @@ def createLocalDictionary(data, output_filename, appid_reference_set={appidContr
 
 def main():
     from appids import appid_hidden_gems_reference_set
-    from download_json import downloadSteamSpyData
+    from download_json import download_steam_spy_data
     import time
 
     json_filename_suffixe = "_steamspy.json"
@@ -108,12 +109,12 @@ def main():
     json_filename = current_date + json_filename_suffixe
 
     # SteamSpy's data in JSON format
-    data = downloadSteamSpyData(json_filename)
+    data = download_steam_spy_data(json_filename)
 
     # A dictionary will be stored in the following text file
     output_filename = "dict_top_rated_games_on_steam.txt"
 
-    createLocalDictionary(data, output_filename, appid_hidden_gems_reference_set)
+    create_local_dictionary(data, output_filename, appid_hidden_gems_reference_set)
 
     return True
 

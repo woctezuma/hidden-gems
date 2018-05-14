@@ -5,7 +5,7 @@ import pathlib
 from urllib.request import urlopen
 
 
-def getTodaysSteamSpyData():
+def get_todays_steam_spy_data():
     import time
 
     json_filename_suffixe = "_steamspy.json"
@@ -18,12 +18,12 @@ def getTodaysSteamSpyData():
     json_filename = current_date + json_filename_suffixe
 
     # SteamSpy's data in JSON format
-    data = downloadSteamSpyData(json_filename)
+    data = download_steam_spy_data(json_filename)
 
     return data
 
 
-def downloadSteamSpyData(json_filename="steamspy.json", genre=None, tag=None):
+def download_steam_spy_data(json_filename="steamspy.json", genre=None, tag=None):
     # Data folder
     data_path = "data/"
     # Reference of the following line: https://stackoverflow.com/a/14364249
@@ -57,15 +57,15 @@ def downloadSteamSpyData(json_filename="steamspy.json", genre=None, tag=None):
             data = json.loads(raw_data.decode(encoding))
             # Make sure the json data is using double quotes instead of single quotes
             # Reference: https://stackoverflow.com/a/8710579/
-            jsonString = json.dumps(data)
+            json_string = json.dumps(data)
             # Cache the json data to a local file
             with open(data_filename, 'w', encoding="utf8") as cache_json_file:
-                print(jsonString, file=cache_json_file)
+                print(json_string, file=cache_json_file)
 
     return data
 
 
-def getAppidByKeyword(keyword):
+def get_appid_by_keyword(keyword):
     import time
 
     json_filename_suffixe = "_steamspy.json"
@@ -78,46 +78,46 @@ def getAppidByKeyword(keyword):
     json_filename = current_date + json_filename_suffixe
 
     # Download data which meta-data includes this keyword as genre
-    dataGenre = downloadSteamSpyData("genre_" + keyword + "_" + json_filename, keyword, None)
+    data_genre = download_steam_spy_data("genre_" + keyword + "_" + json_filename, keyword, None)
     # Download data which meta-data includes this keyword as tag
-    dataTag = downloadSteamSpyData("tag_" + keyword + "_" + json_filename, None, keyword)
+    data_tag = download_steam_spy_data("tag_" + keyword + "_" + json_filename, None, keyword)
 
     # Merge appIDs which genres or tags include the chosen keyword
-    appIDs = set(dataGenre.keys()).union(set(dataTag.keys()))
+    app_ids = set(data_genre.keys()).union(set(data_tag.keys()))
 
-    return appIDs
+    return app_ids
 
 
-def getAppidByKeywordListToInclude(keywordList):
-    appIDs = None  # This variable will be initialized during the first iteration.
+def get_appid_by_keyword_list_to_include(keyword_list):
+    app_ids = None  # This variable will be initialized during the first iteration.
     is_first_iteration = True
 
-    for keyword in keywordList:
-        current_appIDs = getAppidByKeyword(keyword)
-        if len(current_appIDs) == 0:
+    for keyword in keyword_list:
+        current_app_ids = get_appid_by_keyword(keyword)
+        if len(current_app_ids) == 0:
             print("The keyword " + keyword + " does not return any appID.")
         if is_first_iteration:
-            appIDs = current_appIDs
+            app_ids = current_app_ids
             is_first_iteration = False
         else:
             # Intersection of appIDs so that the result are appIDs which correspond to every keyword
-            appIDs = appIDs.intersection(current_appIDs)
+            app_ids = app_ids.intersection(current_app_ids)
 
-    return appIDs
+    return app_ids
 
 
-def getAppidByKeywordListToExclude(keywordList):
-    appIDs = set()  # This is the true initialization of this variable.
+def get_appid_by_keyword_list_to_exclude(keyword_list):
+    app_ids = set()  # This is the true initialization of this variable.
 
-    for keyword in keywordList:
-        current_appIDs = getAppidByKeyword(keyword)
-        if len(current_appIDs) == 0:
+    for keyword in keyword_list:
+        current_app_ids = get_appid_by_keyword(keyword)
+        if len(current_app_ids) == 0:
             print("The keyword " + keyword + " does not return any appID.")
         # Union of appIDs so that the result are appIDs which correspond to at least one keyword
-        appIDs = appIDs.union(current_appIDs)
+        app_ids = app_ids.union(current_app_ids)
 
-    return appIDs
+    return app_ids
 
 
 if __name__ == "__main__":
-    getTodaysSteamSpyData()
+    get_todays_steam_spy_data()

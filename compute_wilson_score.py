@@ -22,7 +22,7 @@ quantile_normal_dist_dict = {
 }
 
 
-def computeWilsonScore(num_pos, num_neg, confidence=0.95):
+def compute_wilson_score(num_pos, num_neg, confidence=0.95):
     # Reference: https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval
 
     assert (num_pos >= 0)
@@ -49,18 +49,18 @@ def computeWilsonScore(num_pos, num_neg, confidence=0.95):
     try:
         inside_sqrt = num_pos * num_neg / (num_pos + num_neg) + z2 / 4
         delta = (z_quantile * sqrt(inside_sqrt)) / den
-        wilson_score = mean - delta
+        wilson_score_value = mean - delta
     except ZeroDivisionError:
         assert (num_pos == 0)
         assert (num_neg == 0)
-        wilson_score = None
+        wilson_score_value = None
 
-    return wilson_score
+    return wilson_score_value
 
 
 if __name__ == "__main__":
     # Loop over the number of reviews
     for num_reviews in [pow(10, n) for n in range(5)]:
         # Display the Wilson score of a game with as many positive and negative reviews
-        wilson_score = computeWilsonScore(num_reviews / 2, num_reviews / 2, 0.95)
+        wilson_score = compute_wilson_score(num_reviews / 2, num_reviews / 2, 0.95)
         print("#reviews = " + str(num_reviews) + "\tWilson score = " + str(wilson_score))
