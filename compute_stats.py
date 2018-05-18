@@ -232,7 +232,7 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     # Output:   list of optimal parameters (by default, only one parameter is optimized: alpha)
 
     from math import log10
-    from scipy.optimize import differential_evolution
+    from scipy.optimize import minimize
 
     # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
     def function_to_minimize(x):
@@ -241,14 +241,13 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     # Bounds for the optimization procedure of the parameter alpha
     my_bounds = [(lower_search_bound, upper_search_bound)]
 
-    res = differential_evolution(function_to_minimize, bounds=my_bounds)
+    # noinspection PyTypeChecker
+    res = minimize(fun=function_to_minimize, x0=10, method='Powell')
 
-    if len(res.x) == 1:
+    try:
         optimal_parameters = [res.x]
-    else:
-        optimal_parameters = res.x
-        if verbose:
-            print(optimal_parameters)
+    except AttributeError:
+        optimal_parameters = [res]
 
     if verbose:
         # Quick print in order to check that the upper search bound is not too close to our optimal alpha
