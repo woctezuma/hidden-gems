@@ -232,7 +232,7 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     # Output:   list of optimal parameters (by default, only one parameter is optimized: alpha)
 
     from math import log10
-    from scipy.optimize import minimize
+    from scipy.optimize import differential_evolution, minimize
 
     # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
     def function_to_minimize(x):
@@ -242,7 +242,10 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     my_bounds = [(lower_search_bound, upper_search_bound)]
 
     # noinspection PyTypeChecker
-    res = minimize(fun=function_to_minimize, x0=10, method='Powell')
+    if popularity_measure_str == 'num_reviews':
+        res = minimize(fun=function_to_minimize, x0=10, method='Powell')
+    else:
+        res = differential_evolution(function_to_minimize, bounds=my_bounds)
 
     try:
         optimal_parameters = [res.x]
@@ -355,12 +358,12 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), 
         else:
             assert (popularity_measure_str == 'num_reviews')
             if quality_measure_str is None or quality_measure_str == 'wilson_score':
-                # Optimal parameter as computed on February 22, 2018
-                optimal_parameters = [pow(10, 4.65)]
+                # Optimal parameter as computed on May 19, 2018
+                optimal_parameters = [pow(10, 4.83)]
             else:
                 assert (quality_measure_str == 'bayesian_rating')
-                # Optimal parameter as computed on March 22, 2018
-                optimal_parameters = [pow(10, 4.75)]
+                # Optimal parameter as computed on May 19, 2018
+                optimal_parameters = [pow(10, 4.96)]
 
     # Filter-in games which meta-data includes ALL the following keywords
     # Caveat: the more keywords, the fewer games are filtered-in! cf. intersection of sets in the code
