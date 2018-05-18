@@ -241,8 +241,8 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     # Bounds for the optimization procedure of the parameter alpha
     my_bounds = [(lower_search_bound, upper_search_bound)]
 
-    # noinspection PyTypeChecker
     if popularity_measure_str == 'num_reviews':
+        # noinspection PyTypeChecker
         res = minimize(fun=function_to_minimize, x0=10, method='Powell')
     else:
         res = differential_evolution(function_to_minimize, bounds=my_bounds)
