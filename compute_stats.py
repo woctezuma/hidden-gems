@@ -205,7 +205,8 @@ def rank_games(D, parameter_list, verbose=False, appid_reference_set={appidContr
 
 
 def choose_x0(vec):
-    return np.median(vec)
+    x0 = 1 + np.max(vec)
+    return x0
 
 
 # noinspection PyPep8Naming
