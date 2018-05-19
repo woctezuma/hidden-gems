@@ -37,8 +37,10 @@ def compute_score_generic(my_tuple, parameter_list, language=None,
 
         num_owners = float(num_owners)
         try:
+            # noinspection PyUnusedLocal
             num_players = float(num_players)
         except TypeError:
+            # noinspection PyUnusedLocal
             num_players = None
         # noinspection PyUnusedLocal
         median_playtime = float(median_playtime)
