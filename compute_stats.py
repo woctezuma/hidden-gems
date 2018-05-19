@@ -14,6 +14,8 @@ def compute_score_generic(my_tuple, parameter_list, language=None,
     #           - parameter_list is a list of parameters to calibrate the ranking.
     #             Currently, there is only one parameter, alpha, which could be chosen up to one's tastes, or optimized.
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
+    #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
+    #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     # Output:   game score
 
     alpha = parameter_list[0]
@@ -94,6 +96,7 @@ def rank_games(D, parameter_list, verbose=False, appid_reference_set={appidContr
     #           - optional set of appID of games chosen as references of hidden gems. By default, only "Contradiction".
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
     #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
+    #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     #           - optional number of top games to print if the ranking is only partially displayed
     #             By default, only the top 1000 games are displayed.
     #             If set to None, the ranking will be fully displayed.
@@ -204,11 +207,6 @@ def rank_games(D, parameter_list, verbose=False, appid_reference_set={appidContr
     return scalar_summarizing_ranks_of_reference_hidden_gems, ranking_list
 
 
-def choose_x0(vec):
-    x0 = 1 + np.max(vec)
-    return x0
-
-
 # noinspection PyPep8Naming
 def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction},
                        language=None,
@@ -222,6 +220,7 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     #           - optional set of appID of games chosen as references of hidden gems. By default, only "Contradiction".
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
     #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
+    #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     # Output:   list of optimal parameters (by default, only one parameter is optimized: alpha)
 
     from math import log10
@@ -246,6 +245,10 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     else:
         vec = [game[language][popularity_measure_str] for game in D.values()]
 
+    def choose_x0(data_vec):
+        x0 = 1 + np.max(data_vec)
+        return x0
+
     res = minimize(fun=function_to_minimize, x0=choose_x0(vec), method='Nelder-Mead')
 
     optimal_parameters = [res.x]
@@ -260,7 +263,7 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
 
 
 def save_ranking_to_file(output_filename, ranking_list, only_show_appid=False, verbose=False, width=40):
-    # Save the ranking to the output text file
+    # Objective: save the ranking to the output text file
 
     base_steam_store_url = "http://store.steampowered.com/app/"
 
@@ -322,6 +325,7 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), 
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
     #           - bool to decide whether to optimize alpha at run-time, or to rely on a hard-coded value instead
     #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
+    #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     #
     # Output:   ranking of hidden gems
 
@@ -378,7 +382,39 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), 
     return ranking
 
 
-def main():
+def run_workflow(quality_measure_str='wilson_score',
+                 popularity_measure_str='num_reviews',
+                 perform_optimization_at_runtime=True,
+                 num_top_games_to_print=250,
+                 language=None,
+                 keywords_to_include=None,
+                 keywords_to_exclude=None):
+    # Objective: save to disk a ranking of hidden gems.
+    #
+    # Input:
+    #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
+    #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
+    #               Warnings:
+    #                   - 'num_players' is NOT available because SteamSpy API does not provide this information anymore.
+    #                   - 'num_owners' is ONLY available for the global ranking of hidden gems.
+    #                      To make it available to regional rankings, fix the code in 'steam-reviews' Github repository.
+    #           - bool to decide whether to optimize alpha at run-time, or to rely on a hard-coded value instead
+    #           - maximal length of the ranking
+    #               The higher the value, the longer it takes to compute and print the ranking.
+    #               If set to None, there is no limit, so the whole Steam catalog is ranked.
+    #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
+    #           - tags to filter-in
+    #               Warning because unintuitive: to avoid filtering-in, please use an empty list.
+    #           - tags to filter-out
+    #
+    # Output:   ranking of hidden gems, printed to screen, and printed to file 'hidden_gems.md'
+
+    if keywords_to_include is None:
+        keywords_to_include = []  # ["Rogue-Like"]
+
+    if keywords_to_exclude is None:
+        keywords_to_exclude = []  # ["Visual Novel", "Anime"]
+
     # A local dictionary was stored in the following text file
     input_filename = "dict_top_rated_games_on_steam.txt"
 
@@ -395,37 +431,27 @@ def main():
         # noinspection PyPep8Naming
         D = eval(lines[1])
 
-    # Maximal length of the ranking. The higher the value, the longer it takes to compute and print the ranking.
-    # If set to None, there is no limit, so the whole Steam catalog is ranked.
-    num_top_games_to_print = 1000
-
-    # Filtering-in
-    # Warning because unintuitive: to avoid filtering-in, please use an empty list!
-    keywords_to_include = []  # ["Rogue-Like"]
-
-    # Filtering-out
-    keywords_to_exclude = []  # ["Visual Novel", "Anime"]
-
-    language = None
-    perform_optimization_at_runtime = True
-    popularity_measure_str = 'num_reviews'  # Either 'num_players', 'num_owners', or 'num_reviews'
-    # Warnings:
-    # - 'num_players' is NOT available because SteamSpy API will not provide this piece of information anymore.
-    # - 'num_owners' is ONLY available for the global ranking of hidden gems.
-    #   For regional rankings, adjust the code in steam-reviews Github repository to make this piece of info available.
-    quality_measure_str = 'wilson_score'  # Either 'wilson_score' or 'bayesian_rating'
-
     ranking = compute_ranking(D, num_top_games_to_print, keywords_to_include, keywords_to_exclude,
                               language, perform_optimization_at_runtime, popularity_measure_str, quality_measure_str)
 
-    # If set to True, print to current display (useful with Travis integration on Github)
-    verbose = True
-
     only_show_appid = False
-    save_ranking_to_file(output_filename, ranking, only_show_appid, verbose)
+    save_ranking_to_file(output_filename, ranking, only_show_appid, verbose=True)
+    # NB: verbose is set to True, so that I can check the results even with Travis integration on Github.
 
     only_show_appid = True
     save_ranking_to_file(output_filename_only_appids, ranking, only_show_appid)
+
+    return True
+
+
+def main():
+    run_workflow(quality_measure_str='wilson_score',  # Either 'wilson_score' or 'bayesian_rating'
+                 popularity_measure_str='num_reviews',  # Either 'num_reviews' or 'num_owners'
+                 perform_optimization_at_runtime=True,
+                 num_top_games_to_print=1000,
+                 language=None,
+                 keywords_to_include=None,
+                 keywords_to_exclude=None)
 
     return True
 
