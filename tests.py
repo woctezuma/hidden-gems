@@ -101,7 +101,7 @@ class TestComputeStatsMethods(unittest.TestCase):
                                                    perform_optimization_at_runtime=False,
                                                    num_top_games_to_print=50,
                                                    language=None,
-                                                   keywords_to_include=["Rogue-Like"],
+                                                   keywords_to_include=["Early Access", "Free To Play"],
                                                    keywords_to_exclude=None))
 
     def test_run_workflow_filtering_out(self):
