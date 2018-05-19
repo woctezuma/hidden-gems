@@ -18,5 +18,12 @@ appid_hidden_gems_reference_set = {appidContradiction,  # Contradiction - Spot T
                                    "233980"  # UnEpic
                                    }
 
-if __name__ == "__main__":
+
+def main():
     print(appid_hidden_gems_reference_set)
+
+    return True
+
+
+if __name__ == "__main__":
+    main()

@@ -119,5 +119,11 @@ def get_appid_by_keyword_list_to_exclude(keyword_list):
     return app_ids
 
 
-if __name__ == "__main__":
+def main():
     get_todays_steam_spy_data()
+
+    return True
+
+
+if __name__ == "__main__":
+    main()

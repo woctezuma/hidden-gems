@@ -58,9 +58,15 @@ def compute_wilson_score(num_pos, num_neg, confidence=0.95):
     return wilson_score_value
 
 
-if __name__ == "__main__":
+def main():
     # Loop over the number of reviews
     for num_reviews in [pow(10, n) for n in range(5)]:
         # Display the Wilson score of a game with as many positive and negative reviews
         wilson_score = compute_wilson_score(num_reviews / 2, num_reviews / 2, 0.95)
         print("#reviews = " + str(num_reviews) + "\tWilson score = " + str(wilson_score))
+
+    return True
+
+
+if __name__ == "__main__":
+    main()

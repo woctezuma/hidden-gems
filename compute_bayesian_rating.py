@@ -41,7 +41,7 @@ def compute_bayesian_score(game_entry, bayes_prior):
     return bayesian_score
 
 
-if __name__ == "__main__":
+def main():
     prior = dict()
     prior['score'] = 0.7
     prior['num_votes'] = pow(10, 3)
@@ -55,3 +55,9 @@ if __name__ == "__main__":
 
         bayesian_rating = compute_bayesian_score(game, prior)
         print("#reviews = " + str(num_reviews) + "\tBayesian rating = " + str(bayesian_rating))
+
+    return True
+
+
+if __name__ == "__main__":
+    main()
