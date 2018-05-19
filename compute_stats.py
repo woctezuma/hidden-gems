@@ -13,7 +13,7 @@ def compute_score_generic(my_tuple, parameter_list, language=None,
     #           - parameter_list is a list of parameters to calibrate the ranking.
     #             Currently, there is only one parameter, alpha, which could be chosen up to one's tastes, or optimized.
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
-    #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
+    #           - optional choice of popularity measure: either 'num_owners', or 'num_reviews'
     #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     # Output:   game score
 
@@ -54,7 +54,6 @@ def compute_score_generic(my_tuple, parameter_list, language=None,
         wilson_score = my_tuple[language]['wilson_score']
         bayesian_rating = my_tuple[language]['bayesian_rating']
         num_owners = my_tuple[language]['num_owners']  # TODO add num_owners to code for regional ranking of hidden gems
-        num_players = my_tuple[language]['num_players']
         num_reviews = my_tuple[language]['num_reviews']
 
     if quality_measure_str is None or quality_measure_str == 'wilson_score':
@@ -62,9 +61,7 @@ def compute_score_generic(my_tuple, parameter_list, language=None,
     else:
         quality_measure = bayesian_rating
 
-    if popularity_measure_str is None or popularity_measure_str == 'num_players':
-        popularity_measure = num_players
-    elif popularity_measure_str == 'num_owners':
+    if popularity_measure_str is None or popularity_measure_str == 'num_owners':
         popularity_measure = num_owners
     else:
         popularity_measure = num_reviews
@@ -91,7 +88,7 @@ def rank_games(D, parameter_list, verbose=False, appid_reference_set={appidContr
     #           - optional verbosity boolean
     #           - optional set of appID of games chosen as references of hidden gems. By default, only "Contradiction".
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
-    #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
+    #           - optional choice of popularity measure: either 'num_owners', or 'num_reviews'
     #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     #           - optional number of top games to print if the ranking is only partially displayed
     #             By default, only the top 1000 games are displayed.
@@ -215,7 +212,7 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     #           - optional verbosity boolean
     #           - optional set of appID of games chosen as references of hidden gems. By default, only "Contradiction".
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
-    #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
+    #           - optional choice of popularity measure: either 'num_owners', or 'num_reviews'
     #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     # Output:   list of optimal parameters (by default, only one parameter is optimized: alpha)
 
@@ -227,9 +224,7 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
         return rank_games(D, [x], False, appid_reference_set, language, popularity_measure_str, quality_measure_str)[0]
 
     if language is None:
-        if popularity_measure_str is None or popularity_measure_str == 'num_players':
-            vec = [float(game[get_index_num_players()]) for game in D.values()]
-        elif popularity_measure_str == 'num_owners':
+        if popularity_measure_str is None or popularity_measure_str == 'num_owners':
             vec = [float(game[get_index_num_owners()]) for game in D.values()]
         else:
             assert (popularity_measure_str == 'num_reviews')
@@ -284,10 +279,6 @@ def get_index_num_owners():
     return 3
 
 
-def get_index_num_players():
-    return 4
-
-
 def get_index_num_positive_reviews():
     return 7
 
@@ -317,7 +308,7 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), 
     #           - tags to filter-out
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
     #           - bool to decide whether to optimize alpha at run-time, or to rely on a hard-coded value instead
-    #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
+    #           - optional choice of popularity measure: either 'num_owners', or 'num_reviews'
     #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     #
     # Output:   ranking of hidden gems
@@ -329,15 +320,7 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), 
         optimal_parameters = optimize_for_alpha(D, True, appid_hidden_gems_reference_set, language,
                                                 popularity_measure_str, quality_measure_str)
     else:
-        if popularity_measure_str is None or popularity_measure_str == 'num_players':
-            if quality_measure_str is None or quality_measure_str == 'wilson_score':
-                # Optimal parameter as computed on December 18, 2017
-                optimal_parameters = [pow(10, 6.40)]
-            else:
-                assert (quality_measure_str == 'bayesian_rating')
-                # Optimal parameter as computed on March 22, 2018
-                optimal_parameters = [pow(10, 6.47)]
-        elif popularity_measure_str == 'num_owners':
+        if popularity_measure_str is None or popularity_measure_str == 'num_owners':
             if quality_measure_str is None or quality_measure_str == 'wilson_score':
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 2156.36
@@ -387,11 +370,9 @@ def run_workflow(quality_measure_str='wilson_score',
     #
     # Input:
     #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
-    #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
-    #               Warnings:
-    #                   - 'num_players' is NOT available because SteamSpy API does not provide this information anymore.
-    #                   - 'num_owners' is ONLY available for the global ranking of hidden gems.
-    #                      To make it available to regional rankings, fix the code in 'steam-reviews' Github repository.
+    #           - optional choice of popularity measure: either 'num_owners', or 'num_reviews'
+    #               Warning: 'num_owners' is ONLY available for the global ranking of hidden gems.
+    #               To make it available to regional rankings, fix the code in 'steam-reviews' Github repository.
     #           - bool to decide whether to optimize alpha at run-time, or to rely on a hard-coded value instead
     #           - maximal length of the ranking
     #               The higher the value, the longer it takes to compute and print the ranking.
