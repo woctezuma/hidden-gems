@@ -23,7 +23,7 @@ def get_todays_steam_spy_data():
     return data
 
 
-def download_steam_spy_data(json_filename="steamspy.json", genre=None, tag=None):
+def download_steam_spy_data(json_filename="steamspy.json", genre=None):
     # Data folder
     data_path = "data/"
     # Reference of the following line: https://stackoverflow.com/a/14364249
@@ -73,7 +73,7 @@ def get_appid_by_keyword(keyword):
     json_filename = current_date + json_filename_suffixe
 
     # Download data which meta-data includes this keyword as genre
-    data_genre = download_steam_spy_data("genre_" + keyword + "_" + json_filename, keyword, None)
+    data_genre = download_steam_spy_data("genre_" + keyword + "_" + json_filename, keyword)
 
     app_ids = set(data_genre.keys())
 
