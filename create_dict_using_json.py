@@ -3,6 +3,15 @@
 from appids import appidContradiction
 
 
+def get_mid_of_interval(interval_as_str):
+    interval_as_str_formatted = [s.replace(',', '') for s in interval_as_str.split('..')]
+    lower_bound = float(interval_as_str_formatted[0])
+    upper_bound = float(interval_as_str_formatted[1])
+    mid_value = (lower_bound + upper_bound) / 2
+
+    return mid_value
+
+
 def create_local_dictionary(data, output_filename, appid_reference_set={appidContradiction},
                             quantile_for_our_wilson_score=0.95):
     # Objective: compute a score for one Steam game.
@@ -40,6 +49,10 @@ def create_local_dictionary(data, output_filename, appid_reference_set={appidCon
     for appid in data.keys():
         name = data[appid]['name']
         num_owners = data[appid]['owners']
+        try:
+            num_owners = float(num_owners)
+        except ValueError:
+            num_owners = get_mid_of_interval(num_owners)
         try:
             num_players = data[appid]['players_forever']
         except KeyError:
