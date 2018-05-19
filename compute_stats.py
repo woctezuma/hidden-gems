@@ -212,9 +212,7 @@ def choose_x0(vec):
 def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction},
                        language=None,
                        popularity_measure_str=None,
-                       quality_measure_str=None,
-                       lower_search_bound=1,  # minimal possible value of alpha is 1 people
-                       upper_search_bound=pow(10, 8)  # maximal possible value of alpha is 8 billion people
+                       quality_measure_str=None
                        ):
     # Objective: find the optimal value of the parameter alpha
     #
@@ -223,39 +221,33 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     #           - optional set of appID of games chosen as references of hidden gems. By default, only "Contradiction".
     #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
     #           - optional choice of popularity measure: either 'num_players', 'num_owners', or 'num_reviews'
-    #           - optional lower bound for the optimization procedure of the parameter alpha
-    #           - optional upper bound for the optimization procedure of the parameter alpha
     # Output:   list of optimal parameters (by default, only one parameter is optimized: alpha)
 
     from math import log10
-    from scipy.optimize import differential_evolution, minimize
+    from scipy.optimize import minimize
 
     # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
     def function_to_minimize(x):
         return rank_games(D, [x], False, appid_reference_set, language, popularity_measure_str, quality_measure_str)[0]
 
-    # Bounds for the optimization procedure of the parameter alpha
-    my_bounds = [(lower_search_bound, upper_search_bound)]
-
-    if popularity_measure_str is None or popularity_measure_str == 'num_players':
-        chosen_x0 = choose_x0([D[appid][get_index_num_players()] for appid in D])
-        # TODO If SteamSpy provides player data ever again, try Nelder-Mead with x0, instead of Differential Evolution.
-        res = differential_evolution(function_to_minimize, bounds=my_bounds)
-
-    elif popularity_measure_str == 'num_owners':
-        chosen_x0 = choose_x0([D[appid][get_index_num_owners()] for appid in D])
-        res = minimize(fun=function_to_minimize, x0=chosen_x0, method='Nelder-Mead')
+    if language is None:
+        if popularity_measure_str is None or popularity_measure_str == 'num_players':
+            vec = [float(game[get_index_num_players()]) for game in D.values()]
+        elif popularity_measure_str == 'num_owners':
+            try:
+                vec = [float(game[get_index_num_owners()]) for game in D.values()]
+            except ValueError:
+                vec = [get_mid_of_interval(game[get_index_num_owners()]) for game in D.values()]
+        else:
+            assert (popularity_measure_str == 'num_reviews')
+            vec = [get_num_reviews(game) for game in D.values()]
 
     else:
-        assert (popularity_measure_str == 'num_reviews')
-        chosen_x0 = choose_x0([get_num_reviews(D[appid]) for appid in D])
-        # noinspection PyTypeChecker
-        res = minimize(fun=function_to_minimize, x0=chosen_x0, method='Nelder-Mead')
+        vec = [game[language][popularity_measure_str] for game in D.values()]
 
-    try:
-        optimal_parameters = [res.x]
-    except AttributeError:
-        optimal_parameters = [res]
+    res = minimize(fun=function_to_minimize, x0=choose_x0(vec), method='Nelder-Mead')
+
+    optimal_parameters = [res.x]
 
     if verbose:
         # Quick print in order to check that the upper search bound is not too close to our optimal alpha
@@ -336,25 +328,8 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), 
     from download_json import get_appid_by_keyword_list_to_include, get_appid_by_keyword_list_to_exclude
 
     if perform_optimization_at_runtime:
-        if language is None:
-            if popularity_measure_str is None or popularity_measure_str == 'num_players':
-                vec = [float(game[get_index_num_players()]) for game in D.values()]
-            elif popularity_measure_str == 'num_owners':
-                try:
-                    vec = [float(game[get_index_num_owners()]) for game in D.values()]
-                except ValueError:
-                    vec = [get_mid_of_interval(game[get_index_num_owners()]) for game in D.values()]
-            else:
-                assert (popularity_measure_str == 'num_reviews')
-
-                vec = [get_num_reviews(game) for game in D.values()]
-
-        else:
-            vec = [game[language][popularity_measure_str] for game in D.values()]
-
-        lower_search_bound = 1 + int(max(vec))
         optimal_parameters = optimize_for_alpha(D, True, appid_hidden_gems_reference_set, language,
-                                                popularity_measure_str, quality_measure_str, lower_search_bound)
+                                                popularity_measure_str, quality_measure_str)
     else:
         if popularity_measure_str is None or popularity_measure_str == 'num_players':
             if quality_measure_str is None or quality_measure_str == 'wilson_score':
