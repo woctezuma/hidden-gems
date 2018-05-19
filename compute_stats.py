@@ -240,17 +240,16 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     if popularity_measure_str is None or popularity_measure_str == 'num_players':
         chosen_x0 = choose_x0([D[appid][get_index_num_players()] for appid in D])
         res = differential_evolution(function_to_minimize, bounds=my_bounds)
-        # res = minimize(fun=function_to_minimize, x0=chosen_x0, method='Powell')
+
     elif popularity_measure_str == 'num_owners':
         chosen_x0 = choose_x0([D[appid][get_index_num_owners()] for appid in D])
-        res = differential_evolution(function_to_minimize, bounds=my_bounds)
-        # res = minimize(fun=function_to_minimize, x0=chosen_x0, method='Powell')
+        res = minimize(fun=function_to_minimize, x0=chosen_x0, method='Nelder-Mead')
+
     else:
         assert (popularity_measure_str == 'num_reviews')
-        chosen_x0 = choose_x0([D[appid][get_index_num_positive_reviews()] + D[appid][get_index_num_negative_reviews()]
-                               for appid in D])
+        chosen_x0 = choose_x0([get_num_reviews(D[appid]) for appid in D])
         # noinspection PyTypeChecker
-        res = minimize(fun=function_to_minimize, x0=chosen_x0, method='Powell')
+        res = minimize(fun=function_to_minimize, x0=chosen_x0, method='Nelder-Mead')
 
     try:
         optimal_parameters = [res.x]
@@ -307,6 +306,10 @@ def get_index_num_negative_reviews():
     return 8
 
 
+def get_num_reviews(game):
+    return int(game[get_index_num_positive_reviews()]) + int(game[get_index_num_negative_reviews()])
+
+
 # noinspection PyPep8Naming
 def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), keywords_to_exclude=list(),
                     language=None,
@@ -343,9 +346,6 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), 
             else:
                 assert (popularity_measure_str == 'num_reviews')
 
-                def get_num_reviews(game):
-                    return int(game[get_index_num_positive_reviews()]) + int(game[get_index_num_negative_reviews()])
-
                 vec = [get_num_reviews(game) for game in D.values()]
 
         else:
@@ -365,21 +365,25 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), 
                 optimal_parameters = [pow(10, 6.47)]
         elif popularity_measure_str == 'num_owners':
             if quality_measure_str is None or quality_measure_str == 'wilson_score':
-                # Optimal parameter as computed on May 3, 2017
-                optimal_parameters = [pow(10, 8)]  # TODO improve by running optimization again with higher upper bound
+                # Optimal parameter as computed on May 19, 2018
+                # Objective function to minimize:	 2156.36
+                optimal_parameters = [pow(10, 6.52)]
             else:
                 assert (quality_measure_str == 'bayesian_rating')
-                # Optimal parameter as computed on May 3, 2017
-                optimal_parameters = [pow(10, 8)]  # TODO improve by running optimization again with higher upper bound
+                # Optimal parameter as computed on May 19, 2018
+                # Objective function to minimize:	 1900.00
+                optimal_parameters = [pow(10, 6.63)]
         else:
             assert (popularity_measure_str == 'num_reviews')
             if quality_measure_str is None or quality_measure_str == 'wilson_score':
                 # Optimal parameter as computed on May 19, 2018
+                # Objective function to minimize:	 2372.90
                 optimal_parameters = [pow(10, 4.83)]
             else:
                 assert (quality_measure_str == 'bayesian_rating')
                 # Optimal parameter as computed on May 19, 2018
-                optimal_parameters = [pow(10, 4.96)]
+                # Objective function to minimize:	 2094.00
+                optimal_parameters = [pow(10, 4.89)]
 
     # Filter-in games which meta-data includes ALL the following keywords
     # Caveat: the more keywords, the fewer games are filtered-in! cf. intersection of sets in the code
