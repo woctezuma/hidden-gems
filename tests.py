@@ -111,8 +111,6 @@ class TestComputeStatsMethods(unittest.TestCase):
                                                    keywords_to_exclude=None))
 
     def test_run_workflow_while_removing_reference_hidden_gems(self):
-        from appids import appid_hidden_gems_reference_set
-
         create_dict_using_json.main()
 
         # A dictionary will be stored in the following text file
@@ -125,7 +123,7 @@ class TestComputeStatsMethods(unittest.TestCase):
             # noinspection PyPep8Naming
             D = eval(lines[1])
 
-        for appid in appid_hidden_gems_reference_set:
+        for appid in appids.appid_hidden_gems_reference_set:
             print('Ensuring reference {} (appID={}) does not appear in the final ranking.'.format(D[appid][0], appid))
             D[appid][-1] = False
             # If True, UnEpic should end up about rank 1828. Otherwise, UnEpic should not appear on there.
