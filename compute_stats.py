@@ -239,6 +239,7 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
 
     if popularity_measure_str is None or popularity_measure_str == 'num_players':
         chosen_x0 = choose_x0([D[appid][get_index_num_players()] for appid in D])
+        # TODO If SteamSpy provides player data ever again, try Nelder-Mead with x0, instead of Differential Evolution.
         res = differential_evolution(function_to_minimize, bounds=my_bounds)
 
     elif popularity_measure_str == 'num_owners':
