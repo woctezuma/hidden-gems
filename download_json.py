@@ -39,11 +39,6 @@ def download_steam_spy_data(json_filename="steamspy.json", genre=None, tag=None)
         print("Focusing on genre " + genre)
         formatted_str = genre.replace(" ", "+")
         steamspy_url = "http://steamspy.com/api.php?request=genre&genre=" + formatted_str
-    # Provide a possibility to download data for a given tag
-    elif bool(not (tag is None)):
-        print("Focusing on tag " + tag)
-        formatted_str = tag.replace(" ", "+")
-        steamspy_url = "http://steamspy.com/api.php?request=tag&tag=" + formatted_str
 
     try:
         with open(data_filename, 'r', encoding="utf8") as in_json_file:
