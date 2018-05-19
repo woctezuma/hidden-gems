@@ -386,6 +386,7 @@ def run_workflow(quality_measure_str='wilson_score',
                  popularity_measure_str='num_reviews',
                  perform_optimization_at_runtime=True,
                  num_top_games_to_print=250,
+                 verbose=False,
                  language=None,
                  keywords_to_include=None,
                  keywords_to_exclude=None):
@@ -434,12 +435,10 @@ def run_workflow(quality_measure_str='wilson_score',
     ranking = compute_ranking(D, num_top_games_to_print, keywords_to_include, keywords_to_exclude,
                               language, perform_optimization_at_runtime, popularity_measure_str, quality_measure_str)
 
-    only_show_appid = False
-    save_ranking_to_file(output_filename, ranking, only_show_appid, verbose=True)
+    save_ranking_to_file(output_filename, ranking, only_show_appid=False, verbose=verbose)
     # NB: verbose is set to True, so that I can check the results even with Travis integration on Github.
 
-    only_show_appid = True
-    save_ranking_to_file(output_filename_only_appids, ranking, only_show_appid)
+    save_ranking_to_file(output_filename_only_appids, ranking, only_show_appid=True, verbose=verbose)
 
     return True
 
@@ -449,6 +448,7 @@ def main():
                  popularity_measure_str='num_reviews',  # Either 'num_reviews' or 'num_owners'
                  perform_optimization_at_runtime=True,
                  num_top_games_to_print=1000,
+                 verbose=False,
                  language=None,
                  keywords_to_include=None,
                  keywords_to_exclude=None)

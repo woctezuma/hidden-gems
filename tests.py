@@ -57,7 +57,8 @@ class TestComputeStatsMethods(unittest.TestCase):
         self.assertTrue(compute_stats.run_workflow(quality_measure_str='wilson_score',
                                                    popularity_measure_str='num_reviews',
                                                    perform_optimization_at_runtime=False,
-                                                   num_top_games_to_print=50))
+                                                   num_top_games_to_print=50,
+                                                   verbose=True))
 
     def test_run_workflow_wilson_owners(self):
         create_dict_using_json.main()
@@ -65,7 +66,8 @@ class TestComputeStatsMethods(unittest.TestCase):
         self.assertTrue(compute_stats.run_workflow(quality_measure_str='wilson_score',
                                                    popularity_measure_str='num_owners',
                                                    perform_optimization_at_runtime=False,
-                                                   num_top_games_to_print=50))
+                                                   num_top_games_to_print=50,
+                                                   verbose=True))
 
     def test_run_workflow_bayes_reviews(self):
         create_dict_using_json.main()
@@ -73,7 +75,8 @@ class TestComputeStatsMethods(unittest.TestCase):
         self.assertTrue(compute_stats.run_workflow(quality_measure_str='bayesian_rating',
                                                    popularity_measure_str='num_reviews',
                                                    perform_optimization_at_runtime=False,
-                                                   num_top_games_to_print=50))
+                                                   num_top_games_to_print=50,
+                                                   verbose=True))
 
     def test_run_workflow_bayes_owners(self):
         create_dict_using_json.main()
@@ -81,7 +84,8 @@ class TestComputeStatsMethods(unittest.TestCase):
         self.assertTrue(compute_stats.run_workflow(quality_measure_str='bayesian_rating',
                                                    popularity_measure_str='num_owners',
                                                    perform_optimization_at_runtime=False,
-                                                   num_top_games_to_print=50))
+                                                   num_top_games_to_print=50,
+                                                   verbose=True))
 
     # TODO
     # def test_run_workflow_language(self):
@@ -91,6 +95,7 @@ class TestComputeStatsMethods(unittest.TestCase):
     #                                                popularity_measure_str='num_reviews',
     #                                                perform_optimization_at_runtime=False,
     #                                                num_top_games_to_print=50,
+    #                                                verbose=True,
     #                                                language='french'))
 
     def test_run_workflow_filtering_in(self):
@@ -100,6 +105,7 @@ class TestComputeStatsMethods(unittest.TestCase):
                                                    popularity_measure_str='num_reviews',
                                                    perform_optimization_at_runtime=False,
                                                    num_top_games_to_print=50,
+                                                   verbose=True,
                                                    language=None,
                                                    keywords_to_include=["Early Access", "Free To Play"],
                                                    keywords_to_exclude=None))
@@ -111,6 +117,7 @@ class TestComputeStatsMethods(unittest.TestCase):
                                                    popularity_measure_str='num_reviews',
                                                    perform_optimization_at_runtime=False,
                                                    num_top_games_to_print=50,
+                                                   verbose=False,
                                                    language=None,
                                                    keywords_to_include=["Rogue-Like"],
                                                    keywords_to_exclude=None))
@@ -122,6 +129,7 @@ class TestComputeStatsMethods(unittest.TestCase):
                                                    popularity_measure_str='num_reviews',
                                                    perform_optimization_at_runtime=False,
                                                    num_top_games_to_print=50,
+                                                   verbose=False,
                                                    language=None,
                                                    keywords_to_include=None,
                                                    keywords_to_exclude=["Visual Novel", "Anime"]))
@@ -132,7 +140,8 @@ class TestComputeStatsMethods(unittest.TestCase):
         self.assertTrue(compute_stats.run_workflow(quality_measure_str='wilson_score',
                                                    popularity_measure_str='num_owners',
                                                    perform_optimization_at_runtime=True,
-                                                   num_top_games_to_print=50))
+                                                   num_top_games_to_print=50,
+                                                   verbose=False))
 
     def test_main(self):
         create_dict_using_json.main()
