@@ -110,6 +110,40 @@ class TestComputeStatsMethods(unittest.TestCase):
                                                    keywords_to_include=["Early Access", "Free To Play"],
                                                    keywords_to_exclude=None))
 
+    def test_run_workflow_while_removing_reference_hidden_gems(self):
+        from appids import appid_hidden_gems_reference_set
+
+        create_dict_using_json.main()
+
+        # A dictionary will be stored in the following text file
+        dict_filename = "dict_top_rated_games_on_steam.txt"
+
+        # Import the local dictionary from the input file
+        with open(dict_filename, 'r', encoding="utf8") as infile:
+            lines = infile.readlines()
+            # The dictionary is on the second line
+            # noinspection PyPep8Naming
+            D = eval(lines[1])
+
+        for appid in appid_hidden_gems_reference_set:
+            print('Ensuring reference {} (appID={}) does not appear in the final ranking.'.format(D[appid][0], appid))
+            D[appid][-1] = False
+            # If True, UnEpic should end up about rank 1828. Otherwise, UnEpic should not appear on there.
+
+        # Save the dictionary to a text file
+        with open(dict_filename, 'w', encoding="utf8") as outfile:
+            print(create_dict_using_json.get_leading_comment(), file=outfile)
+            print(D, file=outfile)
+
+        self.assertTrue(compute_stats.run_workflow(quality_measure_str='wilson_score',
+                                                   popularity_measure_str='num_reviews',
+                                                   perform_optimization_at_runtime=False,
+                                                   num_top_games_to_print=2000,
+                                                   verbose=True,
+                                                   language=None,
+                                                   keywords_to_include=["Action", "Indie", "RPG"],
+                                                   keywords_to_exclude=None))
+
     def test_run_workflow_filtering_in_unknown_tag(self):
         create_dict_using_json.main()
 
