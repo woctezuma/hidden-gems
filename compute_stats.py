@@ -3,7 +3,6 @@
 import numpy as np
 
 from appids import appidContradiction
-from create_dict_using_json import get_mid_of_interval
 
 
 def compute_score_generic(my_tuple, parameter_list, language=None,
@@ -36,10 +35,7 @@ def compute_score_generic(my_tuple, parameter_list, language=None,
         # noinspection PyUnusedLocal
         bool_game_should_appear_in_ranking = my_tuple[-1]
 
-        try:
-            num_owners = float(num_owners)
-        except ValueError:
-            num_owners = get_mid_of_interval(num_owners)
+        num_owners = float(num_owners)
         try:
             num_players = float(num_players)
         except TypeError:
@@ -234,10 +230,7 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
         if popularity_measure_str is None or popularity_measure_str == 'num_players':
             vec = [float(game[get_index_num_players()]) for game in D.values()]
         elif popularity_measure_str == 'num_owners':
-            try:
-                vec = [float(game[get_index_num_owners()]) for game in D.values()]
-            except ValueError:
-                vec = [get_mid_of_interval(game[get_index_num_owners()]) for game in D.values()]
+            vec = [float(game[get_index_num_owners()]) for game in D.values()]
         else:
             assert (popularity_measure_str == 'num_reviews')
             vec = [get_num_reviews(game) for game in D.values()]
