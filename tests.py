@@ -96,7 +96,7 @@ class TestComputeStatsMethods(unittest.TestCase):
     #                                                perform_optimization_at_runtime=False,
     #                                                num_top_games_to_print=50,
     #                                                verbose=True,
-    #                                                language='french'))
+    #                                                language='fr'))
 
     def test_run_workflow_filtering_in(self):
         create_dict_using_json.main()
