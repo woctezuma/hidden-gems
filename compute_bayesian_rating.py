@@ -54,7 +54,7 @@ def main():
         game['num_votes'] = num_reviews
 
         bayesian_rating = compute_bayesian_score(game, prior)
-        print("#reviews = " + str(num_reviews) + "\tBayesian rating = " + str(bayesian_rating))
+        print('#reviews = {:6} \t Bayesian rating = {:.4f}'.format(num_reviews, bayesian_rating))
 
     return True
 
