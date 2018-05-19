@@ -104,6 +104,17 @@ class TestComputeStatsMethods(unittest.TestCase):
                                                    keywords_to_include=["Early Access", "Free To Play"],
                                                    keywords_to_exclude=None))
 
+    def test_run_workflow_filtering_in_unknown_tag(self):
+        create_dict_using_json.main()
+
+        self.assertTrue(compute_stats.run_workflow(quality_measure_str='wilson_score',
+                                                   popularity_measure_str='num_reviews',
+                                                   perform_optimization_at_runtime=False,
+                                                   num_top_games_to_print=50,
+                                                   language=None,
+                                                   keywords_to_include=["Rogue-Like"],
+                                                   keywords_to_exclude=None))
+
     def test_run_workflow_filtering_out(self):
         create_dict_using_json.main()
 
