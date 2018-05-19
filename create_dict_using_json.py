@@ -12,6 +12,14 @@ def get_mid_of_interval(interval_as_str):
     return mid_value
 
 
+def get_leading_comment():
+    # First line of the text file containing the output dictionary
+    leading_comment = "# Dictionary with key=appid and value=list of name, Wilson score, Bayesian rating, #owners, " \
+                      "#players, median playtime, average playtime, #positive reviews, #negative reviews, boolean " \
+                      "whether to include the game in the ranking"
+    return leading_comment
+
+
 def create_local_dictionary(data, output_filename, appid_reference_set={appidContradiction},
                             quantile_for_our_wilson_score=0.95):
     # Objective: compute a score for one Steam game.
@@ -96,14 +104,9 @@ def create_local_dictionary(data, output_filename, appid_reference_set={appidCon
 
             D[appid] = stats_save
 
-    # First line of the text file containing the output dictionary
-    leading_comment = "# Dictionary with key=appid and value=list of name, Wilson score, Bayesian rating, #owners, " \
-                      "#players, median playtime, average playtime, #positive reviews, #negative reviews, boolean " \
-                      "whether to include the game in the ranking"
-
     # Save the dictionary to a text file
     with open(output_filename, 'w', encoding="utf8") as outfile:
-        print(leading_comment, file=outfile)
+        print(get_leading_comment(), file=outfile)
         print(D, file=outfile)
 
 
