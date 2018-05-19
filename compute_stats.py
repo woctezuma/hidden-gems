@@ -131,21 +131,19 @@ def rank_games(D, parameter_list, verbose=False, appid_reference_set={appidContr
 
     reference_dict = {}
     for appid_reference in appid_reference_set:
-        try:
-            # Find the rank of this game used as a reference of a "hidden gem"
-            name_game_ref_for_hidden_gem = D[appid_reference][name_index]
-            rank_game_used_as_reference_for_hidden_gem = sorted_game_names.index(name_game_ref_for_hidden_gem) + 1
 
-            # Find whether the reference game should appear in the ranking (it might not due to tag filters)
-            if language is None:
-                bool_reference_game_should_appear_in_ranking = D[appid_reference][-1]
-            else:
-                bool_reference_game_should_appear_in_ranking = True
+        # Find the rank of this game used as a reference of a "hidden gem"
+        name_game_ref_for_hidden_gem = D[appid_reference][name_index]
+        rank_game_used_as_reference_for_hidden_gem = sorted_game_names.index(name_game_ref_for_hidden_gem) + 1
 
-            reference_dict[appid_reference] = [rank_game_used_as_reference_for_hidden_gem,
-                                               bool_reference_game_should_appear_in_ranking]
-        except KeyError:
-            continue
+        # Find whether the reference game should appear in the ranking (it might not due to tag filters)
+        if language is None:
+            bool_reference_game_should_appear_in_ranking = D[appid_reference][-1]
+        else:
+            bool_reference_game_should_appear_in_ranking = True
+
+        reference_dict[appid_reference] = [rank_game_used_as_reference_for_hidden_gem,
+                                           bool_reference_game_should_appear_in_ranking]
 
     ranks_of_reference_hidden_gems = [v[0] for k, v in reference_dict.items()]
 
