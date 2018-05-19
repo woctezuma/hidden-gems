@@ -79,11 +79,8 @@ def get_appid_by_keyword(keyword):
 
     # Download data which meta-data includes this keyword as genre
     data_genre = download_steam_spy_data("genre_" + keyword + "_" + json_filename, keyword, None)
-    # Download data which meta-data includes this keyword as tag
-    data_tag = download_steam_spy_data("tag_" + keyword + "_" + json_filename, None, keyword)
 
-    # Merge appIDs which genres or tags include the chosen keyword
-    app_ids = set(data_genre.keys()).union(set(data_tag.keys()))
+    app_ids = set(data_genre.keys())
 
     return app_ids
 
