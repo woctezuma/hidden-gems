@@ -1,6 +1,5 @@
 # Objective: choose a prior and compute a Bayesian rating
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -12,6 +11,12 @@ def choose_prior(observations, verbose=False):
 
     # Data visualization to help choose a good prior
     if verbose:
+        import matplotlib
+        # For Travis integration:
+        matplotlib.use('Agg')
+
+        import matplotlib.pyplot as plt
+
         score_max = np.max(scores)
         vote_max = np.max(votes)
 

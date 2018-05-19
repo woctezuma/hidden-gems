@@ -22,11 +22,22 @@ class TestDownloadJsonMethods(unittest.TestCase):
 
 class TestComputeWilsonScoreMethods(unittest.TestCase):
 
+    def test_compute_wilson_score(self):
+        wilson_score_value = compute_wilson_score.compute_wilson_score(num_pos=90, num_neg=10, confidence=0.975)
+        self.assertGreater(wilson_score_value, 0)
+
     def test_main(self):
         self.assertTrue(compute_wilson_score.main())
 
 
 class TestComputeBayesianRatingMethods(unittest.TestCase):
+
+    def test_choose_prior(self):
+        observations = {'Blockbuster': {'score': 0.85, 'num_votes': 1000},
+                        'Average game': {'score': 0.75, 'num_votes': 100},
+                        'Hidden gem': {'score': 0.95, 'num_votes': 10}}
+        bayes_prior = compute_bayesian_rating.choose_prior(observations, verbose=True)
+        self.assertDictEqual(bayes_prior, {'score': 0.85, 'num_votes': 100})
 
     def test_main(self):
         self.assertTrue(compute_bayesian_rating.main())
