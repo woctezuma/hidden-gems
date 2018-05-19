@@ -1,15 +1,9 @@
 # Objective: compute a score for each Steam game and then rank all the games while favoring hidden gems.
 
+import numpy as np
+
 from appids import appidContradiction
-
-
-def get_mid_of_interval(interval_as_str):
-    interval_as_str_formatted = [s.replace(',', '') for s in interval_as_str.split('..')]
-    lower_bound = float(interval_as_str_formatted[0])
-    upper_bound = float(interval_as_str_formatted[1])
-    mid_value = (lower_bound + upper_bound) / 2
-
-    return mid_value
+from create_dict_using_json import get_mid_of_interval
 
 
 def compute_score_generic(my_tuple, parameter_list, language=None,
@@ -114,8 +108,6 @@ def rank_games(D, parameter_list, verbose=False, appid_reference_set={appidContr
     #           - the ranking to be ultimately displayed. A list of 3-tuple: (rank, game_name, appid).
     #             If verbose was set to None, the returned ranking is empty.
 
-    import numpy as np
-
     # Boolean to decide whether printing the ranking of the top 1000 games, rather than the ranking of the whole Steam
     # catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
     print_subset_of_top_games = bool(not (num_top_games_to_print is None))
@@ -212,6 +204,10 @@ def rank_games(D, parameter_list, verbose=False, appid_reference_set={appidContr
     return scalar_summarizing_ranks_of_reference_hidden_gems, ranking_list
 
 
+def choose_x0(vec):
+    return np.median(vec)
+
+
 # noinspection PyPep8Naming
 def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction},
                        language=None,
@@ -241,11 +237,20 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     # Bounds for the optimization procedure of the parameter alpha
     my_bounds = [(lower_search_bound, upper_search_bound)]
 
-    if popularity_measure_str == 'num_reviews':
-        # noinspection PyTypeChecker
-        res = minimize(fun=function_to_minimize, x0=10, method='Powell')
-    else:
+    if popularity_measure_str is None or popularity_measure_str == 'num_players':
+        chosen_x0 = choose_x0([D[appid][get_index_num_players()] for appid in D])
         res = differential_evolution(function_to_minimize, bounds=my_bounds)
+        # res = minimize(fun=function_to_minimize, x0=chosen_x0, method='Powell')
+    elif popularity_measure_str == 'num_owners':
+        chosen_x0 = choose_x0([D[appid][get_index_num_owners()] for appid in D])
+        res = differential_evolution(function_to_minimize, bounds=my_bounds)
+        # res = minimize(fun=function_to_minimize, x0=chosen_x0, method='Powell')
+    else:
+        assert (popularity_measure_str == 'num_reviews')
+        chosen_x0 = choose_x0([D[appid][get_index_num_positive_reviews()] + D[appid][get_index_num_negative_reviews()]
+                               for appid in D])
+        # noinspection PyTypeChecker
+        res = minimize(fun=function_to_minimize, x0=chosen_x0, method='Powell')
 
     try:
         optimal_parameters = [res.x]
@@ -286,6 +291,22 @@ def save_ranking_to_file(output_filename, ranking_list, only_show_appid=False, v
                     print(sentence)
 
 
+def get_index_num_owners():
+    return 3
+
+
+def get_index_num_players():
+    return 4
+
+
+def get_index_num_positive_reviews():
+    return 7
+
+
+def get_index_num_negative_reviews():
+    return 8
+
+
 # noinspection PyPep8Naming
 def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), keywords_to_exclude=list(),
                     language=None,
@@ -312,30 +333,25 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), 
 
     if perform_optimization_at_runtime:
         if language is None:
-            index_num_owners = 3
-            index_num_players = 4
-            index_num_positive_reviews = 7
-            index_num_negative_reviews = 8
-
             if popularity_measure_str is None or popularity_measure_str == 'num_players':
-                vec = [int(game[index_num_players]) for game in D.values()]
+                vec = [float(game[get_index_num_players()]) for game in D.values()]
             elif popularity_measure_str == 'num_owners':
                 try:
-                    vec = [int(game[index_num_owners]) for game in D.values()]
+                    vec = [float(game[get_index_num_owners()]) for game in D.values()]
                 except ValueError:
-                    vec = [int(get_mid_of_interval(game[index_num_owners])) for game in D.values()]
+                    vec = [get_mid_of_interval(game[get_index_num_owners()]) for game in D.values()]
             else:
                 assert (popularity_measure_str == 'num_reviews')
 
                 def get_num_reviews(game):
-                    return int(game[index_num_positive_reviews]) + int(game[index_num_negative_reviews])
+                    return int(game[get_index_num_positive_reviews()]) + int(game[get_index_num_negative_reviews()])
 
                 vec = [get_num_reviews(game) for game in D.values()]
 
         else:
             vec = [game[language][popularity_measure_str] for game in D.values()]
 
-        lower_search_bound = 1 + max(vec)
+        lower_search_bound = 1 + int(max(vec))
         optimal_parameters = optimize_for_alpha(D, True, appid_hidden_gems_reference_set, language,
                                                 popularity_measure_str, quality_measure_str, lower_search_bound)
     else:
