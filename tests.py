@@ -126,6 +126,14 @@ class TestComputeStatsMethods(unittest.TestCase):
                                                    keywords_to_include=None,
                                                    keywords_to_exclude=["Visual Novel", "Anime"]))
 
+    def test_run_workflow_wilson_owners_optimized_at_runtime(self):
+        create_dict_using_json.main()
+
+        self.assertTrue(compute_stats.run_workflow(quality_measure_str='wilson_score',
+                                                   popularity_measure_str='num_owners',
+                                                   perform_optimization_at_runtime=True,
+                                                   num_top_games_to_print=50))
+
     def test_main(self):
         create_dict_using_json.main()
 
