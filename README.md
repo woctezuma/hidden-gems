@@ -81,4 +81,6 @@ The ranking of hidden gems is favorably biased towards high-quality games which 
 * [a NeoGAF post](http://www.neogaf.com/forum/showpost.php?p=241218621&postcount=5840) explaining the method,
 * [a NeoGAF post](http://www.neogaf.com/forum/showpost.php?p=241224894&postcount=5869) explaining the idea behind the optimization of the only free parameter.
 * [the PC Gamer article](http://www.pcgamer.com/this-algorithm-picks-out-steams-best-hidden-gems/) which provides nice insights regarding our approach.
-
+* [my PyPI package to download Steam reviews](https://github.com/woctezuma/download-steam-reviews)
+* [my original repository for regional rankings of hidden gems](https://github.com/woctezuma/steam-reviews)
+* [a pre-downloaded database of Steam reviews](https://github.com/woctezuma/steam-reviews-data)
