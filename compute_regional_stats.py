@@ -360,7 +360,8 @@ def prepare_dictionary_for_ranking_of_hidden_gems(steam_spy_dict, game_feature_d
     if compute_prior_on_whole_steam_catalog:
 
         whole_catalog_prior = choose_language_independent_prior_based_on_whole_steam_catalog(steam_spy_dict,
-                                                                                             all_languages)
+                                                                                             all_languages,
+                                                                                             verbose)
 
         print('Estimating prior (score and num_votes) on the whole Steam catalog (' + str(
             len(steam_spy_dict)) + ' games.')
@@ -368,10 +369,13 @@ def prepare_dictionary_for_ranking_of_hidden_gems(steam_spy_dict, game_feature_d
 
     else:
         if compute_language_specific_prior:
-            subset_catalog_prior = choose_language_specific_prior_based_on_hidden_gems(game_feature_dict, all_languages)
+            subset_catalog_prior = choose_language_specific_prior_based_on_hidden_gems(game_feature_dict,
+                                                                                       all_languages,
+                                                                                       verbose)
         else:
             subset_catalog_prior = choose_language_independent_prior_based_on_hidden_gems(game_feature_dict,
-                                                                                          all_languages)
+                                                                                          all_languages,
+                                                                                          verbose)
 
         print('Estimating prior (score and num_votes) on a pre-computed set of ' + str(
             len(game_feature_dict)) + ' hidden gems.')
