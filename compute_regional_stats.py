@@ -513,7 +513,8 @@ def run_regional_workflow(quality_measure_str='wilson_score',
     if keywords_to_exclude is None:
         keywords_to_exclude = []  # ["Visual Novel", "Anime"]
 
-    download_steam_reviews()
+    if not load_from_cache:
+        download_steam_reviews()
 
     (game_feature_dict, all_languages) = get_input_data(load_from_cache)
 
