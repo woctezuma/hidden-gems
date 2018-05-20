@@ -52,6 +52,126 @@ class TestCreateDictUsingJsonMethods(unittest.TestCase):
 
 class TestComputeRegionalStatsMethods(unittest.TestCase):
 
+    def test_run_regional_workflow_wilson_reviews(self):
+        quality_measure_str = 'wilson_score'  # Either 'wilson_score' or 'bayesian_rating'
+        popularity_measure_str = 'num_reviews'  # Either 'num_reviews' or 'num_owners'
+
+        self.assertTrue(compute_regional_stats.run_regional_workflow(quality_measure_str=quality_measure_str,
+                                                                     popularity_measure_str=popularity_measure_str,
+                                                                     perform_optimization_at_runtime=True,
+                                                                     num_top_games_to_print=50,
+                                                                     verbose=False,
+                                                                     keywords_to_include=None,
+                                                                     keywords_to_exclude=None,
+                                                                     load_from_cache=True,
+                                                                     compute_prior_on_whole_steam_catalog=False,
+                                                                     compute_language_specific_prior=False))
+
+    def test_run_regional_workflow_wilson_owners(self):
+        quality_measure_str = 'wilson_score'  # Either 'wilson_score' or 'bayesian_rating'
+        popularity_measure_str = 'num_owners'  # Either 'num_reviews' or 'num_owners'
+
+        self.assertTrue(compute_regional_stats.run_regional_workflow(quality_measure_str=quality_measure_str,
+                                                                     popularity_measure_str=popularity_measure_str,
+                                                                     perform_optimization_at_runtime=True,
+                                                                     num_top_games_to_print=50,
+                                                                     verbose=False,
+                                                                     keywords_to_include=None,
+                                                                     keywords_to_exclude=None,
+                                                                     load_from_cache=True,
+                                                                     compute_prior_on_whole_steam_catalog=False,
+                                                                     compute_language_specific_prior=False))
+
+    def test_run_regional_workflow_bayes_reviews(self):
+        quality_measure_str = 'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+        popularity_measure_str = 'num_reviews'  # Either 'num_reviews' or 'num_owners'
+
+        self.assertTrue(compute_regional_stats.run_regional_workflow(quality_measure_str=quality_measure_str,
+                                                                     popularity_measure_str=popularity_measure_str,
+                                                                     perform_optimization_at_runtime=True,
+                                                                     num_top_games_to_print=50,
+                                                                     verbose=False,
+                                                                     keywords_to_include=None,
+                                                                     keywords_to_exclude=None,
+                                                                     load_from_cache=True,
+                                                                     compute_prior_on_whole_steam_catalog=False,
+                                                                     compute_language_specific_prior=True))
+
+    def test_run_regional_workflow_bayes_owners(self):
+        quality_measure_str = 'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+        popularity_measure_str = 'num_owners'  # Either 'num_reviews' or 'num_owners'
+
+        self.assertTrue(compute_regional_stats.run_regional_workflow(quality_measure_str=quality_measure_str,
+                                                                     popularity_measure_str=popularity_measure_str,
+                                                                     perform_optimization_at_runtime=True,
+                                                                     num_top_games_to_print=50,
+                                                                     verbose=False,
+                                                                     keywords_to_include=None,
+                                                                     keywords_to_exclude=None,
+                                                                     load_from_cache=True,
+                                                                     compute_prior_on_whole_steam_catalog=False,
+                                                                     compute_language_specific_prior=True))
+
+    def test_run_regional_workflow_bayes_reviews_with_hidden_gem_constant_prior(self):
+        quality_measure_str = 'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+        popularity_measure_str = 'num_reviews'  # Either 'num_reviews' or 'num_owners'
+
+        self.assertTrue(compute_regional_stats.run_regional_workflow(quality_measure_str=quality_measure_str,
+                                                                     popularity_measure_str=popularity_measure_str,
+                                                                     perform_optimization_at_runtime=True,
+                                                                     num_top_games_to_print=50,
+                                                                     verbose=False,
+                                                                     keywords_to_include=None,
+                                                                     keywords_to_exclude=None,
+                                                                     load_from_cache=True,
+                                                                     compute_prior_on_whole_steam_catalog=False,
+                                                                     compute_language_specific_prior=False))
+
+    def test_run_regional_workflow_bayes_owners_with_hidden_gem_constant_prior(self):
+        quality_measure_str = 'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+        popularity_measure_str = 'num_owners'  # Either 'num_reviews' or 'num_owners'
+
+        self.assertTrue(compute_regional_stats.run_regional_workflow(quality_measure_str=quality_measure_str,
+                                                                     popularity_measure_str=popularity_measure_str,
+                                                                     perform_optimization_at_runtime=True,
+                                                                     num_top_games_to_print=50,
+                                                                     verbose=False,
+                                                                     keywords_to_include=None,
+                                                                     keywords_to_exclude=None,
+                                                                     load_from_cache=True,
+                                                                     compute_prior_on_whole_steam_catalog=False,
+                                                                     compute_language_specific_prior=False))
+
+    def test_run_regional_workflow_bayes_reviews_with_global_constant_prior(self):
+        quality_measure_str = 'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+        popularity_measure_str = 'num_reviews'  # Either 'num_reviews' or 'num_owners'
+
+        self.assertTrue(compute_regional_stats.run_regional_workflow(quality_measure_str=quality_measure_str,
+                                                                     popularity_measure_str=popularity_measure_str,
+                                                                     perform_optimization_at_runtime=True,
+                                                                     num_top_games_to_print=50,
+                                                                     verbose=False,
+                                                                     keywords_to_include=None,
+                                                                     keywords_to_exclude=None,
+                                                                     load_from_cache=True,
+                                                                     compute_prior_on_whole_steam_catalog=True,
+                                                                     compute_language_specific_prior=False))
+
+    def test_run_regional_workflow_bayes_owners_with_global_constant_prior(self):
+        quality_measure_str = 'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+        popularity_measure_str = 'num_owners'  # Either 'num_reviews' or 'num_owners'
+
+        self.assertTrue(compute_regional_stats.run_regional_workflow(quality_measure_str=quality_measure_str,
+                                                                     popularity_measure_str=popularity_measure_str,
+                                                                     perform_optimization_at_runtime=True,
+                                                                     num_top_games_to_print=50,
+                                                                     verbose=False,
+                                                                     keywords_to_include=None,
+                                                                     keywords_to_exclude=None,
+                                                                     load_from_cache=True,
+                                                                     compute_prior_on_whole_steam_catalog=True,
+                                                                     compute_language_specific_prior=False))
+
     def test_main(self):
         self.assertTrue(compute_regional_stats.main())
 
