@@ -8,8 +8,7 @@ import iso639
 import steamreviews
 from langdetect import detect, DetectorFactory, lang_detect_exception
 
-from compute_bayesian_rating import choose_prior
-from compute_bayesian_rating import compute_bayesian_score
+from compute_bayesian_rating import choose_prior, compute_bayesian_score
 from compute_stats import compute_ranking, save_ranking_to_file
 from compute_wilson_score import compute_wilson_score
 from create_dict_using_json import get_mid_of_interval
