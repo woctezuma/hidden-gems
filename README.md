@@ -50,6 +50,15 @@ python create_dict_using_json.py
 python compute_stats.py
 ```
 
+- Finally, call the Python script `compute_regional_stats.py` to build regional rankings, one per language. In order to 
+estimate the number of players in each region, Steam reviews have to be downloaded through Steam API. Depending on the 
+number of hidden gems displayed in the global ranking, and depending on the number of reviews for each hidden gem, this
+process may require a decent amount of time. 
+
+```bash
+python compute_regional_stats.py
+```
+
 ## Results ##
 
 The most recent results are shown [on a wiki](https://github.com/woctezuma/Steam-Bayesian-Average/wiki).
