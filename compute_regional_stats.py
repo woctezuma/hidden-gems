@@ -165,10 +165,7 @@ def get_all_review_language_summaries(previously_detected_languages_filename=Non
 
     # Load the result of language detection for each review
     try:
-        with open(previously_detected_languages_filename, 'r', encoding="utf8") as infile:
-            lines = infile.readlines()
-            # The dictionary is on the first line
-            previously_detected_languages = eval(lines[0])
+        previously_detected_languages = load_content_from_disk(previously_detected_languages_filename)
     except FileNotFoundError:
         previously_detected_languages = dict()
 
@@ -191,8 +188,7 @@ def get_all_review_language_summaries(previously_detected_languages_filename=Non
         # Export the result of language detection for each review, so as to avoid repeating intensive computations.
         if previously_detected_languages_filename is not None and flush_to_file_now and \
                 previously_detected_languages['has_changed']:
-            with open(previously_detected_languages_filename, 'w', encoding="utf8") as outfile:
-                print(previously_detected_languages, file=outfile)
+            write_content_to_disk(previously_detected_languages, previously_detected_languages_filename)
             previously_detected_languages['has_changed'] = False
 
         print('AppID ' + str(count + 1) + '/' + str(len(app_id_list)) + ' done.')
