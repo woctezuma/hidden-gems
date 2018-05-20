@@ -553,10 +553,10 @@ def main():
     if compute_prior_on_whole_steam_catalog:
         assert (not compute_language_specific_prior)
 
-    run_regional_workflow(quality_measure_str='wilson_score',  # Either 'wilson_score' or 'bayesian_rating'
-                          popularity_measure_str='num_reviews',  # Either 'num_reviews' or 'num_owners'
+    run_regional_workflow(quality_measure_str='bayesian_rating',  # Either 'wilson_score' or 'bayesian_rating'
+                          popularity_measure_str='num_owners',  # Either 'num_reviews' or 'num_owners'
                           perform_optimization_at_runtime=True,
-                          num_top_games_to_print=1000,
+                          num_top_games_to_print=50,
                           verbose=False,
                           keywords_to_include=None,
                           keywords_to_exclude=None,
