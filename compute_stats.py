@@ -241,11 +241,13 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
 
     optimal_parameters = [res.x]
 
-    if verbose:
-        # Quick print in order to check that the upper search bound is not too close to our optimal alpha
-        # Otherwise, it could indicate the search has been biased by a poor choice of the upper search bound.
-        alpha_optim = optimal_parameters[0]
-        print("alpha = 10^%.2f" % log10(alpha_optim))
+    try:
+        optimal_power = log10(optimal_parameters[0])
+        if verbose:
+            print("alpha = 10^%.2f" % optimal_power)
+    except ValueError:
+        if verbose:
+            print("alpha = %.2f" % optimal_parameters[0])
 
     return optimal_parameters
 
