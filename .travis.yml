@@ -2,6 +2,8 @@ language: python
 python:
  - "3.6"
 install:
+ - git clone https://github.com/woctezuma/hidden-gems-data.git
+ - mv hidden-gems-data/*.txt .
  - pip install codecov
  - pip install -r requirements.txt
 script:
