@@ -105,7 +105,7 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
                                                                      popularity_measure_str=popularity_measure_str,
                                                                      perform_optimization_at_runtime=True,
                                                                      num_top_games_to_print=50,
-                                                                     verbose=False,
+                                                                     verbose=True,
                                                                      keywords_to_include=None,
                                                                      keywords_to_exclude=None,
                                                                      load_from_cache=True,
@@ -135,7 +135,7 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
                                                                      popularity_measure_str=popularity_measure_str,
                                                                      perform_optimization_at_runtime=True,
                                                                      num_top_games_to_print=50,
-                                                                     verbose=False,
+                                                                     verbose=True,
                                                                      keywords_to_include=None,
                                                                      keywords_to_exclude=None,
                                                                      load_from_cache=True,
@@ -165,15 +165,12 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
                                                                      popularity_measure_str=popularity_measure_str,
                                                                      perform_optimization_at_runtime=True,
                                                                      num_top_games_to_print=50,
-                                                                     verbose=False,
+                                                                     verbose=True,
                                                                      keywords_to_include=None,
                                                                      keywords_to_exclude=None,
                                                                      load_from_cache=True,
                                                                      compute_prior_on_whole_steam_catalog=True,
                                                                      compute_language_specific_prior=False))
-
-    def test_main(self):
-        self.assertTrue(compute_regional_stats.main())
 
 
 class TestComputeStatsMethods(unittest.TestCase):

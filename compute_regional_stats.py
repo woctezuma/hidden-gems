@@ -539,8 +539,8 @@ def run_regional_workflow(quality_measure_str='wilson_score',
     return True
 
 
-def main():
-    load_from_cache = True
+if __name__ == "__main__":
+    load_from_cache = False
 
     # Whether to compute a prior for Bayesian rating with the whole Steam catalog,
     # or with a pre-computed set of top-ranked hidden gems
@@ -563,9 +563,3 @@ def main():
                           load_from_cache=load_from_cache,
                           compute_prior_on_whole_steam_catalog=compute_prior_on_whole_steam_catalog,
                           compute_language_specific_prior=compute_language_specific_prior)
-
-    return True
-
-
-if __name__ == "__main__":
-    main()
