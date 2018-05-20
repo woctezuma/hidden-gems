@@ -540,18 +540,18 @@ def run_regional_workflow(quality_measure_str='wilson_score',
 
 
 if __name__ == "__main__":
-    load_from_cache = False
+    load_precomputed_review_language_stats = False
 
     # Whether to compute a prior for Bayesian rating with the whole Steam catalog,
     # or with a pre-computed set of top-ranked hidden gems
-    compute_prior_on_whole_steam_catalog = False
+    use_global_constant_prior = False
 
     # Whether to compute a prior for Bayesian rating for each language independently
-    compute_language_specific_prior = True
+    use_language_specific_prior = True
     # NB: This bool is only relevant if the prior is NOT based on the whole Steam catalog. Indeed, language-specific
     #     computation is impossible for the whole catalog since we don't have access to language data for every game.
-    if compute_prior_on_whole_steam_catalog:
-        assert (not compute_language_specific_prior)
+    if use_global_constant_prior:
+        assert (not use_language_specific_prior)
 
     run_regional_workflow(quality_measure_str='bayesian_rating',  # Either 'wilson_score' or 'bayesian_rating'
                           popularity_measure_str='num_owners',  # Either 'num_reviews' or 'num_owners'
@@ -560,6 +560,6 @@ if __name__ == "__main__":
                           verbose=False,
                           keywords_to_include=None,
                           keywords_to_exclude=None,
-                          load_from_cache=load_from_cache,
-                          compute_prior_on_whole_steam_catalog=compute_prior_on_whole_steam_catalog,
-                          compute_language_specific_prior=compute_language_specific_prior)
+                          load_from_cache=load_precomputed_review_language_stats,
+                          compute_prior_on_whole_steam_catalog=use_global_constant_prior,
+                          compute_language_specific_prior=use_language_specific_prior)
