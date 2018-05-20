@@ -12,7 +12,7 @@ def compute_score_generic(my_tuple, parameter_list, language=None,
     # Input:    - a my_tuple is a list consisting of all retrieved information regarding one game
     #           - parameter_list is a list of parameters to calibrate the ranking.
     #             Currently, there is only one parameter, alpha, which could be chosen up to one's tastes, or optimized.
-    #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
+    #           - optional language to allow to compute regional rankings of hidden gems
     #           - optional choice of popularity measure: either 'num_owners', or 'num_reviews'
     #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     # Output:   game score
@@ -55,7 +55,7 @@ def compute_score_generic(my_tuple, parameter_list, language=None,
 
         wilson_score = my_tuple[language]['wilson_score']
         bayesian_rating = my_tuple[language]['bayesian_rating']
-        num_owners = my_tuple[language]['num_owners']  # TODO add num_owners to code for regional ranking of hidden gems
+        num_owners = my_tuple[language]['num_owners']
         num_reviews = my_tuple[language]['num_reviews']
 
     if quality_measure_str is None or quality_measure_str == 'wilson_score':
@@ -89,7 +89,7 @@ def rank_games(D, parameter_list, verbose=False, appid_reference_set={appidContr
     #           - parameter_list is a list of parameters to calibrate the ranking.
     #           - optional verbosity boolean
     #           - optional set of appID of games chosen as references of hidden gems. By default, only "Contradiction".
-    #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
+    #           - optional language to allow to compute regional rankings of hidden gems. cf. compute_regional_stats.py
     #           - optional choice of popularity measure: either 'num_owners', or 'num_reviews'
     #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     #           - optional number of top games to print if the ranking is only partially displayed
@@ -211,7 +211,7 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     # Input:    - local dictionary of data extracted from SteamSpy
     #           - optional verbosity boolean
     #           - optional set of appID of games chosen as references of hidden gems. By default, only "Contradiction".
-    #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
+    #           - optional language to allow to compute regional rankings of hidden gems. cf. compute_regional_stats.py
     #           - optional choice of popularity measure: either 'num_owners', or 'num_reviews'
     #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     # Output:   list of optimal parameters (by default, only one parameter is optimized: alpha)
@@ -308,7 +308,7 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), 
     #           - tags to filter-in
     #               Warning because unintuitive: to avoid filtering-in, please use an empty list.
     #           - tags to filter-out
-    #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
+    #           - optional language to allow to compute regional rankings of hidden gems. cf. compute_regional_stats.py
     #           - bool to decide whether to optimize alpha at run-time, or to rely on a hard-coded value instead
     #           - optional choice of popularity measure: either 'num_owners', or 'num_reviews'
     #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
@@ -373,13 +373,11 @@ def run_workflow(quality_measure_str='wilson_score',
     # Input:
     #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     #           - optional choice of popularity measure: either 'num_owners', or 'num_reviews'
-    #               Warning: 'num_owners' is ONLY available for the global ranking of hidden gems.
-    #               To make it available to regional rankings, fix the code in 'steam-reviews' Github repository.
     #           - bool to decide whether to optimize alpha at run-time, or to rely on a hard-coded value instead
     #           - maximal length of the ranking
     #               The higher the value, the longer it takes to compute and print the ranking.
     #               If set to None, there is no limit, so the whole Steam catalog is ranked.
-    #           - optional language to allow to compute regional rankings of hidden gems. cf. steam-reviews repository
+    #           - optional language to allow to compute regional rankings of hidden gems
     #           - tags to filter-in
     #               Warning because unintuitive: to avoid filtering-in, please use an empty list.
     #           - tags to filter-out
