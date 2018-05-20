@@ -2,6 +2,7 @@ import unittest
 
 import appids
 import compute_bayesian_rating
+import compute_regional_stats
 import compute_stats
 import compute_wilson_score
 import create_dict_using_json
@@ -49,6 +50,12 @@ class TestCreateDictUsingJsonMethods(unittest.TestCase):
         self.assertTrue(create_dict_using_json.main())
 
 
+class TestComputeRegionalStatsMethods(unittest.TestCase):
+
+    def test_main(self):
+        self.assertTrue(compute_regional_stats.main())
+
+
 class TestComputeStatsMethods(unittest.TestCase):
 
     def test_run_workflow_wilson_reviews(self):
@@ -86,17 +93,6 @@ class TestComputeStatsMethods(unittest.TestCase):
                                                    perform_optimization_at_runtime=False,
                                                    num_top_games_to_print=50,
                                                    verbose=True))
-
-    # TODO
-    # def test_run_workflow_language(self):
-    #     create_dict_using_json.main()
-    #
-    #     self.assertTrue(compute_stats.run_workflow(quality_measure_str='wilson_score',
-    #                                                popularity_measure_str='num_reviews',
-    #                                                perform_optimization_at_runtime=False,
-    #                                                num_top_games_to_print=50,
-    #                                                verbose=True,
-    #                                                language='fr'))
 
     def test_run_workflow_filtering_in(self):
         create_dict_using_json.main()
