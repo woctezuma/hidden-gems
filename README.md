@@ -36,11 +36,6 @@ better account of regional specificity. Our try at building regional rankings ap
 pip install -r requirements.txt
 ```
 
-- In case you wanted to manually install [NumPy](http://www.numpy.org/) and [SciPy](https://www.scipy.org/) on Windows, 
-you could also download these binaries linked to the Intel® Math Kernel Library:
-* [NumPy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy)
-* [SciPy](http://www.lfd.uci.edu/~gohlke/pythonlibs/#scipy)
-
 ## Usage ##
 
 - First, call the Python script `create_dict_using_json.py`, which will download data through [SteamSpy API](https://steamspy.com/api.php).
