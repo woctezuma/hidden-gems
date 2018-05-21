@@ -6,13 +6,13 @@ import pathlib
 
 import iso639
 import steamreviews
+import steamspypi
 from langdetect import detect, DetectorFactory, lang_detect_exception
 
 from compute_bayesian_rating import choose_prior, compute_bayesian_score
 from compute_stats import compute_ranking, save_ranking_to_file
 from compute_wilson_score import compute_wilson_score
 from create_dict_using_json import get_mid_of_interval
-from download_json import get_todays_steam_spy_data
 
 
 def get_review_language_dictionary(app_id, previously_detected_languages_dict=None):
@@ -523,7 +523,7 @@ def run_regional_workflow(quality_measure_str='wilson_score',
     (game_feature_dict, all_languages) = get_input_data(load_from_cache)
 
     # noinspection PyPep8Naming
-    D = prepare_dictionary_for_ranking_of_hidden_gems(get_todays_steam_spy_data(), game_feature_dict, all_languages,
+    D = prepare_dictionary_for_ranking_of_hidden_gems(steamspypi.load(), game_feature_dict, all_languages,
                                                       compute_prior_on_whole_steam_catalog,
                                                       compute_language_specific_prior,
                                                       verbose=verbose)

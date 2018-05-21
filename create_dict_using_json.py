@@ -1,5 +1,7 @@
 # Objective: store information regarding every Steam game in a dictionary.
 
+import steamspypi
+
 from appids import appidContradiction
 
 
@@ -112,20 +114,9 @@ def create_local_dictionary(data, output_filename, appid_reference_set={appidCon
 
 def main():
     from appids import appid_hidden_gems_reference_set
-    from download_json import download_steam_spy_data
-    import time
-
-    json_filename_suffixe = "_steamspy.json"
-
-    # Get current day as yyyymmdd format
-    date_format = "%Y%m%d"
-    current_date = time.strftime(date_format)
-
-    # Database filename
-    json_filename = current_date + json_filename_suffixe
 
     # SteamSpy's data in JSON format
-    data = download_steam_spy_data(json_filename)
+    data = steamspypi.load()
 
     # A dictionary will be stored in the following text file
     output_filename = "dict_top_rated_games_on_steam.txt"

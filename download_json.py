@@ -2,25 +2,8 @@
 
 import json
 import pathlib
-from urllib.request import urlopen
 
-
-def get_todays_steam_spy_data():
-    import time
-
-    json_filename_suffixe = "_steamspy.json"
-
-    # Get current day as yyyymmdd format
-    date_format = "%Y%m%d"
-    current_date = time.strftime(date_format)
-
-    # Database filename
-    json_filename = current_date + json_filename_suffixe
-
-    # SteamSpy's data in JSON format
-    data = download_steam_spy_data(json_filename)
-
-    return data
+import steamspypi
 
 
 def download_steam_spy_data(json_filename="steamspy.json", genre=None):
@@ -31,31 +14,22 @@ def download_steam_spy_data(json_filename="steamspy.json", genre=None):
 
     data_filename = data_path + json_filename
 
-    # If json_filename is missing, we will attempt to download and cache it from steamspy_url:
-    steamspy_url = "http://steamspy.com/api.php?request=all"
-
-    # Provide a possibility to download data for a given genre
-    if bool(not (genre is None)):
-        print("Focusing on genre " + genre)
-        formatted_str = genre.replace(" ", "+")
-        steamspy_url = "http://steamspy.com/api.php?request=genre&genre=" + formatted_str
-
     try:
         with open(data_filename, 'r', encoding="utf8") as in_json_file:
             data = json.load(in_json_file)
     except FileNotFoundError:
         print("Downloading and caching data from SteamSpy")
-        with urlopen(steamspy_url) as response:
-            # Reference: https://stackoverflow.com/a/32169442
-            raw_data = response.read()
-            encoding = response.info().get_content_charset('utf8')  # JSON default
-            data = json.loads(raw_data.decode(encoding))
-            # Make sure the json data is using double quotes instead of single quotes
-            # Reference: https://stackoverflow.com/a/8710579/
-            json_string = json.dumps(data)
-            # Cache the json data to a local file
-            with open(data_filename, 'w', encoding="utf8") as cache_json_file:
-                print(json_string, file=cache_json_file)
+
+        if genre is None:
+            data = steamspypi.load()
+        else:
+            data_request = dict()
+            data_request['request'] = 'genre'
+            data_request['genre'] = genre
+
+            data = steamspypi.download(data_request)
+
+        steamspypi.print_data(data, data_filename)
 
     return data
 
@@ -111,11 +85,5 @@ def get_appid_by_keyword_list_to_exclude(keyword_list):
     return app_ids
 
 
-def main():
-    get_todays_steam_spy_data()
-
-    return True
-
-
 if __name__ == "__main__":
-    main()
+    steamspypi.load()

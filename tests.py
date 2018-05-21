@@ -6,7 +6,6 @@ import compute_regional_stats
 import compute_stats
 import compute_wilson_score
 import create_dict_using_json
-import download_json
 
 
 class TestAppidsMethods(unittest.TestCase):
@@ -15,10 +14,6 @@ class TestAppidsMethods(unittest.TestCase):
         self.assertTrue(appids.main())
 
 
-class TestDownloadJsonMethods(unittest.TestCase):
-
-    def test_main(self):
-        self.assertTrue(download_json.main())
 
 
 class TestComputeWilsonScoreMethods(unittest.TestCase):
