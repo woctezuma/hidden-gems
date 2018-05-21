@@ -20,6 +20,12 @@ A "hidden gem" is defined as a high-quality game (hence the "gem") which only go
 
 The score of a game is defined as the product of a quality measure (its Wilson score) and a decreasing function of a popularity measure (its players total forever).
 
+## Regional specifity
+
+The popularity of game genres varies wildly with geography, which leads to different appreciations of a ranking of 
+hidden gems. A statistical analysis of the reviewers' language could allow to personalize rankings of hidden gems with a
+better account of regional specificity. Our try at building regional rankings appears in `compute_regional_stats.py`.
+
 ## Requirements ##
 
 - Install the latest version of [Python 3.X](https://www.python.org/downloads/).
