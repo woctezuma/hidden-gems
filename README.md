@@ -62,7 +62,7 @@ python compute_regional_stats.py
 
 ## Results ##
 
-The most recent results are shown [on a wiki](https://github.com/woctezuma/Steam-Bayesian-Average/wiki).
+The most recent results are shown [on a wiki](https://github.com/woctezuma/hidden-gems/wiki).
 
 Few past results are listed below:
 * [original ranking](https://gist.github.com/woctezuma/9cea3a93fd5cba2f1b876864a0dc8854), featured on PC Gamer, based on pre-sales data, using players total as a popularity measure.
