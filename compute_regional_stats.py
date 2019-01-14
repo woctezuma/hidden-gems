@@ -2,8 +2,10 @@
 #   https://github.com/woctezuma/steam-reviews/blob/master/download_reviews.py
 #   https://github.com/woctezuma/steam-reviews/blob/master/analyze_language.py
 
-import iso639
+import ast
 import pathlib
+
+import iso639
 import steamreviews
 import steamspypi
 from langdetect import detect, DetectorFactory, lang_detect_exception
@@ -201,7 +203,7 @@ def load_content_from_disk(filename):
     with open(filename, 'r', encoding="utf8") as f:
         lines = f.readlines()
         # The content is on the first line
-        content = eval(lines[0])
+        content = ast.literal_eval(lines[0])
 
     return content
 

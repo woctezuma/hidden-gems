@@ -14,8 +14,6 @@ class TestAppidsMethods(unittest.TestCase):
         self.assertTrue(appids.main())
 
 
-
-
 class TestComputeWilsonScoreMethods(unittest.TestCase):
 
     def test_compute_wilson_score(self):
@@ -224,12 +222,14 @@ class TestComputeStatsMethods(unittest.TestCase):
         # A dictionary will be stored in the following text file
         dict_filename = "dict_top_rated_games_on_steam.txt"
 
+        import ast
+
         # Import the local dictionary from the input file
         with open(dict_filename, 'r', encoding="utf8") as infile:
             lines = infile.readlines()
             # The dictionary is on the second line
             # noinspection PyPep8Naming
-            D = eval(lines[1])
+            D = ast.literal_eval(lines[1])
 
         for appid in appids.appid_hidden_gems_reference_set:
             print('Ensuring reference {} (appID={}) does not appear in the final ranking.'.format(D[appid][0], appid))

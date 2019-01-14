@@ -1,5 +1,7 @@
 # Objective: compute a score for each Steam game and then rank all the games while favoring hidden gems.
 
+import ast
+
 import numpy as np
 
 from appids import appidContradiction
@@ -422,7 +424,7 @@ def run_workflow(quality_measure_str='wilson_score',
         lines = infile.readlines()
         # The dictionary is on the second line
         # noinspection PyPep8Naming
-        D = eval(lines[1])
+        D = ast.literal_eval(lines[1])
 
     ranking = compute_ranking(D, num_top_games_to_print, keywords_to_include, keywords_to_exclude,
                               language, perform_optimization_at_runtime, popularity_measure_str, quality_measure_str)
