@@ -22,7 +22,7 @@ def compute_score_generic(my_tuple, parameter_list, language=None,
     if language is None:
 
         # noinspection PyUnusedLocal
-        game_name = my_tuple[0]
+        # game_name = my_tuple[0]
         wilson_score = my_tuple[1]
         bayesian_rating = my_tuple[2]
         num_owners = my_tuple[3]
@@ -33,7 +33,7 @@ def compute_score_generic(my_tuple, parameter_list, language=None,
         num_negative_reviews = my_tuple[8]
 
         # noinspection PyUnusedLocal
-        bool_game_should_appear_in_ranking = my_tuple[-1]
+        # bool_game_should_appear_in_ranking = my_tuple[-1]
 
         num_owners = float(num_owners)
         try:
@@ -370,10 +370,10 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=None, ke
     # NB: the more keywords, the more games are excluded. cf. union of sets in the code
     filtered_out_app_ids = get_appid_by_keyword_list_to_exclude(keywords_to_exclude)
 
-    (objective_function, ranking) = rank_games(D, optimal_parameters, True, appid_hidden_gems_reference_set, language,
-                                               popularity_measure_str,
-                                               quality_measure_str,
-                                               num_top_games_to_print, filtered_in_app_ids, filtered_out_app_ids)
+    (_, ranking) = rank_games(D, optimal_parameters, True, appid_hidden_gems_reference_set, language,
+                              popularity_measure_str,
+                              quality_measure_str,
+                              num_top_games_to_print, filtered_in_app_ids, filtered_out_app_ids)
 
     return ranking
 

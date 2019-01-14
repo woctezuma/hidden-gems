@@ -2,9 +2,8 @@
 #   https://github.com/woctezuma/steam-reviews/blob/master/download_reviews.py
 #   https://github.com/woctezuma/steam-reviews/blob/master/analyze_language.py
 
-import pathlib
-
 import iso639
+import pathlib
 import steamreviews
 import steamspypi
 from langdetect import detect, DetectorFactory, lang_detect_exception
@@ -80,7 +79,7 @@ def most_common(L):
 
     # auxiliary function to get "quality" for an item
     def _auxfun(g):
-        item, iterable = g
+        _, iterable = g
         count = 0
         min_index = len(L)
         for _, where in iterable:
