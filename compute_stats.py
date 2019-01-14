@@ -78,11 +78,11 @@ def compute_score_generic(my_tuple, parameter_list, language=None,
 
 
 # noinspection PyPep8Naming
-def rank_games(D, parameter_list, verbose=False, appid_reference_set={appidContradiction},
+def rank_games(D, parameter_list, verbose=False, appid_reference_set=None,
                language=None,
                popularity_measure_str=None,
                quality_measure_str=None,
-               num_top_games_to_print=1000, filtered_app_ids_to_show=set(), filtered_app_ids_to_hide=set()):
+               num_top_games_to_print=1000, filtered_app_ids_to_show=None, filtered_app_ids_to_hide=None):
     # Objective: rank all the Steam games, given a parameter alpha.
     #
     # Input:    - local dictionary of data extracted from SteamSpy
@@ -105,6 +105,15 @@ def rank_games(D, parameter_list, verbose=False, appid_reference_set={appidContr
     #           - a scalar value summarizing ranks of games used as references of "hidden gems"
     #           - the ranking to be ultimately displayed. A list of 3-tuple: (rank, game_name, appid).
     #             If verbose was set to None, the returned ranking is empty.
+
+    if appid_reference_set is None:
+        appid_reference_set = {appidContradiction}
+
+    if filtered_app_ids_to_show is None:
+        filtered_app_ids_to_show = set()
+
+    if filtered_app_ids_to_hide is None:
+        filtered_app_ids_to_hide = set()
 
     # Boolean to decide whether printing the ranking of the top 1000 games, rather than the ranking of the whole Steam
     # catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
@@ -201,7 +210,7 @@ def rank_games(D, parameter_list, verbose=False, appid_reference_set={appidContr
 
 
 # noinspection PyPep8Naming
-def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction},
+def optimize_for_alpha(D, verbose=True, appid_reference_set=None,
                        language=None,
                        popularity_measure_str=None,
                        quality_measure_str=None
@@ -215,6 +224,9 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set={appidContradiction}
     #           - optional choice of popularity measure: either 'num_owners', or 'num_reviews'
     #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     # Output:   list of optimal parameters (by default, only one parameter is optimized: alpha)
+
+    if appid_reference_set is None:
+        appid_reference_set = {appidContradiction}
 
     from math import log10
     from scipy.optimize import minimize
@@ -294,7 +306,7 @@ def get_num_reviews(game):
 
 
 # noinspection PyPep8Naming
-def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), keywords_to_exclude=list(),
+def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=None, keywords_to_exclude=None,
                     language=None,
                     perform_optimization_at_runtime=True,
                     popularity_measure_str=None,
@@ -314,6 +326,12 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=list(), 
     #           - optional choice of quality measure: either 'wilson_score' or 'bayesian_rating'
     #
     # Output:   ranking of hidden gems
+
+    if keywords_to_include is None:
+        keywords_to_include = list()
+
+    if keywords_to_exclude is None:
+        keywords_to_exclude = list()
 
     from appids import appid_hidden_gems_reference_set
     from download_json import get_appid_by_keyword_list_to_include, get_appid_by_keyword_list_to_exclude

@@ -22,7 +22,7 @@ def get_leading_comment():
     return leading_comment
 
 
-def create_local_dictionary(data, output_filename, appid_reference_set={appidContradiction},
+def create_local_dictionary(data, output_filename, appid_reference_set=None,
                             quantile_for_our_wilson_score=0.95):
     # Objective: compute a score for one Steam game.
     #
@@ -32,6 +32,9 @@ def create_local_dictionary(data, output_filename, appid_reference_set={appidCon
     #                                           By default, the appID of the game called "Contradiction".
     #           - quantile_for_our_wilson_score: this allows to specify a different confidence for the Wilson score.
     # Output:   none (the local dictionary is written to output_filename)
+
+    if appid_reference_set is None:
+        appid_reference_set = {appidContradiction}
 
     from compute_wilson_score import compute_wilson_score
     from compute_bayesian_rating import choose_prior, compute_bayesian_score
