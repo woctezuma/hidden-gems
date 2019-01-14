@@ -197,7 +197,8 @@ def rank_games(D, parameter_list, verbose=False, appid_reference_set=None,
                 rank_game_used_as_reference_for_hidden_gem = reference_dict[appid][0]
                 bool_reference_game_should_appear_in_ranking = reference_dict[appid][1]
                 if not bool_reference_game_should_appear_in_ranking:
-                    assert (current_rank == rank_game_used_as_reference_for_hidden_gem)
+                    if not (current_rank == rank_game_used_as_reference_for_hidden_gem):
+                        raise AssertionError()
                     rank_decrease += 1
                     continue
 
@@ -241,7 +242,8 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set=None,
         if popularity_measure_str is None or popularity_measure_str == 'num_owners':
             vec = [float(game[get_index_num_owners()]) for game in D.values()]
         else:
-            assert (popularity_measure_str == 'num_reviews')
+            if not (popularity_measure_str == 'num_reviews'):
+                raise AssertionError()
             vec = [get_num_reviews(game) for game in D.values()]
 
     else:
@@ -348,18 +350,21 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=None, ke
                 # Objective function to minimize:	 2156.36
                 optimal_parameters = [pow(10, 6.52)]
             else:
-                assert (quality_measure_str == 'bayesian_rating')
+                if not (quality_measure_str == 'bayesian_rating'):
+                    raise AssertionError()
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 1900.00
                 optimal_parameters = [pow(10, 6.63)]
         else:
-            assert (popularity_measure_str == 'num_reviews')
+            if not (popularity_measure_str == 'num_reviews'):
+                raise AssertionError()
             if quality_measure_str is None or quality_measure_str == 'wilson_score':
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 2372.90
                 optimal_parameters = [pow(10, 4.83)]
             else:
-                assert (quality_measure_str == 'bayesian_rating')
+                if not (quality_measure_str == 'bayesian_rating'):
+                    raise AssertionError()
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 2094.00
                 optimal_parameters = [pow(10, 4.89)]

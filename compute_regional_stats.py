@@ -556,7 +556,8 @@ if __name__ == "__main__":
     # NB: This bool is only relevant if the prior is NOT based on the whole Steam catalog. Indeed, language-specific
     #     computation is impossible for the whole catalog since we don't have access to language data for every game.
     if use_global_constant_prior:
-        assert (not use_language_specific_prior)
+        if use_language_specific_prior:
+            raise AssertionError()
 
     run_regional_workflow(quality_measure_str='bayesian_rating',  # Either 'wilson_score' or 'bayesian_rating'
                           popularity_measure_str='num_owners',  # Either 'num_reviews' or 'num_owners'
