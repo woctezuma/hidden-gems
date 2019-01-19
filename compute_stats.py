@@ -271,7 +271,7 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set=None,
 def save_ranking_to_file(output_filename, ranking_list, only_show_appid=False, verbose=False, width=40):
     # Objective: save the ranking to the output text file
 
-    base_steam_store_url = "http://store.steampowered.com/app/"
+    base_steam_store_url = "https://store.steampowered.com/app/"
 
     with open(output_filename, 'w', encoding="utf8") as outfile:
         for current_ranking_info in ranking_list:
