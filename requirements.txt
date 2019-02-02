@@ -1,5 +1,5 @@
 matplotlib==3.0.2
-numpy==1.16.0
+numpy==1.16.1
 scipy==1.2.0
 steamreviews==0.5.0
 langdetect==1.0.7
