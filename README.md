@@ -15,6 +15,8 @@
 
 This repository contains code to compute a ranking of Steam games, based on a score intended to favor "hidden gems".
 
+![Ranking of hidden gems at Steam250](https://github.com/woctezuma/hidden-gems/wiki/img/2019_04_07_banner_hidden_gems.png)
+
 ## Definition ##
 
 A "hidden gem" is defined as a high-quality game (hence the "gem") which only got little attention (hence "hidden").
