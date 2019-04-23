@@ -1,7 +1,7 @@
 matplotlib==3.0.3
 numpy==1.16.3
 scipy==1.2.1
-steamreviews==0.7.0
+steamreviews==0.8.0
 langdetect==1.0.7
 iso639==0.1.4
 steamspypi==1.0.0
