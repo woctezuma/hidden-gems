@@ -72,12 +72,6 @@ The most recent results are shown [on a wiki](https://github.com/woctezuma/hidde
 Few past results are listed below:
 * [original ranking](https://gist.github.com/woctezuma/9cea3a93fd5cba2f1b876864a0dc8854), featured on PC Gamer, based on pre-sales data, using players total as a popularity measure.
 * [updated ranking](https://gist.github.com/woctezuma/9e3005006361dbd09b7f5b416b5e6869), using data from June 30, a week after the Steam summer sales have started.
-* [updated ranking with tag filtering-out](https://gist.github.com/woctezuma/ed649b5ffe4d1c3d0699ddef9bec34c9), filtering out a few tags (VR, Anime, Visual Novel, and Free To Play),
-* [updated ranking with tag filtering-in](https://gist.github.com/woctezuma/b3081eff4f1e215c3deb1e1f3b707eff), constraining the ranking to the Rogue-like/lite genre (filtering in, so to say).
-* [updated ranking with tag filtering-out and 80% confidence Wilson score](https://gist.github.com/woctezuma/20c4b30dce9ca82d3efa9b944ab92932), filtering out tags (VR, Anime, Visual Novel, F2P).
-* [ranking of card games](https://gist.github.com/woctezuma/3ef6465180e3d28e9167bce03507b721), filtering out F2P, Early Access, etc.
-* [alternative updated ranking with tag filtering-in](https://gist.github.com/woctezuma/fd2fc2b766e7e94605e4be5cf7de03ad), intended to favor hidden gems among "hidden gems", so hidden² gems,
-* [updated rankings for the 2017 Halloween sale](https://gist.github.com/woctezuma/b5954f2d31989fdaf71eef53027f3cac).
 
 ## Perspectives ##
 
