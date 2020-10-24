@@ -9,9 +9,7 @@ def get_mid_of_interval(interval_as_str):
     interval_as_str_formatted = [s.replace(',', '') for s in interval_as_str.split('..')]
     lower_bound = float(interval_as_str_formatted[0])
     upper_bound = float(interval_as_str_formatted[1])
-    mid_value = (lower_bound + upper_bound) / 2
-
-    return mid_value
+    return (lower_bound + upper_bound) / 2
 
 
 def get_leading_comment():
@@ -40,10 +38,10 @@ def create_local_dictionary(data, output_filename, appid_reference_set=None,
     from compute_bayesian_rating import choose_prior, compute_bayesian_score
 
     # noinspection PyPep8Naming
-    D = dict()
+    D = {}
 
     # Construct observation structure used to compute a prior for the inference of a Bayesian rating
-    observations = dict()
+    observations = {}
 
     for appid in data.keys():
         num_positive_reviews = data[appid]["positive"]
@@ -52,7 +50,7 @@ def create_local_dictionary(data, output_filename, appid_reference_set=None,
         num_votes = num_positive_reviews + num_negative_reviews
 
         if num_votes > 0:
-            observations[appid] = dict()
+            observations[appid] = {}
             observations[appid]['score'] = num_positive_reviews / num_votes
             observations[appid]['num_votes'] = num_votes
 
@@ -70,8 +68,6 @@ def create_local_dictionary(data, output_filename, appid_reference_set=None,
             num_players = data[appid]['players_forever']
         except KeyError:
             num_players = None
-        median_time = data[appid]['median_forever']
-        average_time = data[appid]['average_forever']
         num_positive_reviews = data[appid]["positive"]
         num_negative_reviews = data[appid]["negative"]
 
@@ -82,10 +78,7 @@ def create_local_dictionary(data, output_filename, appid_reference_set=None,
         if num_votes > 0:
 
             # Construct game structure used to compute Bayesian rating
-            game = dict()
-            game['score'] = num_positive_reviews / num_votes
-            game['num_votes'] = num_votes
-
+            game = {'score': num_positive_reviews / num_votes, 'num_votes': num_votes}
             bayesian_rating = compute_bayesian_score(game, prior)
 
         else:
@@ -102,6 +95,8 @@ def create_local_dictionary(data, output_filename, appid_reference_set=None,
         if wilson_score is None or bayesian_rating is None:
             print("Game with no review:\t" + name + "\t(appID=" + appid + ")")
         else:
+            median_time = data[appid]['median_forever']
+            average_time = data[appid]['average_forever']
             stats_save = [name, wilson_score, bayesian_rating, num_owners, num_players, median_time, average_time,
                           num_positive_reviews,
                           num_negative_reviews]
