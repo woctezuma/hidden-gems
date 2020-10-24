@@ -250,8 +250,7 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set=None,
         vec = [game[language][popularity_measure_str] for game in D.values()]
 
     def choose_x0(data_vec):
-        x0 = 1 + np.max(data_vec)
-        return x0
+        return 1 + np.max(data_vec)
 
     res = minimize(fun=function_to_minimize, x0=choose_x0(vec), method='Nelder-Mead')
 
@@ -271,12 +270,10 @@ def optimize_for_alpha(D, verbose=True, appid_reference_set=None,
 def save_ranking_to_file(output_filename, ranking_list, only_show_appid=False, verbose=False, width=40):
     # Objective: save the ranking to the output text file
 
-    base_steam_store_url = "https://store.steampowered.com/app/"
-
     with open(output_filename, 'w', encoding="utf8") as outfile:
+        base_steam_store_url = "https://store.steampowered.com/app/"
+
         for current_ranking_info in ranking_list:
-            current_rank = current_ranking_info[0]
-            game_name = current_ranking_info[1]
             appid = current_ranking_info[-1]
 
             store_url = base_steam_store_url + appid
@@ -287,6 +284,8 @@ def save_ranking_to_file(output_filename, ranking_list, only_show_appid=False, v
                 if verbose:
                     print(appid)
             else:
+                current_rank = current_ranking_info[0]
+                game_name = current_ranking_info[1]
                 sentence = '{:05}'.format(current_rank) + ".\t[" + game_name + "](" + store_url_fixed_width + ")"
                 print(sentence, file=outfile)
                 if verbose:
@@ -332,10 +331,10 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=None, ke
     # Output:   ranking of hidden gems
 
     if keywords_to_include is None:
-        keywords_to_include = list()
+        keywords_to_include = []
 
     if keywords_to_exclude is None:
-        keywords_to_exclude = list()
+        keywords_to_exclude = []
 
     from appids import appid_hidden_gems_reference_set
     from download_json import get_appid_by_keyword_list_to_include, get_appid_by_keyword_list_to_exclude
@@ -350,20 +349,20 @@ def compute_ranking(D, num_top_games_to_print=None, keywords_to_include=None, ke
                 # Objective function to minimize:	 2156.36
                 optimal_parameters = [pow(10, 6.52)]
             else:
-                if not (quality_measure_str == 'bayesian_rating'):
+                if quality_measure_str != 'bayesian_rating':
                     raise AssertionError()
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 1900.00
                 optimal_parameters = [pow(10, 6.63)]
         else:
-            if not (popularity_measure_str == 'num_reviews'):
+            if popularity_measure_str != 'num_reviews':
                 raise AssertionError()
             if quality_measure_str is None or quality_measure_str == 'wilson_score':
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 2372.90
                 optimal_parameters = [pow(10, 4.83)]
             else:
-                if not (quality_measure_str == 'bayesian_rating'):
+                if quality_measure_str != 'bayesian_rating':
                     raise AssertionError()
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 2094.00

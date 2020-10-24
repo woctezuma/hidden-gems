@@ -28,10 +28,10 @@ def get_review_language_dictionary(app_id, previously_detected_languages_dict=No
     language_dict = dict()
 
     if previously_detected_languages_dict is None:
-        previously_detected_languages_dict = dict()
+        previously_detected_languages_dict = {}
 
     if app_id not in previously_detected_languages_dict.keys():
-        previously_detected_languages_dict[app_id] = dict()
+        previously_detected_languages_dict[app_id] = {}
 
     for review in reviews:
         # Review ID
@@ -58,7 +58,7 @@ def get_review_language_dictionary(app_id, previously_detected_languages_dict=No
             previously_detected_languages_dict[app_id][review_id] = detected_language
             previously_detected_languages_dict['has_changed'] = True
 
-        language_dict[review_id] = dict()
+        language_dict[review_id] = {}
         language_dict[review_id]['tag'] = review_language_tag
         language_dict[review_id]['detected'] = detected_language
         language_dict[review_id]['voted_up'] = is_a_positive_review
@@ -95,9 +95,9 @@ def most_common(L):
 
 
 def convert_review_language_dictionary_to_iso(language_dict):
-    language_iso_dict = dict()
+    language_iso_dict = {}
 
-    languages = set([r['tag'] for r in language_dict.values()])
+    languages = {r['tag'] for r in language_dict.values()}
 
     for language in languages:
 
@@ -105,7 +105,7 @@ def convert_review_language_dictionary_to_iso(language_dict):
             language_iso = iso639.to_iso639_1(language)
 
         except iso639.NonExistentLanguageError:
-            if language == 'schinese' or language == 'tchinese':
+            if language in ['schinese', 'tchinese']:
                 language_iso = 'zh-cn'
             elif language == 'brazilian':
                 language_iso = 'pt'
@@ -142,7 +142,7 @@ def summarize_review_language_dictionary(language_dict):
         num_upvotes = len(positive_reviews_with_matching_languages)
         num_downvotes = num_votes - num_upvotes
 
-        summary_dict[language_iso] = dict()
+        summary_dict[language_iso] = {}
         summary_dict[language_iso]['voted'] = num_votes
         summary_dict[language_iso]['voted_up'] = num_upvotes
         summary_dict[language_iso]['voted_down'] = num_downvotes
@@ -168,7 +168,7 @@ def get_all_review_language_summaries(previously_detected_languages_filename=Non
     try:
         previously_detected_languages = load_content_from_disk(previously_detected_languages_filename)
     except FileNotFoundError:
-        previously_detected_languages = dict()
+        previously_detected_languages = {}
 
     previously_detected_languages['has_changed'] = False
 
@@ -220,14 +220,18 @@ def write_content_to_disk(content_to_write, filename):
 def compute_review_language_distribution(game_feature_dict, all_languages):
     # Compute the distribution of review languages among reviewers
 
-    review_language_distribution = dict()
+    review_language_distribution = {}
 
     for appID in game_feature_dict.keys():
         data_for_current_game = game_feature_dict[appID]
 
-        num_reviews = sum([data_for_current_game[language]['voted'] for language in data_for_current_game.keys()])
+        num_reviews = sum(
+            data_for_current_game[language]['voted']
+            for language in data_for_current_game.keys()
+        )
 
-        review_language_distribution[appID] = dict()
+
+        review_language_distribution[appID] = {}
         review_language_distribution[appID]['num_reviews'] = num_reviews
         review_language_distribution[appID]['distribution'] = dict()
         for language in all_languages:
@@ -317,11 +321,11 @@ def choose_language_independent_prior_based_on_hidden_gems(game_feature_dict, al
 
 def choose_language_specific_prior_based_on_hidden_gems(game_feature_dict, all_languages, verbose=False):
     # For each language, compute the prior to be used for the inference of a Bayesian rating
-    language_specific_prior = dict()
+    language_specific_prior = {}
     for language in all_languages:
 
         # Construct observation structure used to compute a prior for the inference of a Bayesian rating
-        observations = dict()
+        observations = {}
         for appid in game_feature_dict.keys():
 
             try:
@@ -354,7 +358,7 @@ def prepare_dictionary_for_ranking_of_hidden_gems(steam_spy_dict, game_feature_d
     # Prepare dictionary to feed to compute_stats module in hidden-gems repository
 
     # noinspection PyPep8Naming
-    D = dict()
+    D = {}
 
     review_language_distribution = compute_review_language_distribution(game_feature_dict, all_languages)
 
@@ -386,7 +390,7 @@ def prepare_dictionary_for_ranking_of_hidden_gems(steam_spy_dict, game_feature_d
         print_prior(prior, all_languages)
 
     for appID in game_feature_dict.keys():
-        D[appID] = dict()
+        D[appID] = {}
         try:
             D[appID]['name'] = steam_spy_dict[appID]['name']
         except KeyError:
@@ -403,7 +407,7 @@ def prepare_dictionary_for_ranking_of_hidden_gems(steam_spy_dict, game_feature_d
             num_owners_for_all_languages = get_mid_of_interval(num_owners_for_all_languages)
 
         for language in all_languages:
-            D[appID][language] = dict()
+            D[appID][language] = {}
 
             try:
                 num_positive_reviews = game_feature_dict[appID][language]['voted_up']
@@ -422,10 +426,7 @@ def prepare_dictionary_for_ranking_of_hidden_gems(steam_spy_dict, game_feature_d
 
             if num_reviews > 0:
                 # Construct game structure used to compute Bayesian rating
-                game = dict()
-                game['score'] = num_positive_reviews / num_reviews
-                game['num_votes'] = num_reviews
-
+                game = {'score': num_positive_reviews / num_reviews, 'num_votes': num_reviews}
                 bayesian_rating = compute_bayesian_score(game, prior[language])
             else:
                 bayesian_rating = -1
@@ -497,9 +498,7 @@ def get_regional_ranking_filename(language):
 
     pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
 
-    output_filename = output_folder + "hidden_gems_" + language + ".md"
-
-    return output_filename
+    return output_folder + "hidden_gems_" + language + ".md"
 
 
 def run_regional_workflow(quality_measure_str='wilson_score',
@@ -555,9 +554,8 @@ if __name__ == "__main__":
     use_language_specific_prior = True
     # NB: This bool is only relevant if the prior is NOT based on the whole Steam catalog. Indeed, language-specific
     #     computation is impossible for the whole catalog since we don't have access to language data for every game.
-    if use_global_constant_prior:
-        if use_language_specific_prior:
-            raise AssertionError()
+    if use_global_constant_prior and use_language_specific_prior:
+        raise AssertionError()
 
     run_regional_workflow(quality_measure_str='bayesian_rating',  # Either 'wilson_score' or 'bayesian_rating'
                           popularity_measure_str='num_owners',  # Either 'num_reviews' or 'num_owners'

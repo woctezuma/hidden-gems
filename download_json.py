@@ -23,10 +23,7 @@ def download_steam_spy_data(json_filename="steamspy.json", genre=None):
         if genre is None:
             data = steamspypi.load()
         else:
-            data_request = dict()
-            data_request['request'] = 'genre'
-            data_request['genre'] = genre
-
+            data_request = {'request': 'genre', 'genre': genre}
             data = steamspypi.download(data_request)
 
         steamspypi.print_data(data, data_filename)
@@ -49,9 +46,7 @@ def get_appid_by_keyword(keyword):
     # Download data which meta-data includes this keyword as genre
     data_genre = download_steam_spy_data("genre_" + keyword + "_" + json_filename, keyword)
 
-    app_ids = set(data_genre.keys())
-
-    return app_ids
+    return set(data_genre.keys())
 
 
 def get_appid_by_keyword_list_to_include(keyword_list):
