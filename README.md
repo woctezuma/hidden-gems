@@ -1,7 +1,7 @@
 # Hidden Gems [![Build status][Build image]][Build] [![Updates][Dependency image]][PyUp] [![Python 3][Python3 image]][PyUp] [![Code coverage][Codecov image]][Codecov]  [![Code Quality][codacy image]][codacy]
 
-  [Build]: https://travis-ci.org/woctezuma/hidden-gems
-  [Build image]: https://travis-ci.org/woctezuma/hidden-gems.svg?branch=master
+  [Build]: <https://github.com/woctezuma/hidden-gems/actions>
+  [Build image]: <https://github.com/woctezuma/hidden-gems/workflows/Python application/badge.svg?branch=master>
 
   [PyUp]: https://pyup.io/repos/github/woctezuma/hidden-gems/
   [Dependency image]: https://pyup.io/repos/github/woctezuma/hidden-gems/shield.svg
