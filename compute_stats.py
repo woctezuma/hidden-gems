@@ -83,7 +83,7 @@ def compute_score_generic(
 
 # noinspection PyPep8Naming
 def rank_games(
-    D,
+    d,
     parameter_list,
     verbose=False,
     appid_reference_set=None,
@@ -150,7 +150,7 @@ def rank_games(
         )
 
     # Rank all the Steam games
-    sorted_values = sorted(D.values(), key=compute_score, reverse=True)
+    sorted_values = sorted(d.values(), key=compute_score, reverse=True)
 
     if language is None:
         name_index = 0
@@ -162,14 +162,14 @@ def rank_games(
     reference_dict = {}
     for appid_reference in appid_reference_set:
         # Find the rank of this game used as a reference of a "hidden gem"
-        name_game_ref_for_hidden_gem = D[appid_reference][name_index]
+        name_game_ref_for_hidden_gem = d[appid_reference][name_index]
         rank_game_used_as_reference_for_hidden_gem = (
             sorted_game_names.index(name_game_ref_for_hidden_gem) + 1
         )
 
         # Find whether the reference game should appear in the ranking (it might not due to tag filters)
         if language is None:
-            bool_reference_game_should_appear_in_ranking = D[appid_reference][-1]
+            bool_reference_game_should_appear_in_ranking = d[appid_reference][-1]
         else:
             bool_reference_game_should_appear_in_ranking = True
 
@@ -219,7 +219,7 @@ def rank_games(
 
         for i in range(num_games_to_print):
             game_name = sorted_game_names[i]
-            appid = [k for k, v in D.items() if v[name_index] == game_name][0]
+            appid = [k for k, v in d.items() if v[name_index] == game_name][0]
 
             current_rank = i + 1
 
@@ -253,7 +253,7 @@ def rank_games(
 
 # noinspection PyPep8Naming
 def optimize_for_alpha(
-    D,
+    d,
     verbose=True,
     appid_reference_set=None,
     language=None,
@@ -280,7 +280,7 @@ def optimize_for_alpha(
     # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
     def function_to_minimize(x):
         return rank_games(
-            D,
+            d,
             [x],
             False,
             appid_reference_set,
@@ -291,14 +291,14 @@ def optimize_for_alpha(
 
     if language is None:
         if popularity_measure_str is None or popularity_measure_str == 'num_owners':
-            vec = [float(game[get_index_num_owners()]) for game in D.values()]
+            vec = [float(game[get_index_num_owners()]) for game in d.values()]
         else:
             if not (popularity_measure_str == 'num_reviews'):
                 raise AssertionError
-            vec = [get_num_reviews(game) for game in D.values()]
+            vec = [get_num_reviews(game) for game in d.values()]
 
     else:
-        vec = [game[language][popularity_measure_str] for game in D.values()]
+        vec = [game[language][popularity_measure_str] for game in d.values()]
 
     def choose_x0(data_vec):
         x0 = 1 + np.max(data_vec)
@@ -370,7 +370,7 @@ def get_num_reviews(game):
 
 # noinspection PyPep8Naming
 def compute_ranking(
-    D,
+    d,
     num_top_games_to_print=None,
     keywords_to_include=None,
     keywords_to_exclude=None,
@@ -409,7 +409,7 @@ def compute_ranking(
 
     if perform_optimization_at_runtime:
         optimal_parameters = optimize_for_alpha(
-            D,
+            d,
             True,
             appid_hidden_gems_reference_set,
             language,
@@ -451,7 +451,7 @@ def compute_ranking(
     filtered_out_app_ids = get_appid_by_keyword_list_to_exclude(keywords_to_exclude)
 
     (_, ranking) = rank_games(
-        D,
+        d,
         optimal_parameters,
         True,
         appid_hidden_gems_reference_set,

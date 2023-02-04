@@ -68,7 +68,7 @@ def get_review_language_dictionary(app_id, previously_detected_languages_dict=No
 
 
 # noinspection PyPep8Naming
-def most_common(L):
+def most_common(lst):
     # Reference: https://stackoverflow.com/a/1518632
 
     import itertools
@@ -76,14 +76,14 @@ def most_common(L):
 
     # get an iterable of (item, iterable) pairs
     # noinspection PyPep8Naming
-    SL = sorted((x, i) for i, x in enumerate(L))
+    SL = sorted((x, i) for i, x in enumerate(lst))
     groups = itertools.groupby(SL, key=operator.itemgetter(0))
 
     # auxiliary function to get "quality" for an item
     def _auxfun(g):
         _, iterable = g
         count = 0
-        min_index = len(L)
+        min_index = len(lst)
         for _, where in iterable:
             count += 1
             min_index = min(min_index, where)
