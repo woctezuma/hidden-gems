@@ -1,6 +1,10 @@
 # Hidden Gems
 
-[![Build status][Build image]][Build] [![Updates][Dependency image]][PyUp] [![Python 3][Python3 image]][PyUp] [![Code coverage][Codecov image]][Codecov]  [![Code Quality][codacy image]][codacy]
+[![Build status][Build image]][Build]
+[![Updates][Dependency image]][PyUp]
+[![Python 3][Python3 image]][PyUp]
+[![Code coverage][Codecov image]][Codecov]
+[![Code Quality][codacy image]][codacy]
 
 This repository contains code to compute a ranking of Steam games, based on a score intended to favor "hidden gems".
 
