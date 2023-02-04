@@ -44,30 +44,30 @@ def create_local_dictionary(
     if appid_reference_set is None:
         appid_reference_set = {appidContradiction}
 
-    from compute_wilson_score import compute_wilson_score
     from compute_bayesian_rating import choose_prior, compute_bayesian_score
+    from compute_wilson_score import compute_wilson_score
 
     # noinspection PyPep8Naming
-    D = dict()
+    D = {}
 
     # Construct observation structure used to compute a prior for the inference of a Bayesian rating
-    observations = dict()
+    observations = {}
 
-    for appid in data.keys():
+    for appid in data:
         num_positive_reviews = data[appid]["positive"]
         num_negative_reviews = data[appid]["negative"]
 
         num_votes = num_positive_reviews + num_negative_reviews
 
         if num_votes > 0:
-            observations[appid] = dict()
+            observations[appid] = {}
             observations[appid]['score'] = num_positive_reviews / num_votes
             observations[appid]['num_votes'] = num_votes
 
     prior = choose_prior(observations)
     print(prior)
 
-    for appid in data.keys():
+    for appid in data:
         name = data[appid]['name']
         num_owners = data[appid]['owners']
         try:
@@ -93,7 +93,7 @@ def create_local_dictionary(
 
         if num_votes > 0:
             # Construct game structure used to compute Bayesian rating
-            game = dict()
+            game = {}
             game['score'] = num_positive_reviews / num_votes
             game['num_votes'] = num_votes
 

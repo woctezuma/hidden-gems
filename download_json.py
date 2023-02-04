@@ -15,7 +15,7 @@ def download_steam_spy_data(json_filename="steamspy.json", genre=None):
     data_filename = data_path + json_filename
 
     try:
-        with open(data_filename, 'r', encoding="utf8") as in_json_file:
+        with open(data_filename, encoding="utf8") as in_json_file:
             data = json.load(in_json_file)
     except FileNotFoundError:
         print("Downloading and caching data from SteamSpy")
@@ -23,7 +23,7 @@ def download_steam_spy_data(json_filename="steamspy.json", genre=None):
         if genre is None:
             data = steamspypi.load()
         else:
-            data_request = dict()
+            data_request = {}
             data_request['request'] = 'genre'
             data_request['genre'] = genre
 

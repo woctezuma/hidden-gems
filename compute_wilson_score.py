@@ -30,7 +30,7 @@ def compute_wilson_score(num_pos, num_neg, confidence=0.95):
     if not (num_neg >= 0):
         raise AssertionError()
 
-    if confidence in quantile_normal_dist_dict.keys():
+    if confidence in quantile_normal_dist_dict:
         tabulated_confidence = confidence
     else:
         tabulated_confidence_list = list(quantile_normal_dist_dict.keys())

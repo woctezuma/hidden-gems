@@ -293,7 +293,7 @@ class TestComputeStatsMethods(unittest.TestCase):
         import ast
 
         # Import the local dictionary from the input file
-        with open(dict_filename, 'r', encoding="utf8") as infile:
+        with open(dict_filename, encoding="utf8") as infile:
             lines = infile.readlines()
             # The dictionary is on the second line
             # noinspection PyPep8Naming

@@ -28,7 +28,6 @@ def compute_score_generic(
 
     if language is None:
         # noinspection PyUnusedLocal
-        # game_name = my_tuple[0]
         wilson_score = my_tuple[1]
         bayesian_rating = my_tuple[2]
         num_owners = my_tuple[3]
@@ -39,7 +38,6 @@ def compute_score_generic(
         num_negative_reviews = my_tuple[8]
 
         # noinspection PyUnusedLocal
-        # bool_game_should_appear_in_ranking = my_tuple[-1]
 
         num_owners = float(num_owners)
         try:
@@ -129,18 +127,16 @@ def rank_games(
 
     # Boolean to decide whether printing the ranking of the top 1000 games, rather than the ranking of the whole Steam
     # catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
-    print_subset_of_top_games = bool(not (num_top_games_to_print is None))
+    print_subset_of_top_games = bool(num_top_games_to_print is not None)
 
     # Boolean to decide whether there is a filtering-in of appIDs (typically to filter-in genres or tags).
     print_filtered_app_ids_only = bool(
-        not (filtered_app_ids_to_show is None)
-        and not (len(filtered_app_ids_to_show) == 0),
+        filtered_app_ids_to_show is not None and len(filtered_app_ids_to_show) != 0,
     )
 
     # Boolean to decide whether there is a filtering-out of appIDs (typically to filter-out genres or tags).
     hide_filtered_app_ids_only = bool(
-        not (filtered_app_ids_to_hide is None)
-        and not (len(filtered_app_ids_to_hide) == 0),
+        filtered_app_ids_to_hide is not None and len(filtered_app_ids_to_hide) != 0,
     )
 
     def compute_score(x):
@@ -203,7 +199,7 @@ def rank_games(
         if print_subset_of_top_games:
             num_games_to_print = min(num_top_games_to_print, num_games_to_print)
 
-        for appid_reference in reference_dict.keys():
+        for appid_reference in reference_dict:
             rank_game_used_as_reference_for_hidden_gem = reference_dict[
                 appid_reference
             ][0]
@@ -226,7 +222,7 @@ def rank_games(
 
             current_rank = i + 1
 
-            if appid in reference_dict.keys():
+            if appid in reference_dict:
                 rank_game_used_as_reference_for_hidden_gem = reference_dict[appid][0]
                 bool_reference_game_should_appear_in_ranking = reference_dict[appid][1]
                 if not bool_reference_game_should_appear_in_ranking:
@@ -237,14 +233,19 @@ def rank_games(
 
             current_rank -= rank_decrease
 
-            if not print_filtered_app_ids_only or bool(
-                appid in filtered_app_ids_to_show,
+            if (
+                not print_filtered_app_ids_only
+                or bool(
+                    appid in filtered_app_ids_to_show,
+                )
+            ) and (
+                not hide_filtered_app_ids_only
+                or bool(
+                    appid not in filtered_app_ids_to_hide,
+                )
             ):
-                if not hide_filtered_app_ids_only or bool(
-                    not (appid in filtered_app_ids_to_hide),
-                ):
-                    # Append the ranking info
-                    ranking_list.append([current_rank, game_name, appid])
+                # Append the ranking info
+                ranking_list.append([current_rank, game_name, appid])
 
     return scalar_summarizing_ranks_of_reference_hidden_gems, ranking_list
 
@@ -272,6 +273,7 @@ def optimize_for_alpha(
         appid_reference_set = {appidContradiction}
 
     from math import log10
+
     from scipy.optimize import minimize
 
     # Goal: find the optimal value for alpha by minimizing the rank of games chosen as references of "hidden gems"
@@ -342,7 +344,7 @@ def save_ranking_to_file(
                     print(appid)
             else:
                 sentence = (
-                    '{:05}'.format(current_rank)
+                    f'{current_rank:05}'
                     + ".\t["
                     + game_name
                     + "]("
@@ -400,15 +402,15 @@ def compute_ranking(
     # Output:   ranking of hidden gems
 
     if keywords_to_include is None:
-        keywords_to_include = list()
+        keywords_to_include = []
 
     if keywords_to_exclude is None:
-        keywords_to_exclude = list()
+        keywords_to_exclude = []
 
     from appids import appid_hidden_gems_reference_set
     from download_json import (
-        get_appid_by_keyword_list_to_include,
         get_appid_by_keyword_list_to_exclude,
+        get_appid_by_keyword_list_to_include,
     )
 
     if perform_optimization_at_runtime:
@@ -512,7 +514,7 @@ def run_workflow(
     output_filename_only_appids = "idlist.txt"
 
     # Import the local dictionary from the input file
-    with open(input_filename, 'r', encoding="utf8") as infile:
+    with open(input_filename, encoding="utf8") as infile:
         lines = infile.readlines()
         # The dictionary is on the second line
         # noinspection PyPep8Naming
