@@ -11,10 +11,10 @@ import steamreviews
 import steamspypi
 from langdetect import DetectorFactory, detect, lang_detect_exception
 
-from compute_bayesian_rating import choose_prior, compute_bayesian_score
 from compute_stats import compute_ranking, save_ranking_to_file
-from compute_wilson_score import compute_wilson_score
 from create_dict_using_json import get_mid_of_interval
+from src.compute_bayesian_rating import choose_prior, compute_bayesian_score
+from src.compute_wilson_score import compute_wilson_score
 
 
 def get_review_language_dictionary(app_id, previously_detected_languages_dict=None):
@@ -160,7 +160,7 @@ def get_all_review_language_summaries(
     previously_detected_languages_filename=None,
     delta_n_reviews_between_temp_saves=10,
 ):
-    from appids import appid_hidden_gems_reference_set
+    from src.appids import appid_hidden_gems_reference_set
 
     with Path("idlist.txt").open() as f:
         d = f.readlines()
@@ -551,7 +551,7 @@ def get_input_data(load_from_cache=True):
 
 
 def download_steam_reviews():
-    from appids import appid_hidden_gems_reference_set
+    from src.appids import appid_hidden_gems_reference_set
 
     # All the reference hidden-gems
     steamreviews.download_reviews_for_app_id_batch(appid_hidden_gems_reference_set)

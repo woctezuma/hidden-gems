@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
-from appids import APP_ID_CONTRADICTION
+from src.appids import APP_ID_CONTRADICTION
 
 
 def compute_score_generic(
@@ -398,8 +398,8 @@ def compute_ranking(
     if keywords_to_exclude is None:
         keywords_to_exclude = []
 
-    from appids import appid_hidden_gems_reference_set
-    from download_json import (
+    from src.appids import appid_hidden_gems_reference_set
+    from src.download_json import (
         get_appid_by_keyword_list_to_exclude,
         get_appid_by_keyword_list_to_include,
     )

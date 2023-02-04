@@ -1,12 +1,10 @@
 import unittest
 from pathlib import Path
 
-import appids
-import compute_bayesian_rating
 import compute_regional_stats
 import compute_stats
-import compute_wilson_score
 import create_dict_using_json
+from src import appids, compute_bayesian_rating, compute_wilson_score
 
 
 class TestAppidsMethods(unittest.TestCase):

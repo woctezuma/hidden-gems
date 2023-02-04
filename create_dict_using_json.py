@@ -4,7 +4,7 @@ from pathlib import Path
 
 import steamspypi
 
-from appids import APP_ID_CONTRADICTION
+from src.appids import APP_ID_CONTRADICTION
 
 
 def get_mid_of_interval(interval_as_str):
@@ -46,8 +46,8 @@ def create_local_dictionary(
     if appid_reference_set is None:
         appid_reference_set = {APP_ID_CONTRADICTION}
 
-    from compute_bayesian_rating import choose_prior, compute_bayesian_score
-    from compute_wilson_score import compute_wilson_score
+    from src.compute_bayesian_rating import choose_prior, compute_bayesian_score
+    from src.compute_wilson_score import compute_wilson_score
 
     # noinspection PyPep8Naming
     d = {}
@@ -139,7 +139,7 @@ def create_local_dictionary(
 
 
 def main():
-    from appids import appid_hidden_gems_reference_set
+    from src.appids import appid_hidden_gems_reference_set
 
     # SteamSpy's data in JSON format
     data = steamspypi.load()
