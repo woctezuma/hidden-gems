@@ -26,9 +26,9 @@ def compute_wilson_score(num_pos, num_neg, confidence=0.95):
     # Reference: https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Wilson_score_interval
 
     if not (num_pos >= 0):
-        raise AssertionError()
+        raise AssertionError
     if not (num_neg >= 0):
-        raise AssertionError()
+        raise AssertionError
 
     if confidence in quantile_normal_dist_dict:
         tabulated_confidence = confidence
@@ -54,9 +54,9 @@ def compute_wilson_score(num_pos, num_neg, confidence=0.95):
         wilson_score_value = mean - delta
     except ZeroDivisionError:
         if not (num_pos == 0):
-            raise AssertionError()
+            raise AssertionError
         if not (num_neg == 0):
-            raise AssertionError()
+            raise AssertionError
         wilson_score_value = None
 
     return wilson_score_value

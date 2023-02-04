@@ -228,7 +228,7 @@ def rank_games(
                 bool_reference_game_should_appear_in_ranking = reference_dict[appid][1]
                 if not bool_reference_game_should_appear_in_ranking:
                     if not (current_rank == rank_game_used_as_reference_for_hidden_gem):
-                        raise AssertionError()
+                        raise AssertionError
                     rank_decrease += 1
                     continue
 
@@ -294,7 +294,7 @@ def optimize_for_alpha(
             vec = [float(game[get_index_num_owners()]) for game in D.values()]
         else:
             if not (popularity_measure_str == 'num_reviews'):
-                raise AssertionError()
+                raise AssertionError
             vec = [get_num_reviews(game) for game in D.values()]
 
     else:
@@ -431,20 +431,20 @@ def compute_ranking(
                 optimal_parameters = [pow(10, 6.52)]
             else:
                 if not (quality_measure_str == 'bayesian_rating'):
-                    raise AssertionError()
+                    raise AssertionError
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 1900.00
                 optimal_parameters = [pow(10, 6.63)]
         else:
             if not (popularity_measure_str == 'num_reviews'):
-                raise AssertionError()
+                raise AssertionError
             if quality_measure_str is None or quality_measure_str == 'wilson_score':
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 2372.90
                 optimal_parameters = [pow(10, 4.83)]
             else:
                 if not (quality_measure_str == 'bayesian_rating'):
-                    raise AssertionError()
+                    raise AssertionError
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 2094.00
                 optimal_parameters = [pow(10, 4.89)]

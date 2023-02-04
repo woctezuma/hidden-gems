@@ -107,9 +107,9 @@ def create_local_dictionary(
         # Make sure the output dictionary includes the game which will be chosen as a reference of a "hidden gem"
         if appid in appid_reference_set:
             if wilson_score is None:
-                raise AssertionError()
+                raise AssertionError
             if bayesian_rating is None:
-                raise AssertionError()
+                raise AssertionError
             print("Game used as a reference:\t" + name + "\t(appID=" + appid + ")")
 
         if wilson_score is None or bayesian_rating is None:
