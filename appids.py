@@ -1,12 +1,12 @@
 # Objective: list appID of examples of "hidden gems"
 
 # This is the appID of the game called "Contradiction".
-appidContradiction = "373390"  # Contradiction - Spot The Liar!
+APP_ID_CONTRADICTION = "373390"  # Contradiction - Spot The Liar!
 
 # This is a set including appID of games which will serve as references of "hidden gems".
 # Reference: http://www.neogaf.com/forum/showpost.php?p=241232835&postcount=5886
 appid_hidden_gems_reference_set = {
-    appidContradiction,  # Contradiction - Spot The Liar!
+    APP_ID_CONTRADICTION,  # Contradiction - Spot The Liar!
     "320090",  # This Starry Midnight We Make
     "363980",  # Forget Me Not: My Organic Garden
     "561740",  # MidBoss

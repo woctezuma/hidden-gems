@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
-from appids import appidContradiction
+from appids import APP_ID_CONTRADICTION
 
 
 def compute_score_generic(
@@ -118,7 +118,7 @@ def rank_games(
     #             If verbose was set to None, the returned ranking is empty.
 
     if appid_reference_set is None:
-        appid_reference_set = {appidContradiction}
+        appid_reference_set = {APP_ID_CONTRADICTION}
 
     if filtered_app_ids_to_show is None:
         filtered_app_ids_to_show = set()
@@ -271,7 +271,7 @@ def optimize_for_alpha(
     # Output:   list of optimal parameters (by default, only one parameter is optimized: alpha)
 
     if appid_reference_set is None:
-        appid_reference_set = {appidContradiction}
+        appid_reference_set = {APP_ID_CONTRADICTION}
 
     from math import log10
 

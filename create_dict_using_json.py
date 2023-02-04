@@ -4,7 +4,7 @@ from pathlib import Path
 
 import steamspypi
 
-from appids import appidContradiction
+from appids import APP_ID_CONTRADICTION
 
 
 def get_mid_of_interval(interval_as_str):
@@ -44,7 +44,7 @@ def create_local_dictionary(
     # Output:   none (the local dictionary is written to output_filename)
 
     if appid_reference_set is None:
-        appid_reference_set = {appidContradiction}
+        appid_reference_set = {APP_ID_CONTRADICTION}
 
     from compute_bayesian_rating import choose_prior, compute_bayesian_score
     from compute_wilson_score import compute_wilson_score
