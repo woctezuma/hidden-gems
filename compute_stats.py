@@ -344,14 +344,7 @@ def save_ranking_to_file(
                 if verbose:
                     print(appid)
             else:
-                sentence = (
-                    f'{current_rank:05}'
-                    + ".\t["
-                    + game_name
-                    + "]("
-                    + store_url_fixed_width
-                    + ")"
-                )
+                sentence = f'{current_rank:05}.\t[{game_name}]({store_url_fixed_width})'
                 print(sentence, file=outfile)
                 if verbose:
                     print(sentence)
