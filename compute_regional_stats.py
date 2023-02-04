@@ -76,8 +76,8 @@ def most_common(lst):
 
     # get an iterable of (item, iterable) pairs
     # noinspection PyPep8Naming
-    SL = sorted((x, i) for i, x in enumerate(lst))
-    groups = itertools.groupby(SL, key=operator.itemgetter(0))
+    sl = sorted((x, i) for i, x in enumerate(lst))
+    groups = itertools.groupby(sl, key=operator.itemgetter(0))
 
     # auxiliary function to get "quality" for an item
     def _auxfun(g):
@@ -182,15 +182,15 @@ def get_all_review_language_summaries(
 
     previously_detected_languages['has_changed'] = False
 
-    for count, appID in enumerate(app_id_list):
+    for count, app_id in enumerate(app_id_list):
         (language_dict, previously_detected_languages) = get_review_language_dictionary(
-            appID,
+            app_id,
             previously_detected_languages,
         )
 
         summary_dict = summarize_review_language_dictionary(language_dict)
 
-        game_feature_dict[appID] = summary_dict
+        game_feature_dict[app_id] = summary_dict
         all_languages = all_languages.union(summary_dict.keys())
 
         if delta_n_reviews_between_temp_saves > 0:
@@ -240,8 +240,8 @@ def compute_review_language_distribution(game_feature_dict, all_languages):
 
     review_language_distribution = {}
 
-    for appID in game_feature_dict:
-        data_for_current_game = game_feature_dict[appID]
+    for app_id in game_feature_dict:
+        data_for_current_game = game_feature_dict[app_id]
 
         num_reviews = sum(
             [
@@ -250,16 +250,16 @@ def compute_review_language_distribution(game_feature_dict, all_languages):
             ],
         )
 
-        review_language_distribution[appID] = {}
-        review_language_distribution[appID]['num_reviews'] = num_reviews
-        review_language_distribution[appID]['distribution'] = {}
+        review_language_distribution[app_id] = {}
+        review_language_distribution[app_id]['num_reviews'] = num_reviews
+        review_language_distribution[app_id]['distribution'] = {}
         for language in all_languages:
             try:
-                review_language_distribution[appID]['distribution'][language] = (
+                review_language_distribution[app_id]['distribution'][language] = (
                     data_for_current_game[language]['voted'] / num_reviews
                 )
             except KeyError:
-                review_language_distribution[appID]['distribution'][language] = 0
+                review_language_distribution[app_id]['distribution'][language] = 0
 
     return review_language_distribution
 
@@ -392,7 +392,7 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
     # Prepare dictionary to feed to compute_stats module in hidden-gems repository
 
     # noinspection PyPep8Naming
-    D = {}
+    d = {}
 
     review_language_distribution = compute_review_language_distribution(
         game_feature_dict,
@@ -441,15 +441,15 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
     if verbose:
         print_prior(prior, all_languages)
 
-    for appID in game_feature_dict:
-        D[appID] = {}
+    for app_id in game_feature_dict:
+        d[app_id] = {}
         try:
-            D[appID]['name'] = steam_spy_dict[appID]['name']
+            d[app_id]['name'] = steam_spy_dict[app_id]['name']
         except KeyError:
-            D[appID]['name'] = 'Unknown ' + str(appID)
+            d[app_id]['name'] = 'Unknown ' + str(app_id)
 
         try:
-            num_owners_for_all_languages = steam_spy_dict[appID]['owners']
+            num_owners_for_all_languages = steam_spy_dict[app_id]['owners']
         except KeyError:
             num_owners_for_all_languages = 0
 
@@ -461,11 +461,11 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
             )
 
         for language in all_languages:
-            D[appID][language] = {}
+            d[app_id][language] = {}
 
             try:
-                num_positive_reviews = game_feature_dict[appID][language]['voted_up']
-                num_negative_reviews = game_feature_dict[appID][language]['voted_down']
+                num_positive_reviews = game_feature_dict[app_id][language]['voted_up']
+                num_negative_reviews = game_feature_dict[app_id][language]['voted_down']
             except KeyError:
                 num_positive_reviews = 0
                 num_negative_reviews = 0
@@ -494,7 +494,7 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
             # Assumption: for every game, owners and reviews are distributed among regions in the same proportions.
             num_owners = (
                 num_owners_for_all_languages
-                * review_language_distribution[appID]['distribution'][language]
+                * review_language_distribution[app_id]['distribution'][language]
             )
 
             if num_owners < num_reviews:
@@ -506,18 +506,18 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
                     + " reviews) for language="
                     + language
                     + " and appID="
-                    + appID
+                    + app_id
                     + ". Game skipped.",
                 )
                 wilson_score = -1
                 bayesian_rating = -1
 
-            D[appID][language]['wilson_score'] = wilson_score
-            D[appID][language]['bayesian_rating'] = bayesian_rating
-            D[appID][language]['num_owners'] = num_owners
-            D[appID][language]['num_reviews'] = num_reviews
+            d[app_id][language]['wilson_score'] = wilson_score
+            d[app_id][language]['bayesian_rating'] = bayesian_rating
+            d[app_id][language]['num_owners'] = num_owners
+            d[app_id][language]['num_reviews'] = num_reviews
 
-    return D
+    return d
 
 
 def get_language_features_filename():
@@ -599,7 +599,7 @@ def run_regional_workflow(
     (game_feature_dict, all_languages) = get_input_data(load_from_cache)
 
     # noinspection PyPep8Naming
-    D = prepare_dictionary_for_ranking_of_hidden_gems(
+    d = prepare_dictionary_for_ranking_of_hidden_gems(
         steamspypi.load(),
         game_feature_dict,
         all_languages,
@@ -610,7 +610,7 @@ def run_regional_workflow(
 
     for language in all_languages:
         ranking = compute_ranking(
-            D,
+            d,
             num_top_games_to_print,
             keywords_to_include,
             keywords_to_exclude,

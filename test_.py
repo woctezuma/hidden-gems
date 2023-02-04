@@ -298,22 +298,22 @@ class TestComputeStatsMethods(unittest.TestCase):
             lines = infile.readlines()
             # The dictionary is on the second line
             # noinspection PyPep8Naming
-            D = ast.literal_eval(lines[1])
+            d = ast.literal_eval(lines[1])
 
         for appid in appids.appid_hidden_gems_reference_set:
             print(
                 'Ensuring reference {} (appID={}) does not appear in the final ranking.'.format(
-                    D[appid][0],
+                    d[appid][0],
                     appid,
                 ),
             )
-            D[appid][-1] = False
+            d[appid][-1] = False
             # If True, UnEpic should end up about rank 1828. Otherwise, UnEpic should not appear on there.
 
         # Save the dictionary to a text file
         with Path(dict_filename).open('w', encoding="utf8") as outfile:
             print(create_dict_using_json.get_leading_comment(), file=outfile)
-            print(D, file=outfile)
+            print(d, file=outfile)
 
         self.assertTrue(
             compute_stats.run_workflow(

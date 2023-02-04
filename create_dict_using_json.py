@@ -50,7 +50,7 @@ def create_local_dictionary(
     from compute_wilson_score import compute_wilson_score
 
     # noinspection PyPep8Naming
-    D = {}
+    d = {}
 
     # Construct observation structure used to compute a prior for the inference of a Bayesian rating
     observations = {}
@@ -130,12 +130,12 @@ def create_local_dictionary(
             bool_game_should_appear_in_ranking = True
             stats_save.append(bool_game_should_appear_in_ranking)
 
-            D[appid] = stats_save
+            d[appid] = stats_save
 
     # Save the dictionary to a text file
     with Path(output_filename).open('w', encoding="utf8") as outfile:
         print(get_leading_comment(), file=outfile)
-        print(D, file=outfile)
+        print(d, file=outfile)
 
 
 def main():

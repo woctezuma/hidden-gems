@@ -512,10 +512,10 @@ def run_workflow(
         lines = infile.readlines()
         # The dictionary is on the second line
         # noinspection PyPep8Naming
-        D = ast.literal_eval(lines[1])
+        d = ast.literal_eval(lines[1])
 
     ranking = compute_ranking(
-        D,
+        d,
         num_top_games_to_print,
         keywords_to_include,
         keywords_to_exclude,
