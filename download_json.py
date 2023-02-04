@@ -2,6 +2,7 @@
 
 import json
 import pathlib
+from pathlib import Path
 
 import steamspypi
 
@@ -15,7 +16,7 @@ def download_steam_spy_data(json_filename="steamspy.json", genre=None):
     data_filename = data_path + json_filename
 
     try:
-        with open(data_filename, encoding="utf8") as in_json_file:
+        with Path(data_filename).open(encoding="utf8") as in_json_file:
             data = json.load(in_json_file)
     except FileNotFoundError:
         print("Downloading and caching data from SteamSpy")

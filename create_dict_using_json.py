@@ -1,5 +1,7 @@
 # Objective: store information regarding every Steam game in a dictionary.
 
+from pathlib import Path
+
 import steamspypi
 
 from appids import appidContradiction
@@ -131,7 +133,7 @@ def create_local_dictionary(
             D[appid] = stats_save
 
     # Save the dictionary to a text file
-    with open(output_filename, 'w', encoding="utf8") as outfile:
+    with Path(output_filename).open('w', encoding="utf8") as outfile:
         print(get_leading_comment(), file=outfile)
         print(D, file=outfile)
 

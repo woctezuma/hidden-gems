@@ -4,6 +4,7 @@
 
 import ast
 import pathlib
+from pathlib import Path
 
 import iso639
 import steamreviews
@@ -161,7 +162,7 @@ def get_all_review_language_summaries(
 ):
     from appids import appid_hidden_gems_reference_set
 
-    with open('idlist.txt') as f:
+    with Path('idlist.txt').open() as f:
         d = f.readlines()
 
     app_id_list = [x.strip() for x in d]
@@ -217,7 +218,7 @@ def get_all_review_language_summaries(
 
 
 def load_content_from_disk(filename):
-    with open(filename, encoding="utf8") as f:
+    with Path(filename).open(encoding="utf8") as f:
         lines = f.readlines()
         # The content is on the first line
         content = ast.literal_eval(lines[0])
@@ -228,7 +229,7 @@ def load_content_from_disk(filename):
 def write_content_to_disk(content_to_write, filename):
     # Export the content to a text file
 
-    with open(filename, 'w', encoding="utf8") as f:
+    with Path(filename).open('w', encoding="utf8") as f:
         print(content_to_write, file=f)
 
     return

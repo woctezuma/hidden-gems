@@ -1,6 +1,7 @@
 # Objective: compute a score for each Steam game and then rank all the games while favoring hidden gems.
 
 import ast
+from pathlib import Path
 
 import numpy as np
 
@@ -329,7 +330,7 @@ def save_ranking_to_file(
 
     base_steam_store_url = "https://store.steampowered.com/app/"
 
-    with open(output_filename, 'w', encoding="utf8") as outfile:
+    with Path(output_filename).open('w', encoding="utf8") as outfile:
         for current_ranking_info in ranking_list:
             current_rank = current_ranking_info[0]
             game_name = current_ranking_info[1]
@@ -514,7 +515,7 @@ def run_workflow(
     output_filename_only_appids = "idlist.txt"
 
     # Import the local dictionary from the input file
-    with open(input_filename, encoding="utf8") as infile:
+    with Path(input_filename).open(encoding="utf8") as infile:
         lines = infile.readlines()
         # The dictionary is on the second line
         # noinspection PyPep8Naming

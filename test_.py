@@ -1,4 +1,5 @@
 import unittest
+from pathlib import Path
 
 import appids
 import compute_bayesian_rating
@@ -293,7 +294,7 @@ class TestComputeStatsMethods(unittest.TestCase):
         import ast
 
         # Import the local dictionary from the input file
-        with open(dict_filename, encoding="utf8") as infile:
+        with Path(dict_filename).open(encoding="utf8") as infile:
             lines = infile.readlines()
             # The dictionary is on the second line
             # noinspection PyPep8Naming
@@ -310,7 +311,7 @@ class TestComputeStatsMethods(unittest.TestCase):
             # If True, UnEpic should end up about rank 1828. Otherwise, UnEpic should not appear on there.
 
         # Save the dictionary to a text file
-        with open(dict_filename, 'w', encoding="utf8") as outfile:
+        with Path(dict_filename).open('w', encoding="utf8") as outfile:
             print(create_dict_using_json.get_leading_comment(), file=outfile)
             print(D, file=outfile)
 
