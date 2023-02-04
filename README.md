@@ -2,19 +2,6 @@
 
 [![Build status][Build image]][Build] [![Updates][Dependency image]][PyUp] [![Python 3][Python3 image]][PyUp] [![Code coverage][Codecov image]][Codecov]  [![Code Quality][codacy image]][codacy]
 
-  [Build]: <https://github.com/woctezuma/hidden-gems/actions>
-  [Build image]: <https://github.com/woctezuma/hidden-gems/workflows/Python application/badge.svg?branch=master>
-
-  [PyUp]: https://pyup.io/repos/github/woctezuma/hidden-gems/
-  [Dependency image]: https://pyup.io/repos/github/woctezuma/hidden-gems/shield.svg
-  [Python3 image]: https://pyup.io/repos/github/woctezuma/hidden-gems/python-3-shield.svg
-
-  [Codecov]: https://codecov.io/gh/woctezuma/hidden-gems
-  [Codecov image]: https://codecov.io/gh/woctezuma/hidden-gems/branch/master/graph/badge.svg
-
-  [codacy]: https://www.codacy.com/app/woctezuma/hidden-gems
-  [codacy image]: https://api.codacy.com/project/badge/Grade/78cb31aae3514de8b792760bf3fa814f
-
 This repository contains code to compute a ranking of Steam games, based on a score intended to favor "hidden gems".
 
 ![Ranking of hidden gems at Steam250](https://github.com/woctezuma/hidden-gems/wiki/img/2019_04_07_banner_hidden_gems.png)
@@ -88,3 +75,19 @@ The ranking of hidden gems is favorably biased towards high-quality games which 
 * [my PyPI package to download Steam reviews](https://github.com/woctezuma/download-steam-reviews)
 * [my original repository for regional rankings of hidden gems](https://github.com/woctezuma/steam-reviews)
 * [a pre-downloaded database of Steam reviews](https://github.com/woctezuma/steam-reviews-data)
+
+<!-- Definitions -->
+
+  [Build]: <https://github.com/woctezuma/hidden-gems/actions>
+  [Build image]: <https://github.com/woctezuma/hidden-gems/workflows/Python application/badge.svg?branch=master>
+
+  [PyUp]: https://pyup.io/repos/github/woctezuma/hidden-gems/
+  [Dependency image]: https://pyup.io/repos/github/woctezuma/hidden-gems/shield.svg
+  [Python3 image]: https://pyup.io/repos/github/woctezuma/hidden-gems/python-3-shield.svg
+
+  [Codecov]: https://codecov.io/gh/woctezuma/hidden-gems
+  [Codecov image]: https://codecov.io/gh/woctezuma/hidden-gems/branch/master/graph/badge.svg
+
+  [codacy]: https://www.codacy.com/app/woctezuma/hidden-gems
+  [codacy image]: https://api.codacy.com/project/badge/Grade/78cb31aae3514de8b792760bf3fa814f
+
