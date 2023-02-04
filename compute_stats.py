@@ -156,7 +156,7 @@ def rank_games(
     else:
         name_index = 'name'
 
-    sorted_game_names = list(map(lambda x: x[name_index], sorted_values))
+    sorted_game_names = [x[name_index] for x in sorted_values]
 
     reference_dict = {}
     for appid_reference in appid_reference_set:
