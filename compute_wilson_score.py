@@ -52,11 +52,11 @@ def compute_wilson_score(num_pos, num_neg, confidence=0.95):
         inside_sqrt = num_pos * num_neg / (num_pos + num_neg) + z2 / 4
         delta = (z_quantile * sqrt(inside_sqrt)) / den
         wilson_score_value = mean - delta
-    except ZeroDivisionError:
+    except ZeroDivisionError as exc:
         if not (num_pos == 0):
-            raise AssertionError
+            raise AssertionError from exc
         if not (num_neg == 0):
-            raise AssertionError
+            raise AssertionError from exc
         wilson_score_value = None
 
     return wilson_score_value
