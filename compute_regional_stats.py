@@ -211,7 +211,7 @@ def get_all_review_language_summaries(
 
         print('AppID ' + str(count + 1) + '/' + str(len(app_id_list)) + ' done.')
 
-    all_languages = sorted(list(all_languages))
+    all_languages = sorted(all_languages)
 
     return game_feature_dict, all_languages
 
