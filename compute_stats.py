@@ -152,10 +152,7 @@ def rank_games(
     # Rank all the Steam games
     sorted_values = sorted(d.values(), key=compute_score, reverse=True)
 
-    if language is None:
-        name_index = 0
-    else:
-        name_index = "name"
+    name_index = 0 if language is None else "name"
 
     sorted_game_names = [x[name_index] for x in sorted_values]
 
