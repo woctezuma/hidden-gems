@@ -22,9 +22,9 @@ def get_review_language_dictionary(app_id, previously_detected_languages_dict=No
 
     review_data = steamreviews.load_review_dict(app_id)
 
-    print('\nAppID: ' + app_id)
+    print("\nAppID: " + app_id)
 
-    reviews = list(review_data['reviews'].values())
+    reviews = list(review_data["reviews"].values())
 
     language_dict = {}
 
@@ -39,13 +39,13 @@ def get_review_language_dictionary(app_id, previously_detected_languages_dict=No
         review_id = review["recommendationid"]
 
         # Review polarity tag, i.e. either "recommended" or "not recommended"
-        is_a_positive_review = review['voted_up']
+        is_a_positive_review = review["voted_up"]
 
         # Review text
-        review_content = review['review']
+        review_content = review["review"]
 
         # Review language tag
-        review_language_tag = review['language']
+        review_language_tag = review["language"]
 
         # Review's automatically detected language
         if review_id in previously_detected_languages_dict[app_id]:
@@ -55,14 +55,14 @@ def get_review_language_dictionary(app_id, previously_detected_languages_dict=No
                 DetectorFactory.seed = 0
                 detected_language = detect(review_content)
             except lang_detect_exception.LangDetectException:
-                detected_language = 'unknown'
+                detected_language = "unknown"
             previously_detected_languages_dict[app_id][review_id] = detected_language
-            previously_detected_languages_dict['has_changed'] = True
+            previously_detected_languages_dict["has_changed"] = True
 
         language_dict[review_id] = {}
-        language_dict[review_id]['tag'] = review_language_tag
-        language_dict[review_id]['detected'] = detected_language
-        language_dict[review_id]['voted_up'] = is_a_positive_review
+        language_dict[review_id]["tag"] = review_language_tag
+        language_dict[review_id]["detected"] = detected_language
+        language_dict[review_id]["voted_up"] = is_a_positive_review
 
     return language_dict, previously_detected_languages_dict
 
@@ -96,31 +96,31 @@ def most_common(lst):
 def convert_review_language_dictionary_to_iso(language_dict):
     language_iso_dict = {}
 
-    languages = {r['tag'] for r in language_dict.values()}
+    languages = {r["tag"] for r in language_dict.values()}
 
     for language in languages:
         try:
             language_iso = iso639.to_iso639_1(language)
 
         except iso639.NonExistentLanguageError:
-            if language == 'schinese' or language == 'tchinese':
-                language_iso = 'zh-cn'
-            elif language == 'brazilian':
-                language_iso = 'pt'
-            elif language == 'koreana':
-                language_iso = 'ko'
+            if language == "schinese" or language == "tchinese":
+                language_iso = "zh-cn"
+            elif language == "brazilian":
+                language_iso = "pt"
+            elif language == "koreana":
+                language_iso = "ko"
             else:
-                print('Missing language:' + language)
+                print("Missing language:" + language)
 
                 detected_languages = [
-                    r['detected']
+                    r["detected"]
                     for r in language_dict.values()
-                    if r['tag'] == language
+                    if r["tag"] == language
                 ]
                 print(detected_languages)
 
                 language_iso = most_common(detected_languages)
-                print('Most common match among detected languages: ' + language_iso)
+                print("Most common match among detected languages: " + language_iso)
 
         language_iso_dict[language] = language_iso
 
@@ -139,19 +139,19 @@ def summarize_review_language_dictionary(language_dict):
 
     for language_iso in set(language_iso_dict.values()):
         reviews_with_matching_languages = [
-            r for r in language_dict.values() if r['detected'] == language_iso
+            r for r in language_dict.values() if r["detected"] == language_iso
         ]
         num_votes = len(reviews_with_matching_languages)
         positive_reviews_with_matching_languages = [
-            r for r in reviews_with_matching_languages if bool(r['voted_up'])
+            r for r in reviews_with_matching_languages if bool(r["voted_up"])
         ]
         num_upvotes = len(positive_reviews_with_matching_languages)
         num_downvotes = num_votes - num_upvotes
 
         summary_dict[language_iso] = {}
-        summary_dict[language_iso]['voted'] = num_votes
-        summary_dict[language_iso]['voted_up'] = num_upvotes
-        summary_dict[language_iso]['voted_down'] = num_downvotes
+        summary_dict[language_iso]["voted"] = num_votes
+        summary_dict[language_iso]["voted_up"] = num_upvotes
+        summary_dict[language_iso]["voted_down"] = num_downvotes
 
     return summary_dict
 
@@ -162,7 +162,7 @@ def get_all_review_language_summaries(
 ):
     from appids import appid_hidden_gems_reference_set
 
-    with Path('idlist.txt').open() as f:
+    with Path("idlist.txt").open() as f:
         d = f.readlines()
 
     app_id_list = [x.strip() for x in d]
@@ -180,7 +180,7 @@ def get_all_review_language_summaries(
     except FileNotFoundError:
         previously_detected_languages = {}
 
-    previously_detected_languages['has_changed'] = False
+    previously_detected_languages["has_changed"] = False
 
     for count, app_id in enumerate(app_id_list):
         (language_dict, previously_detected_languages) = get_review_language_dictionary(
@@ -202,15 +202,15 @@ def get_all_review_language_summaries(
         if (
             previously_detected_languages_filename is not None
             and flush_to_file_now
-            and previously_detected_languages['has_changed']
+            and previously_detected_languages["has_changed"]
         ):
             write_content_to_disk(
                 previously_detected_languages,
                 previously_detected_languages_filename,
             )
-            previously_detected_languages['has_changed'] = False
+            previously_detected_languages["has_changed"] = False
 
-        print('AppID ' + str(count + 1) + '/' + str(len(app_id_list)) + ' done.')
+        print("AppID " + str(count + 1) + "/" + str(len(app_id_list)) + " done.")
 
     all_languages = sorted(all_languages)
 
@@ -229,7 +229,7 @@ def load_content_from_disk(filename):
 def write_content_to_disk(content_to_write, filename):
     # Export the content to a text file
 
-    with Path(filename).open('w', encoding="utf8") as f:
+    with Path(filename).open("w", encoding="utf8") as f:
         print(content_to_write, file=f)
 
     return
@@ -245,21 +245,21 @@ def compute_review_language_distribution(game_feature_dict, all_languages):
 
         num_reviews = sum(
             [
-                data_for_current_game[language]['voted']
+                data_for_current_game[language]["voted"]
                 for language in data_for_current_game
             ],
         )
 
         review_language_distribution[app_id] = {}
-        review_language_distribution[app_id]['num_reviews'] = num_reviews
-        review_language_distribution[app_id]['distribution'] = {}
+        review_language_distribution[app_id]["num_reviews"] = num_reviews
+        review_language_distribution[app_id]["distribution"] = {}
         for language in all_languages:
             try:
-                review_language_distribution[app_id]['distribution'][language] = (
-                    data_for_current_game[language]['voted'] / num_reviews
+                review_language_distribution[app_id]["distribution"][language] = (
+                    data_for_current_game[language]["voted"] / num_reviews
                 )
             except KeyError:
-                review_language_distribution[app_id]['distribution'][language] = 0
+                review_language_distribution[app_id]["distribution"][language] = 0
 
     return review_language_distribution
 
@@ -269,7 +269,7 @@ def print_prior(prior, all_languages=None):
         print(repr(prior))
     else:
         for language in all_languages:
-            print(f'{language} : {repr(prior[language])}')
+            print(f"{language} : {repr(prior[language])}")
 
     return
 
@@ -282,15 +282,15 @@ def choose_language_independent_prior_based_on_whole_steam_catalog(
     # Construct observation structure used to compute a prior for the inference of a Bayesian rating
     observations = {}
     for appid in steam_spy_dict:
-        num_positive_reviews = steam_spy_dict[appid]['positive']
-        num_negative_reviews = steam_spy_dict[appid]['negative']
+        num_positive_reviews = steam_spy_dict[appid]["positive"]
+        num_negative_reviews = steam_spy_dict[appid]["negative"]
 
         num_votes = num_positive_reviews + num_negative_reviews
 
         if num_votes > 0:
             observations[appid] = {}
-            observations[appid]['num_votes'] = num_votes
-            observations[appid]['score'] = num_positive_reviews / num_votes
+            observations[appid]["num_votes"] = num_votes
+            observations[appid]["score"] = num_positive_reviews / num_votes
 
     common_prior = choose_prior(observations)
 
@@ -320,8 +320,8 @@ def choose_language_independent_prior_based_on_hidden_gems(
 
         for language in all_languages:
             try:
-                num_positive_reviews += game_feature_dict[appid][language]['voted_up']
-                num_negative_reviews += game_feature_dict[appid][language]['voted_down']
+                num_positive_reviews += game_feature_dict[appid][language]["voted_up"]
+                num_negative_reviews += game_feature_dict[appid][language]["voted_down"]
             except KeyError:
                 continue
 
@@ -329,8 +329,8 @@ def choose_language_independent_prior_based_on_hidden_gems(
 
         if num_votes > 0:
             observations[appid] = {}
-            observations[appid]['num_votes'] = num_votes
-            observations[appid]['score'] = num_positive_reviews / num_votes
+            observations[appid]["num_votes"] = num_votes
+            observations[appid]["score"] = num_positive_reviews / num_votes
 
     common_prior = choose_prior(observations)
 
@@ -359,8 +359,8 @@ def choose_language_specific_prior_based_on_hidden_gems(
         observations = {}
         for appid in game_feature_dict:
             try:
-                num_positive_reviews = game_feature_dict[appid][language]['voted_up']
-                num_negative_reviews = game_feature_dict[appid][language]['voted_down']
+                num_positive_reviews = game_feature_dict[appid][language]["voted_up"]
+                num_negative_reviews = game_feature_dict[appid][language]["voted_down"]
             except KeyError:
                 num_positive_reviews = 0
                 num_negative_reviews = 0
@@ -369,8 +369,8 @@ def choose_language_specific_prior_based_on_hidden_gems(
 
             if num_votes > 0:
                 observations[appid] = {}
-                observations[appid]['num_votes'] = num_votes
-                observations[appid]['score'] = num_positive_reviews / num_votes
+                observations[appid]["num_votes"] = num_votes
+                observations[appid]["score"] = num_positive_reviews / num_votes
 
         language_specific_prior[language] = choose_prior(observations)
 
@@ -409,9 +409,9 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
         )
 
         print(
-            'Estimating prior (score and num_votes) on the whole Steam catalog ('
+            "Estimating prior (score and num_votes) on the whole Steam catalog ("
             + str(len(steam_spy_dict))
-            + ' games.',
+            + " games.",
         )
         prior = whole_catalog_prior
 
@@ -432,9 +432,9 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
             )
 
         print(
-            'Estimating prior (score and num_votes) on a pre-computed set of '
+            "Estimating prior (score and num_votes) on a pre-computed set of "
             + str(len(game_feature_dict))
-            + ' hidden gems.',
+            + " hidden gems.",
         )
         prior = subset_catalog_prior
 
@@ -444,12 +444,12 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
     for app_id in game_feature_dict:
         d[app_id] = {}
         try:
-            d[app_id]['name'] = steam_spy_dict[app_id]['name']
+            d[app_id]["name"] = steam_spy_dict[app_id]["name"]
         except KeyError:
-            d[app_id]['name'] = 'Unknown ' + str(app_id)
+            d[app_id]["name"] = "Unknown " + str(app_id)
 
         try:
-            num_owners_for_all_languages = steam_spy_dict[app_id]['owners']
+            num_owners_for_all_languages = steam_spy_dict[app_id]["owners"]
         except KeyError:
             num_owners_for_all_languages = 0
 
@@ -464,8 +464,8 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
             d[app_id][language] = {}
 
             try:
-                num_positive_reviews = game_feature_dict[app_id][language]['voted_up']
-                num_negative_reviews = game_feature_dict[app_id][language]['voted_down']
+                num_positive_reviews = game_feature_dict[app_id][language]["voted_up"]
+                num_negative_reviews = game_feature_dict[app_id][language]["voted_down"]
             except KeyError:
                 num_positive_reviews = 0
                 num_negative_reviews = 0
@@ -484,8 +484,8 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
             if num_reviews > 0:
                 # Construct game structure used to compute Bayesian rating
                 game = {}
-                game['score'] = num_positive_reviews / num_reviews
-                game['num_votes'] = num_reviews
+                game["score"] = num_positive_reviews / num_reviews
+                game["num_votes"] = num_reviews
 
                 bayesian_rating = compute_bayesian_score(game, prior[language])
             else:
@@ -494,7 +494,7 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
             # Assumption: for every game, owners and reviews are distributed among regions in the same proportions.
             num_owners = (
                 num_owners_for_all_languages
-                * review_language_distribution[app_id]['distribution'][language]
+                * review_language_distribution[app_id]["distribution"][language]
             )
 
             if num_owners < num_reviews:
@@ -512,10 +512,10 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
                 wilson_score = -1
                 bayesian_rating = -1
 
-            d[app_id][language]['wilson_score'] = wilson_score
-            d[app_id][language]['bayesian_rating'] = bayesian_rating
-            d[app_id][language]['num_owners'] = num_owners
-            d[app_id][language]['num_reviews'] = num_reviews
+            d[app_id][language]["wilson_score"] = wilson_score
+            d[app_id][language]["bayesian_rating"] = bayesian_rating
+            d[app_id][language]["num_owners"] = num_owners
+            d[app_id][language]["num_reviews"] = num_reviews
 
     return d
 
@@ -561,7 +561,7 @@ def download_steam_reviews():
 
 
 def get_regional_data_path():
-    return 'regional_rankings/'
+    return "regional_rankings/"
 
 
 def get_regional_ranking_filename(language):
@@ -576,8 +576,8 @@ def get_regional_ranking_filename(language):
 
 
 def run_regional_workflow(
-    quality_measure_str='wilson_score',
-    popularity_measure_str='num_reviews',
+    quality_measure_str="wilson_score",
+    popularity_measure_str="num_reviews",
     perform_optimization_at_runtime=True,
     num_top_games_to_print=250,
     verbose=False,
@@ -645,8 +645,8 @@ if __name__ == "__main__":
         raise AssertionError
 
     run_regional_workflow(
-        quality_measure_str='bayesian_rating',  # Either 'wilson_score' or 'bayesian_rating'
-        popularity_measure_str='num_owners',  # Either 'num_reviews' or 'num_owners'
+        quality_measure_str="bayesian_rating",  # Either 'wilson_score' or 'bayesian_rating'
+        popularity_measure_str="num_owners",  # Either 'num_reviews' or 'num_owners'
         perform_optimization_at_runtime=True,
         num_top_games_to_print=50,
         verbose=False,

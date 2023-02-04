@@ -57,17 +57,17 @@ def compute_score_generic(
         num_reviews = num_positive_reviews + num_negative_reviews
 
     else:
-        wilson_score = my_tuple[language]['wilson_score']
-        bayesian_rating = my_tuple[language]['bayesian_rating']
-        num_owners = my_tuple[language]['num_owners']
-        num_reviews = my_tuple[language]['num_reviews']
+        wilson_score = my_tuple[language]["wilson_score"]
+        bayesian_rating = my_tuple[language]["bayesian_rating"]
+        num_owners = my_tuple[language]["num_owners"]
+        num_reviews = my_tuple[language]["num_reviews"]
 
-    if quality_measure_str is None or quality_measure_str == 'wilson_score':
+    if quality_measure_str is None or quality_measure_str == "wilson_score":
         quality_measure = wilson_score
     else:
         quality_measure = bayesian_rating
 
-    if popularity_measure_str is None or popularity_measure_str == 'num_owners':
+    if popularity_measure_str is None or popularity_measure_str == "num_owners":
         popularity_measure = num_owners
     else:
         popularity_measure = num_reviews
@@ -155,7 +155,7 @@ def rank_games(
     if language is None:
         name_index = 0
     else:
-        name_index = 'name'
+        name_index = "name"
 
     sorted_game_names = [x[name_index] for x in sorted_values]
 
@@ -191,7 +191,7 @@ def rank_games(
     ranking_list = []
     if verbose:
         print(
-            'Objective function to minimize:\t',
+            "Objective function to minimize:\t",
             scalar_summarizing_ranks_of_reference_hidden_gems,
         )
 
@@ -290,10 +290,10 @@ def optimize_for_alpha(
         )[0]
 
     if language is None:
-        if popularity_measure_str is None or popularity_measure_str == 'num_owners':
+        if popularity_measure_str is None or popularity_measure_str == "num_owners":
             vec = [float(game[get_index_num_owners()]) for game in d.values()]
         else:
-            if not (popularity_measure_str == 'num_reviews'):
+            if not (popularity_measure_str == "num_reviews"):
                 raise AssertionError
             vec = [get_num_reviews(game) for game in d.values()]
 
@@ -304,7 +304,7 @@ def optimize_for_alpha(
         x0 = 1 + np.max(data_vec)
         return x0
 
-    res = minimize(fun=function_to_minimize, x0=choose_x0(vec), method='Nelder-Mead')
+    res = minimize(fun=function_to_minimize, x0=choose_x0(vec), method="Nelder-Mead")
 
     optimal_parameters = [res.x]
 
@@ -330,21 +330,21 @@ def save_ranking_to_file(
 
     base_steam_store_url = "https://store.steampowered.com/app/"
 
-    with Path(output_filename).open('w', encoding="utf8") as outfile:
+    with Path(output_filename).open("w", encoding="utf8") as outfile:
         for current_ranking_info in ranking_list:
             current_rank = current_ranking_info[0]
             game_name = current_ranking_info[1]
             appid = current_ranking_info[-1]
 
             store_url = base_steam_store_url + appid
-            store_url_fixed_width = f'{store_url: <{width}}'
+            store_url_fixed_width = f"{store_url: <{width}}"
 
             if only_show_appid:
                 print(appid, file=outfile)
                 if verbose:
                     print(appid)
             else:
-                sentence = f'{current_rank:05}.\t[{game_name}]({store_url_fixed_width})'
+                sentence = f"{current_rank:05}.\t[{game_name}]({store_url_fixed_width})"
                 print(sentence, file=outfile)
                 if verbose:
                     print(sentence)
@@ -417,26 +417,26 @@ def compute_ranking(
             quality_measure_str,
         )
     else:
-        if popularity_measure_str is None or popularity_measure_str == 'num_owners':
-            if quality_measure_str is None or quality_measure_str == 'wilson_score':
+        if popularity_measure_str is None or popularity_measure_str == "num_owners":
+            if quality_measure_str is None or quality_measure_str == "wilson_score":
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 2156.36
                 optimal_parameters = [pow(10, 6.52)]
             else:
-                if not (quality_measure_str == 'bayesian_rating'):
+                if not (quality_measure_str == "bayesian_rating"):
                     raise AssertionError
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 1900.00
                 optimal_parameters = [pow(10, 6.63)]
         else:
-            if not (popularity_measure_str == 'num_reviews'):
+            if not (popularity_measure_str == "num_reviews"):
                 raise AssertionError
-            if quality_measure_str is None or quality_measure_str == 'wilson_score':
+            if quality_measure_str is None or quality_measure_str == "wilson_score":
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 2372.90
                 optimal_parameters = [pow(10, 4.83)]
             else:
-                if not (quality_measure_str == 'bayesian_rating'):
+                if not (quality_measure_str == "bayesian_rating"):
                     raise AssertionError
                 # Optimal parameter as computed on May 19, 2018
                 # Objective function to minimize:	 2094.00
@@ -467,8 +467,8 @@ def compute_ranking(
 
 
 def run_workflow(
-    quality_measure_str='wilson_score',
-    popularity_measure_str='num_reviews',
+    quality_measure_str="wilson_score",
+    popularity_measure_str="num_reviews",
     perform_optimization_at_runtime=True,
     num_top_games_to_print=250,
     verbose=False,
@@ -545,8 +545,8 @@ def run_workflow(
 
 def main():
     run_workflow(
-        quality_measure_str='wilson_score',  # Either 'wilson_score' or 'bayesian_rating'
-        popularity_measure_str='num_reviews',  # Either 'num_reviews' or 'num_owners'
+        quality_measure_str="wilson_score",  # Either 'wilson_score' or 'bayesian_rating'
+        popularity_measure_str="num_reviews",  # Either 'num_reviews' or 'num_owners'
         perform_optimization_at_runtime=True,
         num_top_games_to_print=1000,
         verbose=False,

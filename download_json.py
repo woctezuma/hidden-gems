@@ -25,8 +25,8 @@ def download_steam_spy_data(json_filename="steamspy.json", genre=None):
             data = steamspypi.load()
         else:
             data_request = {}
-            data_request['request'] = 'genre'
-            data_request['genre'] = genre
+            data_request["request"] = "genre"
+            data_request["genre"] = genre
 
             data = steamspypi.download(data_request)
 

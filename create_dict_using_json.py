@@ -9,7 +9,7 @@ from appids import APP_ID_CONTRADICTION
 
 def get_mid_of_interval(interval_as_str):
     interval_as_str_formatted = [
-        s.replace(',', '') for s in interval_as_str.split('..')
+        s.replace(",", "") for s in interval_as_str.split("..")
     ]
     lower_bound = float(interval_as_str_formatted[0])
     upper_bound = float(interval_as_str_formatted[1])
@@ -63,25 +63,25 @@ def create_local_dictionary(
 
         if num_votes > 0:
             observations[appid] = {}
-            observations[appid]['score'] = num_positive_reviews / num_votes
-            observations[appid]['num_votes'] = num_votes
+            observations[appid]["score"] = num_positive_reviews / num_votes
+            observations[appid]["num_votes"] = num_votes
 
     prior = choose_prior(observations)
     print(prior)
 
     for appid in data:
-        name = data[appid]['name']
-        num_owners = data[appid]['owners']
+        name = data[appid]["name"]
+        num_owners = data[appid]["owners"]
         try:
             num_owners = float(num_owners)
         except ValueError:
             num_owners = get_mid_of_interval(num_owners)
         try:
-            num_players = data[appid]['players_forever']
+            num_players = data[appid]["players_forever"]
         except KeyError:
             num_players = None
-        median_time = data[appid]['median_forever']
-        average_time = data[appid]['average_forever']
+        median_time = data[appid]["median_forever"]
+        average_time = data[appid]["average_forever"]
         num_positive_reviews = data[appid]["positive"]
         num_negative_reviews = data[appid]["negative"]
 
@@ -96,8 +96,8 @@ def create_local_dictionary(
         if num_votes > 0:
             # Construct game structure used to compute Bayesian rating
             game = {}
-            game['score'] = num_positive_reviews / num_votes
-            game['num_votes'] = num_votes
+            game["score"] = num_positive_reviews / num_votes
+            game["num_votes"] = num_votes
 
             bayesian_rating = compute_bayesian_score(game, prior)
 
@@ -133,7 +133,7 @@ def create_local_dictionary(
             d[appid] = stats_save
 
     # Save the dictionary to a text file
-    with Path(output_filename).open('w', encoding="utf8") as outfile:
+    with Path(output_filename).open("w", encoding="utf8") as outfile:
         print(get_leading_comment(), file=outfile)
         print(d, file=outfile)
 

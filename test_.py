@@ -30,12 +30,12 @@ class TestComputeWilsonScoreMethods(unittest.TestCase):
 class TestComputeBayesianRatingMethods(unittest.TestCase):
     def test_choose_prior(self):
         observations = {
-            'Blockbuster': {'score': 0.85, 'num_votes': 1000},
-            'Average game': {'score': 0.75, 'num_votes': 100},
-            'Hidden gem': {'score': 0.95, 'num_votes': 10},
+            "Blockbuster": {"score": 0.85, "num_votes": 1000},
+            "Average game": {"score": 0.75, "num_votes": 100},
+            "Hidden gem": {"score": 0.95, "num_votes": 10},
         }
         bayes_prior = compute_bayesian_rating.choose_prior(observations, verbose=True)
-        self.assertDictEqual(bayes_prior, {'score': 0.85, 'num_votes': 100})
+        self.assertDictEqual(bayes_prior, {"score": 0.85, "num_votes": 100})
 
     def test_main(self):
         self.assertTrue(compute_bayesian_rating.main())
@@ -49,9 +49,9 @@ class TestCreateDictUsingJsonMethods(unittest.TestCase):
 class TestComputeRegionalStatsMethods(unittest.TestCase):
     def test_run_regional_workflow_wilson_reviews(self):
         quality_measure_str = (
-            'wilson_score'  # Either 'wilson_score' or 'bayesian_rating'
+            "wilson_score"  # Either 'wilson_score' or 'bayesian_rating'
         )
-        popularity_measure_str = 'num_reviews'  # Either 'num_reviews' or 'num_owners'
+        popularity_measure_str = "num_reviews"  # Either 'num_reviews' or 'num_owners'
 
         self.assertTrue(
             compute_regional_stats.run_regional_workflow(
@@ -70,9 +70,9 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
 
     def test_run_regional_workflow_wilson_owners(self):
         quality_measure_str = (
-            'wilson_score'  # Either 'wilson_score' or 'bayesian_rating'
+            "wilson_score"  # Either 'wilson_score' or 'bayesian_rating'
         )
-        popularity_measure_str = 'num_owners'  # Either 'num_reviews' or 'num_owners'
+        popularity_measure_str = "num_owners"  # Either 'num_reviews' or 'num_owners'
 
         self.assertTrue(
             compute_regional_stats.run_regional_workflow(
@@ -91,9 +91,9 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
 
     def test_run_regional_workflow_bayes_reviews(self):
         quality_measure_str = (
-            'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+            "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
-        popularity_measure_str = 'num_reviews'  # Either 'num_reviews' or 'num_owners'
+        popularity_measure_str = "num_reviews"  # Either 'num_reviews' or 'num_owners'
 
         self.assertTrue(
             compute_regional_stats.run_regional_workflow(
@@ -112,9 +112,9 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
 
     def test_run_regional_workflow_bayes_owners(self):
         quality_measure_str = (
-            'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+            "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
-        popularity_measure_str = 'num_owners'  # Either 'num_reviews' or 'num_owners'
+        popularity_measure_str = "num_owners"  # Either 'num_reviews' or 'num_owners'
 
         self.assertTrue(
             compute_regional_stats.run_regional_workflow(
@@ -133,9 +133,9 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
 
     def test_run_regional_workflow_bayes_reviews_with_hidden_gem_constant_prior(self):
         quality_measure_str = (
-            'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+            "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
-        popularity_measure_str = 'num_reviews'  # Either 'num_reviews' or 'num_owners'
+        popularity_measure_str = "num_reviews"  # Either 'num_reviews' or 'num_owners'
 
         self.assertTrue(
             compute_regional_stats.run_regional_workflow(
@@ -154,9 +154,9 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
 
     def test_run_regional_workflow_bayes_owners_with_hidden_gem_constant_prior(self):
         quality_measure_str = (
-            'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+            "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
-        popularity_measure_str = 'num_owners'  # Either 'num_reviews' or 'num_owners'
+        popularity_measure_str = "num_owners"  # Either 'num_reviews' or 'num_owners'
 
         self.assertTrue(
             compute_regional_stats.run_regional_workflow(
@@ -175,9 +175,9 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
 
     def test_run_regional_workflow_bayes_reviews_with_global_constant_prior(self):
         quality_measure_str = (
-            'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+            "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
-        popularity_measure_str = 'num_reviews'  # Either 'num_reviews' or 'num_owners'
+        popularity_measure_str = "num_reviews"  # Either 'num_reviews' or 'num_owners'
 
         self.assertTrue(
             compute_regional_stats.run_regional_workflow(
@@ -196,9 +196,9 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
 
     def test_run_regional_workflow_bayes_owners_with_global_constant_prior(self):
         quality_measure_str = (
-            'bayesian_rating'  # Either 'wilson_score' or 'bayesian_rating'
+            "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
-        popularity_measure_str = 'num_owners'  # Either 'num_reviews' or 'num_owners'
+        popularity_measure_str = "num_owners"  # Either 'num_reviews' or 'num_owners'
 
         self.assertTrue(
             compute_regional_stats.run_regional_workflow(
@@ -222,8 +222,8 @@ class TestComputeStatsMethods(unittest.TestCase):
 
         self.assertTrue(
             compute_stats.run_workflow(
-                quality_measure_str='wilson_score',
-                popularity_measure_str='num_reviews',
+                quality_measure_str="wilson_score",
+                popularity_measure_str="num_reviews",
                 perform_optimization_at_runtime=False,
                 num_top_games_to_print=50,
                 verbose=True,
@@ -235,8 +235,8 @@ class TestComputeStatsMethods(unittest.TestCase):
 
         self.assertTrue(
             compute_stats.run_workflow(
-                quality_measure_str='wilson_score',
-                popularity_measure_str='num_owners',
+                quality_measure_str="wilson_score",
+                popularity_measure_str="num_owners",
                 perform_optimization_at_runtime=False,
                 num_top_games_to_print=50,
                 verbose=True,
@@ -248,8 +248,8 @@ class TestComputeStatsMethods(unittest.TestCase):
 
         self.assertTrue(
             compute_stats.run_workflow(
-                quality_measure_str='bayesian_rating',
-                popularity_measure_str='num_reviews',
+                quality_measure_str="bayesian_rating",
+                popularity_measure_str="num_reviews",
                 perform_optimization_at_runtime=False,
                 num_top_games_to_print=50,
                 verbose=True,
@@ -261,8 +261,8 @@ class TestComputeStatsMethods(unittest.TestCase):
 
         self.assertTrue(
             compute_stats.run_workflow(
-                quality_measure_str='bayesian_rating',
-                popularity_measure_str='num_owners',
+                quality_measure_str="bayesian_rating",
+                popularity_measure_str="num_owners",
                 perform_optimization_at_runtime=False,
                 num_top_games_to_print=50,
                 verbose=True,
@@ -274,8 +274,8 @@ class TestComputeStatsMethods(unittest.TestCase):
 
         self.assertTrue(
             compute_stats.run_workflow(
-                quality_measure_str='wilson_score',
-                popularity_measure_str='num_reviews',
+                quality_measure_str="wilson_score",
+                popularity_measure_str="num_reviews",
                 perform_optimization_at_runtime=False,
                 num_top_games_to_print=50,
                 verbose=True,
@@ -302,7 +302,7 @@ class TestComputeStatsMethods(unittest.TestCase):
 
         for appid in appids.appid_hidden_gems_reference_set:
             print(
-                'Ensuring reference {} (appID={}) does not appear in the final ranking.'.format(
+                "Ensuring reference {} (appID={}) does not appear in the final ranking.".format(
                     d[appid][0],
                     appid,
                 ),
@@ -311,14 +311,14 @@ class TestComputeStatsMethods(unittest.TestCase):
             # If True, UnEpic should end up about rank 1828. Otherwise, UnEpic should not appear on there.
 
         # Save the dictionary to a text file
-        with Path(dict_filename).open('w', encoding="utf8") as outfile:
+        with Path(dict_filename).open("w", encoding="utf8") as outfile:
             print(create_dict_using_json.get_leading_comment(), file=outfile)
             print(d, file=outfile)
 
         self.assertTrue(
             compute_stats.run_workflow(
-                quality_measure_str='wilson_score',
-                popularity_measure_str='num_reviews',
+                quality_measure_str="wilson_score",
+                popularity_measure_str="num_reviews",
                 perform_optimization_at_runtime=False,
                 num_top_games_to_print=2000,
                 verbose=True,
@@ -333,8 +333,8 @@ class TestComputeStatsMethods(unittest.TestCase):
 
         self.assertTrue(
             compute_stats.run_workflow(
-                quality_measure_str='wilson_score',
-                popularity_measure_str='num_reviews',
+                quality_measure_str="wilson_score",
+                popularity_measure_str="num_reviews",
                 perform_optimization_at_runtime=False,
                 num_top_games_to_print=50,
                 verbose=False,
@@ -349,8 +349,8 @@ class TestComputeStatsMethods(unittest.TestCase):
 
         self.assertTrue(
             compute_stats.run_workflow(
-                quality_measure_str='wilson_score',
-                popularity_measure_str='num_reviews',
+                quality_measure_str="wilson_score",
+                popularity_measure_str="num_reviews",
                 perform_optimization_at_runtime=False,
                 num_top_games_to_print=50,
                 verbose=False,
@@ -365,8 +365,8 @@ class TestComputeStatsMethods(unittest.TestCase):
 
         self.assertTrue(
             compute_stats.run_workflow(
-                quality_measure_str='wilson_score',
-                popularity_measure_str='num_owners',
+                quality_measure_str="wilson_score",
+                popularity_measure_str="num_owners",
                 perform_optimization_at_runtime=True,
                 num_top_games_to_print=50,
                 verbose=False,
@@ -379,5 +379,5 @@ class TestComputeStatsMethods(unittest.TestCase):
         self.assertTrue(compute_stats.main())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
