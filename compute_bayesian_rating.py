@@ -19,10 +19,10 @@ def choose_prior(observations, verbose=False):
 
     # Data visualization to help choose a good prior
     if verbose:
-        import matplotlib
+        import matplotlib as mpl
 
         # For Travis integration:
-        matplotlib.use('Agg')
+        mpl.use('Agg')
 
         import matplotlib.pyplot as plt
 
