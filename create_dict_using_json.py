@@ -6,7 +6,9 @@ from appids import appidContradiction
 
 
 def get_mid_of_interval(interval_as_str):
-    interval_as_str_formatted = [s.replace(',', '') for s in interval_as_str.split('..')]
+    interval_as_str_formatted = [
+        s.replace(',', '') for s in interval_as_str.split('..')
+    ]
     lower_bound = float(interval_as_str_formatted[0])
     upper_bound = float(interval_as_str_formatted[1])
     mid_value = (lower_bound + upper_bound) / 2
@@ -16,14 +18,20 @@ def get_mid_of_interval(interval_as_str):
 
 def get_leading_comment():
     # First line of the text file containing the output dictionary
-    leading_comment = "# Dictionary with key=appid and value=list of name, Wilson score, Bayesian rating, #owners, " \
-                      "#players, median playtime, average playtime, #positive reviews, #negative reviews, boolean " \
-                      "whether to include the game in the ranking"
+    leading_comment = (
+        "# Dictionary with key=appid and value=list of name, Wilson score, Bayesian rating, #owners, "
+        "#players, median playtime, average playtime, #positive reviews, #negative reviews, boolean "
+        "whether to include the game in the ranking"
+    )
     return leading_comment
 
 
-def create_local_dictionary(data, output_filename, appid_reference_set=None,
-                            quantile_for_our_wilson_score=0.95):
+def create_local_dictionary(
+    data,
+    output_filename,
+    appid_reference_set=None,
+    quantile_for_our_wilson_score=0.95,
+):
     # Objective: compute a score for one Steam game.
     #
     # Input:    - data:                         SteamSpy's data.
@@ -75,12 +83,15 @@ def create_local_dictionary(data, output_filename, appid_reference_set=None,
         num_positive_reviews = data[appid]["positive"]
         num_negative_reviews = data[appid]["negative"]
 
-        wilson_score = compute_wilson_score(num_positive_reviews, num_negative_reviews, quantile_for_our_wilson_score)
+        wilson_score = compute_wilson_score(
+            num_positive_reviews,
+            num_negative_reviews,
+            quantile_for_our_wilson_score,
+        )
 
         num_votes = num_positive_reviews + num_negative_reviews
 
         if num_votes > 0:
-
             # Construct game structure used to compute Bayesian rating
             game = dict()
             game['score'] = num_positive_reviews / num_votes
@@ -93,18 +104,26 @@ def create_local_dictionary(data, output_filename, appid_reference_set=None,
 
         # Make sure the output dictionary includes the game which will be chosen as a reference of a "hidden gem"
         if appid in appid_reference_set:
-            if (wilson_score is None):
+            if wilson_score is None:
                 raise AssertionError()
-            if (bayesian_rating is None):
+            if bayesian_rating is None:
                 raise AssertionError()
             print("Game used as a reference:\t" + name + "\t(appID=" + appid + ")")
 
         if wilson_score is None or bayesian_rating is None:
             print("Game with no review:\t" + name + "\t(appID=" + appid + ")")
         else:
-            stats_save = [name, wilson_score, bayesian_rating, num_owners, num_players, median_time, average_time,
-                          num_positive_reviews,
-                          num_negative_reviews]
+            stats_save = [
+                name,
+                wilson_score,
+                bayesian_rating,
+                num_owners,
+                num_players,
+                median_time,
+                average_time,
+                num_positive_reviews,
+                num_negative_reviews,
+            ]
 
             bool_game_should_appear_in_ranking = True
             stats_save.append(bool_game_should_appear_in_ranking)

@@ -6,12 +6,21 @@ import numpy as np
 def choose_prior(observations, verbose=False):
     bayes_prior = dict()
 
-    scores = [game_entry['score'] for game_entry in observations.values() if game_entry['score'] is not None]
-    votes = [game_entry['num_votes'] for game_entry in observations.values() if game_entry['num_votes'] is not None]
+    scores = [
+        game_entry['score']
+        for game_entry in observations.values()
+        if game_entry['score'] is not None
+    ]
+    votes = [
+        game_entry['num_votes']
+        for game_entry in observations.values()
+        if game_entry['num_votes'] is not None
+    ]
 
     # Data visualization to help choose a good prior
     if verbose:
         import matplotlib
+
         # For Travis integration:
         matplotlib.use('Agg')
 
@@ -21,10 +30,22 @@ def choose_prior(observations, verbose=False):
         vote_max = np.max(votes)
 
         print('Highest average score:')
-        print([game_name for game_name in observations.keys() if observations[game_name]['score'] >= score_max])
+        print(
+            [
+                game_name
+                for game_name in observations.keys()
+                if observations[game_name]['score'] >= score_max
+            ],
+        )
 
         print('Highest number of votes:')
-        print([game_name for game_name in observations.keys() if observations[game_name]['num_votes'] >= vote_max])
+        print(
+            [
+                game_name
+                for game_name in observations.keys()
+                if observations[game_name]['num_votes'] >= vote_max
+            ],
+        )
 
         plt.figure()
         plt.scatter(scores, votes)
@@ -40,8 +61,10 @@ def choose_prior(observations, verbose=False):
 
 
 def compute_bayesian_score(game_entry, bayes_prior):
-    bayesian_score = (bayes_prior['num_votes'] * bayes_prior['score'] + game_entry['num_votes'] * game_entry['score']) \
-                     / (bayes_prior['num_votes'] + game_entry['num_votes'])
+    bayesian_score = (
+        bayes_prior['num_votes'] * bayes_prior['score']
+        + game_entry['num_votes'] * game_entry['score']
+    ) / (bayes_prior['num_votes'] + game_entry['num_votes'])
 
     return bayesian_score
 
@@ -59,7 +82,12 @@ def main():
         game['num_votes'] = num_reviews
 
         bayesian_rating = compute_bayesian_score(game, prior)
-        print('#reviews = {:6} \t Bayesian rating = {:.4f}'.format(num_reviews, bayesian_rating))
+        print(
+            '#reviews = {:6} \t Bayesian rating = {:.4f}'.format(
+                num_reviews,
+                bayesian_rating,
+            ),
+        )
 
     return True
 

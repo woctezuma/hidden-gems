@@ -18,7 +18,7 @@ quantile_normal_dist_dict = {
     0.999999: 4.891638475699,
     0.9999999: 5.326723886384,
     0.99999999: 5.730728868236,
-    0.999999999: 6.109410204869
+    0.999999999: 6.109410204869,
 }
 
 
@@ -67,7 +67,12 @@ def main():
     for num_reviews in [pow(10, n) for n in range(5)]:
         # Display the Wilson score of a game with as many positive and negative reviews
         wilson_score = compute_wilson_score(num_reviews / 2, num_reviews / 2, 0.95)
-        print('#reviews = {:6} \t Wilson score = {:.4f}'.format(num_reviews, wilson_score))
+        print(
+            '#reviews = {:6} \t Wilson score = {:.4f}'.format(
+                num_reviews,
+                wilson_score,
+            ),
+        )
 
     return True
 

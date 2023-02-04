@@ -47,7 +47,10 @@ def get_appid_by_keyword(keyword):
     json_filename = current_date + json_filename_suffixe
 
     # Download data which meta-data includes this keyword as genre
-    data_genre = download_steam_spy_data("genre_" + keyword + "_" + json_filename, keyword)
+    data_genre = download_steam_spy_data(
+        "genre_" + keyword + "_" + json_filename,
+        keyword,
+    )
 
     app_ids = set(data_genre.keys())
 
