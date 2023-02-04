@@ -1,4 +1,4 @@
-matplotlib==3.4.0
+matplotlib==3.6.3
 numpy==1.22.0
 scipy==1.10.0
 steamreviews==0.9.3
