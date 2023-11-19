@@ -68,10 +68,7 @@ def main():
         # Display the Wilson score of a game with as many positive and negative reviews
         wilson_score = compute_wilson_score(num_reviews / 2, num_reviews / 2, 0.95)
         print(
-            "#reviews = {:6} \t Wilson score = {:.4f}".format(
-                num_reviews,
-                wilson_score,
-            ),
+            f"#reviews = {num_reviews:6} \t Wilson score = {wilson_score:.4f}",
         )
 
     return True

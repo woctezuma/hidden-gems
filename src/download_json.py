@@ -53,9 +53,7 @@ def get_appid_by_keyword(keyword):
         keyword,
     )
 
-    app_ids = set(data_genre.keys())
-
-    return app_ids
+    return set(data_genre.keys())
 
 
 def get_appid_by_keyword_list_to_include(keyword_list):

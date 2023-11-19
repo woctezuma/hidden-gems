@@ -61,12 +61,10 @@ def choose_prior(observations, verbose=False):
 
 
 def compute_bayesian_score(game_entry, bayes_prior):
-    bayesian_score = (
+    return (
         bayes_prior["num_votes"] * bayes_prior["score"]
         + game_entry["num_votes"] * game_entry["score"]
     ) / (bayes_prior["num_votes"] + game_entry["num_votes"])
-
-    return bayesian_score
 
 
 def main():
@@ -83,10 +81,7 @@ def main():
 
         bayesian_rating = compute_bayesian_score(game, prior)
         print(
-            "#reviews = {:6} \t Bayesian rating = {:.4f}".format(
-                num_reviews,
-                bayesian_rating,
-            ),
+            f"#reviews = {num_reviews:6} \t Bayesian rating = {bayesian_rating:.4f}",
         )
 
     return True

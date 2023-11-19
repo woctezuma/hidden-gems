@@ -13,19 +13,16 @@ def get_mid_of_interval(interval_as_str):
     ]
     lower_bound = float(interval_as_str_formatted[0])
     upper_bound = float(interval_as_str_formatted[1])
-    mid_value = (lower_bound + upper_bound) / 2
-
-    return mid_value
+    return (lower_bound + upper_bound) / 2
 
 
 def get_leading_comment():
     # First line of the text file containing the output dictionary
-    leading_comment = (
+    return (
         "# Dictionary with key=appid and value=list of name, Wilson score, Bayesian rating, #owners, "
         "#players, median playtime, average playtime, #positive reviews, #negative reviews, boolean "
         "whether to include the game in the ranking"
     )
-    return leading_comment
 
 
 def create_local_dictionary(

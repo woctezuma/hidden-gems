@@ -76,9 +76,7 @@ def compute_score_generic(
         # Decreasing function
         return alpha / (alpha + x)
 
-    score = quality_measure * decreasing_fun(popularity_measure)
-
-    return score
+    return quality_measure * decreasing_fun(popularity_measure)
 
 
 # noinspection PyPep8Naming
@@ -216,7 +214,7 @@ def rank_games(
 
         for i in range(num_games_to_print):
             game_name = sorted_game_names[i]
-            appid = [k for k, v in d.items() if v[name_index] == game_name][0]
+            appid = next(k for k, v in d.items() if v[name_index] == game_name)
 
             current_rank = i + 1
 
@@ -298,8 +296,7 @@ def optimize_for_alpha(
         vec = [game[language][popularity_measure_str] for game in d.values()]
 
     def choose_x0(data_vec):
-        x0 = 1 + np.max(data_vec)
-        return x0
+        return 1 + np.max(data_vec)
 
     res = minimize(fun=function_to_minimize, x0=choose_x0(vec), method="Nelder-Mead")
 

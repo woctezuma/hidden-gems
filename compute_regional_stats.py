@@ -31,7 +31,7 @@ def get_review_language_dictionary(app_id, previously_detected_languages_dict=No
     if previously_detected_languages_dict is None:
         previously_detected_languages_dict = {}
 
-    if app_id not in previously_detected_languages_dict.keys():
+    if app_id not in previously_detected_languages_dict:
         previously_detected_languages_dict[app_id] = {}
 
     for review in reviews:
@@ -103,7 +103,7 @@ def convert_review_language_dictionary_to_iso(language_dict):
             language_iso = iso639.to_iso639_1(language)
 
         except iso639.NonExistentLanguageError:
-            if language == "schinese" or language == "tchinese":
+            if language in ("schinese", "tchinese"):
                 language_iso = "zh-cn"
             elif language == "brazilian":
                 language_iso = "pt"
@@ -221,9 +221,7 @@ def load_content_from_disk(filename):
     with Path(filename).open(encoding="utf8") as f:
         lines = f.readlines()
         # The content is on the first line
-        content = ast.literal_eval(lines[0])
-
-    return content
+        return ast.literal_eval(lines[0])
 
 
 def write_content_to_disk(content_to_write, filename):
@@ -231,8 +229,6 @@ def write_content_to_disk(content_to_write, filename):
 
     with Path(filename).open("w", encoding="utf8") as f:
         print(content_to_write, file=f)
-
-    return
 
 
 def compute_review_language_distribution(game_feature_dict, all_languages):
@@ -269,9 +265,7 @@ def print_prior(prior, all_languages=None):
         print(repr(prior))
     else:
         for language in all_languages:
-            print(f"{language} : {repr(prior[language])}")
-
-    return
+            print(f"{language} : {prior[language]!r}")
 
 
 def choose_language_independent_prior_based_on_whole_steam_catalog(
@@ -570,9 +564,7 @@ def get_regional_ranking_filename(language):
 
     pathlib.Path(output_folder).mkdir(parents=True, exist_ok=True)
 
-    output_filename = output_folder + "hidden_gems_" + language + ".md"
-
-    return output_filename
+    return output_folder + "hidden_gems_" + language + ".md"
 
 
 def run_regional_workflow(
