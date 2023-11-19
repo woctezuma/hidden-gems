@@ -410,31 +410,30 @@ def compute_ranking(
             popularity_measure_str,
             quality_measure_str,
         )
-    else:
-        if popularity_measure_str is None or popularity_measure_str == "num_owners":
-            if quality_measure_str is None or quality_measure_str == "wilson_score":
-                # Optimal parameter as computed on May 19, 2018
-                # Objective function to minimize:	 2156.36
-                optimal_parameters = [pow(10, 6.52)]
-            else:
-                if not (quality_measure_str == "bayesian_rating"):
-                    raise AssertionError
-                # Optimal parameter as computed on May 19, 2018
-                # Objective function to minimize:	 1900.00
-                optimal_parameters = [pow(10, 6.63)]
+    elif popularity_measure_str is None or popularity_measure_str == "num_owners":
+        if quality_measure_str is None or quality_measure_str == "wilson_score":
+            # Optimal parameter as computed on May 19, 2018
+            # Objective function to minimize:	 2156.36
+            optimal_parameters = [pow(10, 6.52)]
         else:
-            if not (popularity_measure_str == "num_reviews"):
+            if not (quality_measure_str == "bayesian_rating"):
                 raise AssertionError
-            if quality_measure_str is None or quality_measure_str == "wilson_score":
-                # Optimal parameter as computed on May 19, 2018
-                # Objective function to minimize:	 2372.90
-                optimal_parameters = [pow(10, 4.83)]
-            else:
-                if not (quality_measure_str == "bayesian_rating"):
-                    raise AssertionError
-                # Optimal parameter as computed on May 19, 2018
-                # Objective function to minimize:	 2094.00
-                optimal_parameters = [pow(10, 4.89)]
+            # Optimal parameter as computed on May 19, 2018
+            # Objective function to minimize:	 1900.00
+            optimal_parameters = [pow(10, 6.63)]
+    else:
+        if not (popularity_measure_str == "num_reviews"):
+            raise AssertionError
+        if quality_measure_str is None or quality_measure_str == "wilson_score":
+            # Optimal parameter as computed on May 19, 2018
+            # Objective function to minimize:	 2372.90
+            optimal_parameters = [pow(10, 4.83)]
+        else:
+            if not (quality_measure_str == "bayesian_rating"):
+                raise AssertionError
+            # Optimal parameter as computed on May 19, 2018
+            # Objective function to minimize:	 2094.00
+            optimal_parameters = [pow(10, 4.89)]
 
     # Filter-in games which meta-data includes ALL the following keywords
     # Caveat: the more keywords, the fewer games are filtered-in! cf. intersection of sets in the code
