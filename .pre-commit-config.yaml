@@ -1,18 +1,15 @@
 files: \.(py)$
 repos:
 
--   repo: https://github.com/psf/black
-    rev: 23.1.0
-    hooks:
-    - id: black
-
--   repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.0.241
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.6
     hooks:
     - id: ruff
-      args: [--fix, --target-version, "py311", --select, "ALL", --ignore, "ANN,C90,D,E501,FBT,INP,PLR091,PT,RET504,T20"]
-
--   repo: https://github.com/asottile/add-trailing-comma
-    rev: v2.4.0
-    hooks:
-    - id: add-trailing-comma
+      args: [
+      --fix,
+      --unsafe-fixes,
+      --target-version, "py312",
+      --select, "ALL",
+      --ignore, "ANN,C90,D,E501,FBT,FIX,PLR091,PT,S101,T20,TD"
+      ]
+    - id: ruff-format
