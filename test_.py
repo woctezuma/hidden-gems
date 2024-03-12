@@ -274,10 +274,7 @@ class TestComputeStatsMethods(unittest.TestCase):
 
         for appid in appids.appid_hidden_gems_reference_set:
             print(
-                "Ensuring reference {} (appID={}) does not appear in the final ranking.".format(
-                    d[appid][0],
-                    appid,
-                ),
+                f"Ensuring reference {d[appid][0]} (appID={appid}) does not appear in the final ranking.",
             )
             d[appid][-1] = False
             # If True, UnEpic should end up about rank 1828. Otherwise, UnEpic should not appear on there.
