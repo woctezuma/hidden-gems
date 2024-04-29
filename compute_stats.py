@@ -306,10 +306,10 @@ def optimize_for_alpha(
     try:
         optimal_power = log10(alpha)
         if verbose:
-            print("alpha = 10^%.2f" % optimal_power)
+            print(f"alpha = 10^{optimal_power:.2f}")
     except ValueError:
         if verbose:
-            print("alpha = %.2f" % alpha)
+            print(f"alpha = {alpha:.2f}")
 
     return optimal_parameters
 
