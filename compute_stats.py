@@ -301,14 +301,15 @@ def optimize_for_alpha(
     res = minimize(fun=function_to_minimize, x0=choose_x0(vec), method="Nelder-Mead")
 
     optimal_parameters = [res.x]
+    alpha = np.squeeze(optimal_parameters[0])
 
     try:
-        optimal_power = log10(optimal_parameters[0])
+        optimal_power = log10(alpha)
         if verbose:
             print(f"alpha = 10^{optimal_power:.2f}")
     except ValueError:
         if verbose:
-            print(f"alpha = {optimal_parameters[0]:.2f}")
+            print(f"alpha = {alpha:.2f}")
 
     return optimal_parameters
 
