@@ -2,6 +2,6 @@ iso639==0.1.4
 langdetect==1.0.9
 matplotlib==3.9.0
 numpy==1.26.4
-scipy==1.13.1
+scipy==1.14.0
 steamreviews==0.9.5
 steamspypi==1.1.1
