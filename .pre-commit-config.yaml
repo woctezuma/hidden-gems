@@ -8,7 +8,7 @@ repos:
       args: [
       --fix,
       --unsafe-fixes,
-      --target-version, "py312",
+      --target-version, "py314",
       --select, "ALL",
       --ignore, "ANN,C90,D,E501,FBT,FIX,PLR091,PT,S101,T20,TD,PLC0415"
       ]
