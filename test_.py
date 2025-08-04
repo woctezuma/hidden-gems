@@ -54,11 +54,11 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
         assert compute_regional_stats.run_regional_workflow(
             quality_measure_str=quality_measure_str,
             popularity_measure_str=popularity_measure_str,
-            perform_optimization_at_runtime=True,
             num_top_games_to_print=50,
-            verbose=False,
             keywords_to_include=None,
             keywords_to_exclude=None,
+            perform_optimization_at_runtime=True,
+            verbose=False,
             load_from_cache=True,
             compute_prior_on_whole_steam_catalog=False,
             compute_language_specific_prior=False,
@@ -73,11 +73,11 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
         assert compute_regional_stats.run_regional_workflow(
             quality_measure_str=quality_measure_str,
             popularity_measure_str=popularity_measure_str,
-            perform_optimization_at_runtime=True,
             num_top_games_to_print=50,
-            verbose=False,
             keywords_to_include=None,
             keywords_to_exclude=None,
+            perform_optimization_at_runtime=True,
+            verbose=False,
             load_from_cache=True,
             compute_prior_on_whole_steam_catalog=False,
             compute_language_specific_prior=False,
@@ -92,11 +92,11 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
         assert compute_regional_stats.run_regional_workflow(
             quality_measure_str=quality_measure_str,
             popularity_measure_str=popularity_measure_str,
-            perform_optimization_at_runtime=True,
             num_top_games_to_print=50,
-            verbose=False,
             keywords_to_include=None,
             keywords_to_exclude=None,
+            perform_optimization_at_runtime=True,
+            verbose=False,
             load_from_cache=True,
             compute_prior_on_whole_steam_catalog=False,
             compute_language_specific_prior=True,
@@ -111,17 +111,19 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
         assert compute_regional_stats.run_regional_workflow(
             quality_measure_str=quality_measure_str,
             popularity_measure_str=popularity_measure_str,
-            perform_optimization_at_runtime=True,
             num_top_games_to_print=50,
-            verbose=True,
             keywords_to_include=None,
             keywords_to_exclude=None,
+            perform_optimization_at_runtime=True,
+            verbose=True,
             load_from_cache=True,
             compute_prior_on_whole_steam_catalog=False,
             compute_language_specific_prior=True,
         )
 
-    def test_run_regional_workflow_bayes_reviews_with_hidden_gem_constant_prior(self) -> None:
+    def test_run_regional_workflow_bayes_reviews_with_hidden_gem_constant_prior(
+        self,
+    ) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -130,17 +132,19 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
         assert compute_regional_stats.run_regional_workflow(
             quality_measure_str=quality_measure_str,
             popularity_measure_str=popularity_measure_str,
-            perform_optimization_at_runtime=True,
             num_top_games_to_print=50,
-            verbose=False,
             keywords_to_include=None,
             keywords_to_exclude=None,
+            perform_optimization_at_runtime=True,
+            verbose=False,
             load_from_cache=True,
             compute_prior_on_whole_steam_catalog=False,
             compute_language_specific_prior=False,
         )
 
-    def test_run_regional_workflow_bayes_owners_with_hidden_gem_constant_prior(self) -> None:
+    def test_run_regional_workflow_bayes_owners_with_hidden_gem_constant_prior(
+        self,
+    ) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -149,17 +153,19 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
         assert compute_regional_stats.run_regional_workflow(
             quality_measure_str=quality_measure_str,
             popularity_measure_str=popularity_measure_str,
-            perform_optimization_at_runtime=True,
             num_top_games_to_print=50,
-            verbose=True,
             keywords_to_include=None,
             keywords_to_exclude=None,
+            perform_optimization_at_runtime=True,
+            verbose=True,
             load_from_cache=True,
             compute_prior_on_whole_steam_catalog=False,
             compute_language_specific_prior=False,
         )
 
-    def test_run_regional_workflow_bayes_reviews_with_global_constant_prior(self) -> None:
+    def test_run_regional_workflow_bayes_reviews_with_global_constant_prior(
+        self,
+    ) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -168,17 +174,19 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
         assert compute_regional_stats.run_regional_workflow(
             quality_measure_str=quality_measure_str,
             popularity_measure_str=popularity_measure_str,
-            perform_optimization_at_runtime=True,
             num_top_games_to_print=50,
-            verbose=False,
             keywords_to_include=None,
             keywords_to_exclude=None,
+            perform_optimization_at_runtime=True,
+            verbose=False,
             load_from_cache=True,
             compute_prior_on_whole_steam_catalog=True,
             compute_language_specific_prior=False,
         )
 
-    def test_run_regional_workflow_bayes_owners_with_global_constant_prior(self) -> None:
+    def test_run_regional_workflow_bayes_owners_with_global_constant_prior(
+        self,
+    ) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -187,11 +195,11 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
         assert compute_regional_stats.run_regional_workflow(
             quality_measure_str=quality_measure_str,
             popularity_measure_str=popularity_measure_str,
-            perform_optimization_at_runtime=True,
             num_top_games_to_print=50,
-            verbose=True,
             keywords_to_include=None,
             keywords_to_exclude=None,
+            perform_optimization_at_runtime=True,
+            verbose=True,
             load_from_cache=True,
             compute_prior_on_whole_steam_catalog=True,
             compute_language_specific_prior=False,

@@ -83,7 +83,6 @@ def compute_score_generic(
 def rank_games(
     d,
     parameter_list,
-    verbose=False,
     appid_reference_set=None,
     language=None,
     popularity_measure_str=None,
@@ -91,6 +90,8 @@ def rank_games(
     num_top_games_to_print=1000,
     filtered_app_ids_to_show=None,
     filtered_app_ids_to_hide=None,
+    *,
+    verbose=False,
 ):
     # Objective: rank all the Steam games, given a parameter alpha.
     #
@@ -249,11 +250,12 @@ def rank_games(
 # noinspection PyPep8Naming
 def optimize_for_alpha(
     d,
-    verbose=True,
     appid_reference_set=None,
     language=None,
     popularity_measure_str=None,
     quality_measure_str=None,
+    *,
+    verbose=True,
 ):
     # Objective: find the optimal value of the parameter alpha
     #
@@ -277,11 +279,11 @@ def optimize_for_alpha(
         return rank_games(
             d,
             [x],
-            False,
             appid_reference_set,
             language,
             popularity_measure_str,
             quality_measure_str,
+            verbose=False,
         )[0]
 
     if language is None:
@@ -317,9 +319,10 @@ def optimize_for_alpha(
 def save_ranking_to_file(
     output_filename,
     ranking_list,
+    width=40,
+    *,
     only_show_appid=False,
     verbose=False,
-    width=40,
 ) -> None:
     # Objective: save the ranking to the output text file
 
@@ -370,9 +373,10 @@ def compute_ranking(
     keywords_to_include=None,
     keywords_to_exclude=None,
     language=None,
-    perform_optimization_at_runtime=True,
     popularity_measure_str=None,
     quality_measure_str=None,
+    *,
+    perform_optimization_at_runtime=True,
 ):
     # Objective: compute a ranking of hidden gems
     #
@@ -405,11 +409,11 @@ def compute_ranking(
     if perform_optimization_at_runtime:
         optimal_parameters = optimize_for_alpha(
             d,
-            True,
             appid_hidden_gems_reference_set,
             language,
             popularity_measure_str,
             quality_measure_str,
+            verbose=True,
         )
     elif popularity_measure_str is None or popularity_measure_str == "num_owners":
         if quality_measure_str is None or quality_measure_str == "wilson_score":
@@ -447,7 +451,6 @@ def compute_ranking(
     (_, ranking) = rank_games(
         d,
         optimal_parameters,
-        True,
         appid_hidden_gems_reference_set,
         language,
         popularity_measure_str,
@@ -455,6 +458,7 @@ def compute_ranking(
         num_top_games_to_print,
         filtered_in_app_ids,
         filtered_out_app_ids,
+        verbose=True,
     )
 
     return ranking
@@ -463,6 +467,7 @@ def compute_ranking(
 def run_workflow(
     quality_measure_str="wilson_score",
     popularity_measure_str="num_reviews",
+    *,
     perform_optimization_at_runtime=True,
     num_top_games_to_print=250,
     verbose=False,
@@ -514,9 +519,9 @@ def run_workflow(
         keywords_to_include,
         keywords_to_exclude,
         language,
-        perform_optimization_at_runtime,
         popularity_measure_str,
         quality_measure_str,
+        perform_optimization_at_runtime=perform_optimization_at_runtime,
     )
 
     save_ranking_to_file(

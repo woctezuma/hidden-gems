@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def choose_prior(observations, verbose=False):
+def choose_prior(observations, *, verbose=False):
     bayes_prior = {}
 
     scores = [
