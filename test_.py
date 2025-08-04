@@ -271,8 +271,6 @@ class TestComputeStatsMethods(unittest.TestCase):
         # A dictionary will be stored in the following text file
         dict_filename = "dict_top_rated_games_on_steam.txt"
 
-        import ast
-
         d = compute_stats.load_dict_top_rated_games(dict_filename)
 
         for appid in appids.appid_hidden_gems_reference_set:

@@ -3,7 +3,6 @@
 import ast
 from pathlib import Path
 
-import json
 import numpy as np
 
 from src.appids import APP_ID_CONTRADICTION
@@ -464,6 +463,7 @@ def compute_ranking(
 
     return ranking
 
+
 def load_dict_top_rated_games(input_filename):
     # Import the local dictionary from the input file
     with Path(input_filename).open(encoding="utf8") as infile:
@@ -476,9 +476,8 @@ def load_dict_top_rated_games(input_filename):
     input_string = input_string.replace("),", ",")
 
     # noinspection PyPep8Naming
-    d = ast.literal_eval(input_string)
+    return ast.literal_eval(input_string)
 
-    return d
 
 def run_workflow(
     quality_measure_str="wilson_score",
