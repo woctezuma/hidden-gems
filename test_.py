@@ -121,7 +121,9 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
             compute_language_specific_prior=True,
         )
 
-    def test_run_regional_workflow_bayes_reviews_with_hidden_gem_constant_prior(self) -> None:
+    def test_run_regional_workflow_bayes_reviews_with_hidden_gem_constant_prior(
+        self,
+    ) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -140,7 +142,9 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
             compute_language_specific_prior=False,
         )
 
-    def test_run_regional_workflow_bayes_owners_with_hidden_gem_constant_prior(self) -> None:
+    def test_run_regional_workflow_bayes_owners_with_hidden_gem_constant_prior(
+        self,
+    ) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -159,7 +163,9 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
             compute_language_specific_prior=False,
         )
 
-    def test_run_regional_workflow_bayes_reviews_with_global_constant_prior(self) -> None:
+    def test_run_regional_workflow_bayes_reviews_with_global_constant_prior(
+        self,
+    ) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -178,7 +184,9 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
             compute_language_specific_prior=False,
         )
 
-    def test_run_regional_workflow_bayes_owners_with_global_constant_prior(self) -> None:
+    def test_run_regional_workflow_bayes_owners_with_global_constant_prior(
+        self,
+    ) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )

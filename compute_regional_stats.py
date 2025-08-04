@@ -271,6 +271,7 @@ def print_prior(prior, all_languages=None) -> None:
 def choose_language_independent_prior_based_on_whole_steam_catalog(
     steam_spy_dict,
     all_languages,
+    *,
     verbose=False,
 ):
     # Construct observation structure used to compute a prior for the inference of a Bayesian rating
@@ -304,6 +305,7 @@ def choose_language_independent_prior_based_on_whole_steam_catalog(
 def choose_language_independent_prior_based_on_hidden_gems(
     game_feature_dict,
     all_languages,
+    *,
     verbose=False,
 ):
     # Construct observation structure used to compute a prior for the inference of a Bayesian rating
@@ -344,6 +346,7 @@ def choose_language_independent_prior_based_on_hidden_gems(
 def choose_language_specific_prior_based_on_hidden_gems(
     game_feature_dict,
     all_languages,
+    *,
     verbose=False,
 ):
     # For each language, compute the prior to be used for the inference of a Bayesian rating
@@ -378,6 +381,7 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
     steam_spy_dict,
     game_feature_dict,
     all_languages,
+    *,
     compute_prior_on_whole_steam_catalog=True,
     compute_language_specific_prior=False,
     verbose=False,
@@ -526,7 +530,7 @@ def get_detected_languages_filename() -> str:
     return "previously_detected_languages.txt"
 
 
-def get_input_data(load_from_cache=True):
+def get_input_data(*, load_from_cache=True):
     if load_from_cache:
         game_feature_dict = load_content_from_disk(get_language_features_filename())
 
@@ -570,6 +574,7 @@ def get_regional_ranking_filename(language):
 def run_regional_workflow(
     quality_measure_str="wilson_score",
     popularity_measure_str="num_reviews",
+    *,
     perform_optimization_at_runtime=True,
     num_top_games_to_print=250,
     verbose=False,
@@ -607,9 +612,9 @@ def run_regional_workflow(
             keywords_to_include,
             keywords_to_exclude,
             language,
-            perform_optimization_at_runtime,
             popularity_measure_str,
             quality_measure_str,
+            perform_optimization_at_runtime=perform_optimization_at_runtime,
         )
 
         save_ranking_to_file(
