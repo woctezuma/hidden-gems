@@ -3,6 +3,7 @@
 import ast
 from pathlib import Path
 
+import json
 import numpy as np
 
 from src.appids import APP_ID_CONTRADICTION
@@ -463,6 +464,21 @@ def compute_ranking(
 
     return ranking
 
+def load_dict_top_rated_games(input_filename):
+    # Import the local dictionary from the input file
+    with Path(input_filename).open(encoding="utf8") as infile:
+        lines = infile.readlines()
+
+    # The dictionary is on the second line
+    input_string = lines[1]
+
+    input_string = input_string.replace("np.float64(", "")
+    input_string = input_string.replace("),", ",")
+
+    # noinspection PyPep8Naming
+    d = ast.literal_eval(input_string)
+
+    return d
 
 def run_workflow(
     quality_measure_str="wilson_score",
@@ -506,12 +522,7 @@ def run_workflow(
     # A ranking, as a list of appids, will be stored in the following text file
     output_filename_only_appids = "idlist.txt"
 
-    # Import the local dictionary from the input file
-    with Path(input_filename).open(encoding="utf8") as infile:
-        lines = infile.readlines()
-        # The dictionary is on the second line
-        # noinspection PyPep8Naming
-        d = ast.literal_eval(lines[1])
+    d = load_dict_top_rated_games(input_filename)
 
     ranking = compute_ranking(
         d,

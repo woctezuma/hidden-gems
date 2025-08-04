@@ -273,12 +273,7 @@ class TestComputeStatsMethods(unittest.TestCase):
 
         import ast
 
-        # Import the local dictionary from the input file
-        with Path(dict_filename).open(encoding="utf8") as infile:
-            lines = infile.readlines()
-            # The dictionary is on the second line
-            # noinspection PyPep8Naming
-            d = ast.literal_eval(lines[1])
+        d = compute_stats.load_dict_top_rated_games(dict_filename)
 
         for appid in appids.appid_hidden_gems_reference_set:
             print(
