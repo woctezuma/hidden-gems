@@ -20,7 +20,7 @@ appid_hidden_gems_reference_set = {
 }
 
 
-def main():
+def main() -> bool:
     print(appid_hidden_gems_reference_set)
 
     return True

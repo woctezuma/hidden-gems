@@ -67,7 +67,7 @@ def compute_bayesian_score(game_entry, bayes_prior):
     ) / (bayes_prior["num_votes"] + game_entry["num_votes"])
 
 
-def main():
+def main() -> bool:
     prior = {}
     prior["score"] = 0.7
     prior["num_votes"] = pow(10, 3)

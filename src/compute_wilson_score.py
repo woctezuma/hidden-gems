@@ -62,7 +62,7 @@ def compute_wilson_score(num_pos, num_neg, confidence=0.95):
     return wilson_score_value
 
 
-def main():
+def main() -> bool:
     # Loop over the number of reviews
     for num_reviews in [pow(10, n) for n in range(5)]:
         # Display the Wilson score of a game with as many positive and negative reviews

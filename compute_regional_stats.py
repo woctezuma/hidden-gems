@@ -224,7 +224,7 @@ def load_content_from_disk(filename):
         return ast.literal_eval(lines[0])
 
 
-def write_content_to_disk(content_to_write, filename):
+def write_content_to_disk(content_to_write, filename) -> None:
     # Export the content to a text file
 
     with Path(filename).open("w", encoding="utf8") as f:
@@ -260,7 +260,7 @@ def compute_review_language_distribution(game_feature_dict, all_languages):
     return review_language_distribution
 
 
-def print_prior(prior, all_languages=None):
+def print_prior(prior, all_languages=None) -> None:
     if all_languages is None:
         print(repr(prior))
     else:
@@ -514,15 +514,15 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
     return d
 
 
-def get_language_features_filename():
+def get_language_features_filename() -> str:
     return "dict_review_languages.txt"
 
 
-def get_all_languages_filename():
+def get_all_languages_filename() -> str:
     return "list_all_languages.txt"
 
 
-def get_detected_languages_filename():
+def get_detected_languages_filename() -> str:
     return "previously_detected_languages.txt"
 
 
@@ -544,7 +544,7 @@ def get_input_data(load_from_cache=True):
     return game_feature_dict, all_languages
 
 
-def download_steam_reviews():
+def download_steam_reviews() -> None:
     from src.appids import appid_hidden_gems_reference_set
 
     # All the reference hidden-gems
@@ -554,7 +554,7 @@ def download_steam_reviews():
     steamreviews.download_reviews_for_app_id_batch()
 
 
-def get_regional_data_path():
+def get_regional_data_path() -> str:
     return "regional_rankings/"
 
 
@@ -578,7 +578,7 @@ def run_regional_workflow(
     load_from_cache=True,
     compute_prior_on_whole_steam_catalog=True,
     compute_language_specific_prior=False,
-):
+) -> bool:
     if keywords_to_include is None:
         keywords_to_include = []  # ["Rogue-Like"]
 

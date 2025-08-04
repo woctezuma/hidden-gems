@@ -16,7 +16,7 @@ def get_mid_of_interval(interval_as_str):
     return (lower_bound + upper_bound) / 2
 
 
-def get_leading_comment():
+def get_leading_comment() -> str:
     # First line of the text file containing the output dictionary
     return (
         "# Dictionary with key=appid and value=list of name, Wilson score, Bayesian rating, #owners, "
@@ -30,7 +30,7 @@ def create_local_dictionary(
     output_filename,
     appid_reference_set=None,
     quantile_for_our_wilson_score=0.95,
-):
+) -> None:
     # Objective: compute a score for one Steam game.
     #
     # Input:    - data:                         SteamSpy's data.
@@ -135,7 +135,7 @@ def create_local_dictionary(
         print(d, file=outfile)
 
 
-def main():
+def main() -> bool:
     from src.appids import appid_hidden_gems_reference_set
 
     # SteamSpy's data in JSON format

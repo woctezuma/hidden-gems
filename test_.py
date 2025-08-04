@@ -8,12 +8,12 @@ from src import appids, compute_bayesian_rating, compute_wilson_score
 
 
 class TestAppidsMethods(unittest.TestCase):
-    def test_main(self):
+    def test_main(self) -> None:
         assert appids.main()
 
 
 class TestComputeWilsonScoreMethods(unittest.TestCase):
-    def test_compute_wilson_score(self):
+    def test_compute_wilson_score(self) -> None:
         wilson_score_value = compute_wilson_score.compute_wilson_score(
             num_pos=90,
             num_neg=10,
@@ -21,12 +21,12 @@ class TestComputeWilsonScoreMethods(unittest.TestCase):
         )
         assert wilson_score_value > 0
 
-    def test_main(self):
+    def test_main(self) -> None:
         assert compute_wilson_score.main()
 
 
 class TestComputeBayesianRatingMethods(unittest.TestCase):
-    def test_choose_prior(self):
+    def test_choose_prior(self) -> None:
         observations = {
             "Blockbuster": {"score": 0.85, "num_votes": 1000},
             "Average game": {"score": 0.75, "num_votes": 100},
@@ -35,17 +35,17 @@ class TestComputeBayesianRatingMethods(unittest.TestCase):
         bayes_prior = compute_bayesian_rating.choose_prior(observations, verbose=True)
         self.assertDictEqual(bayes_prior, {"score": 0.85, "num_votes": 100})
 
-    def test_main(self):
+    def test_main(self) -> None:
         assert compute_bayesian_rating.main()
 
 
 class TestCreateDictUsingJsonMethods(unittest.TestCase):
-    def test_main(self):
+    def test_main(self) -> None:
         assert create_dict_using_json.main()
 
 
 class TestComputeRegionalStatsMethods(unittest.TestCase):
-    def test_run_regional_workflow_wilson_reviews(self):
+    def test_run_regional_workflow_wilson_reviews(self) -> None:
         quality_measure_str = (
             "wilson_score"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -64,7 +64,7 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
             compute_language_specific_prior=False,
         )
 
-    def test_run_regional_workflow_wilson_owners(self):
+    def test_run_regional_workflow_wilson_owners(self) -> None:
         quality_measure_str = (
             "wilson_score"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -83,7 +83,7 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
             compute_language_specific_prior=False,
         )
 
-    def test_run_regional_workflow_bayes_reviews(self):
+    def test_run_regional_workflow_bayes_reviews(self) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -102,7 +102,7 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
             compute_language_specific_prior=True,
         )
 
-    def test_run_regional_workflow_bayes_owners(self):
+    def test_run_regional_workflow_bayes_owners(self) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -121,7 +121,7 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
             compute_language_specific_prior=True,
         )
 
-    def test_run_regional_workflow_bayes_reviews_with_hidden_gem_constant_prior(self):
+    def test_run_regional_workflow_bayes_reviews_with_hidden_gem_constant_prior(self) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -140,7 +140,7 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
             compute_language_specific_prior=False,
         )
 
-    def test_run_regional_workflow_bayes_owners_with_hidden_gem_constant_prior(self):
+    def test_run_regional_workflow_bayes_owners_with_hidden_gem_constant_prior(self) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -159,7 +159,7 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
             compute_language_specific_prior=False,
         )
 
-    def test_run_regional_workflow_bayes_reviews_with_global_constant_prior(self):
+    def test_run_regional_workflow_bayes_reviews_with_global_constant_prior(self) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -178,7 +178,7 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
             compute_language_specific_prior=False,
         )
 
-    def test_run_regional_workflow_bayes_owners_with_global_constant_prior(self):
+    def test_run_regional_workflow_bayes_owners_with_global_constant_prior(self) -> None:
         quality_measure_str = (
             "bayesian_rating"  # Either 'wilson_score' or 'bayesian_rating'
         )
@@ -199,7 +199,7 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
 
 
 class TestComputeStatsMethods(unittest.TestCase):
-    def test_run_workflow_wilson_reviews(self):
+    def test_run_workflow_wilson_reviews(self) -> None:
         create_dict_using_json.main()
 
         assert compute_stats.run_workflow(
@@ -210,7 +210,7 @@ class TestComputeStatsMethods(unittest.TestCase):
             verbose=True,
         )
 
-    def test_run_workflow_wilson_owners(self):
+    def test_run_workflow_wilson_owners(self) -> None:
         create_dict_using_json.main()
 
         assert compute_stats.run_workflow(
@@ -221,7 +221,7 @@ class TestComputeStatsMethods(unittest.TestCase):
             verbose=True,
         )
 
-    def test_run_workflow_bayes_reviews(self):
+    def test_run_workflow_bayes_reviews(self) -> None:
         create_dict_using_json.main()
 
         assert compute_stats.run_workflow(
@@ -232,7 +232,7 @@ class TestComputeStatsMethods(unittest.TestCase):
             verbose=True,
         )
 
-    def test_run_workflow_bayes_owners(self):
+    def test_run_workflow_bayes_owners(self) -> None:
         create_dict_using_json.main()
 
         assert compute_stats.run_workflow(
@@ -243,7 +243,7 @@ class TestComputeStatsMethods(unittest.TestCase):
             verbose=True,
         )
 
-    def test_run_workflow_filtering_in(self):
+    def test_run_workflow_filtering_in(self) -> None:
         create_dict_using_json.main()
 
         assert compute_stats.run_workflow(
@@ -257,7 +257,7 @@ class TestComputeStatsMethods(unittest.TestCase):
             keywords_to_exclude=None,
         )
 
-    def test_run_workflow_while_removing_reference_hidden_gems(self):
+    def test_run_workflow_while_removing_reference_hidden_gems(self) -> None:
         create_dict_using_json.main()
 
         # A dictionary will be stored in the following text file
@@ -295,7 +295,7 @@ class TestComputeStatsMethods(unittest.TestCase):
             keywords_to_exclude=None,
         )
 
-    def test_run_workflow_filtering_in_unknown_tag(self):
+    def test_run_workflow_filtering_in_unknown_tag(self) -> None:
         create_dict_using_json.main()
 
         assert compute_stats.run_workflow(
@@ -309,7 +309,7 @@ class TestComputeStatsMethods(unittest.TestCase):
             keywords_to_exclude=None,
         )
 
-    def test_run_workflow_filtering_out(self):
+    def test_run_workflow_filtering_out(self) -> None:
         create_dict_using_json.main()
 
         assert compute_stats.run_workflow(
@@ -323,7 +323,7 @@ class TestComputeStatsMethods(unittest.TestCase):
             keywords_to_exclude=["Visual Novel", "Anime"],
         )
 
-    def test_run_workflow_wilson_owners_optimized_at_runtime(self):
+    def test_run_workflow_wilson_owners_optimized_at_runtime(self) -> None:
         create_dict_using_json.main()
 
         assert compute_stats.run_workflow(
@@ -334,7 +334,7 @@ class TestComputeStatsMethods(unittest.TestCase):
             verbose=False,
         )
 
-    def test_main(self):
+    def test_main(self) -> None:
         create_dict_using_json.main()
 
         assert compute_stats.main()

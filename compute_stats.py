@@ -320,7 +320,7 @@ def save_ranking_to_file(
     only_show_appid=False,
     verbose=False,
     width=40,
-):
+) -> None:
     # Objective: save the ranking to the output text file
 
     base_steam_store_url = "https://store.steampowered.com/app/"
@@ -345,15 +345,15 @@ def save_ranking_to_file(
                     print(sentence)
 
 
-def get_index_num_owners():
+def get_index_num_owners() -> int:
     return 3
 
 
-def get_index_num_positive_reviews():
+def get_index_num_positive_reviews() -> int:
     return 7
 
 
-def get_index_num_negative_reviews():
+def get_index_num_negative_reviews() -> int:
     return 8
 
 
@@ -469,7 +469,7 @@ def run_workflow(
     language=None,
     keywords_to_include=None,
     keywords_to_exclude=None,
-):
+) -> bool:
     # Objective: save to disk a ranking of hidden gems.
     #
     # Input:
@@ -537,7 +537,7 @@ def run_workflow(
     return True
 
 
-def main():
+def main() -> bool:
     run_workflow(
         quality_measure_str="wilson_score",  # Either 'wilson_score' or 'bayesian_rating'
         popularity_measure_str="num_reviews",  # Either 'num_reviews' or 'num_owners'
