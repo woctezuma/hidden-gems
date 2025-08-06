@@ -62,7 +62,11 @@ def rank_games(
     sorted_games = sorted(
         games.values(),
         key=lambda g: compute_game_score(
-            g, alpha, language, popularity_measure_str, quality_measure_str
+            g,
+            alpha,
+            language,
+            popularity_measure_str,
+            quality_measure_str,
         ),
         reverse=True,
     )
@@ -98,10 +102,7 @@ def rank_games(
         if (
             (not filtered_app_ids_to_show or appid in filtered_app_ids_to_show)
             and (not filtered_app_ids_to_hide or appid not in filtered_app_ids_to_hide)
-            and (
-                language is not None
-                or game.should_appear_in_ranking
-            )
+            and (language is not None or game.should_appear_in_ranking)
         ):
             game_name = game.name if language is None else game["name"]
             ranking_list.append([rank, game_name, appid])
@@ -136,8 +137,7 @@ def optimize_for_alpha(
     if language is None:
         if popularity_measure_str == "num_reviews":
             vec = [
-                g.num_positive_reviews + g.num_negative_reviews
-                for g in games.values()
+                g.num_positive_reviews + g.num_negative_reviews for g in games.values()
             ]
         else:
             vec = [g.num_owners for g in games.values()]
@@ -204,18 +204,16 @@ def compute_ranking(
             quality_measure_str,
             verbose=True,
         )
-    else:
-        # Hardcoded values from the original script
-        if popularity_measure_str == "num_owners":
-            if quality_measure_str == "wilson_score":
-                optimal_parameters = [10**6.52]
-            else:
-                optimal_parameters = [10**6.63]
+    # Hardcoded values from the original script
+    elif popularity_measure_str == "num_owners":
+        if quality_measure_str == "wilson_score":
+            optimal_parameters = [10**6.52]
         else:
-            if quality_measure_str == "wilson_score":
-                optimal_parameters = [10**4.83]
-            else:
-                optimal_parameters = [10**4.89]
+            optimal_parameters = [10**6.63]
+    elif quality_measure_str == "wilson_score":
+        optimal_parameters = [10**4.83]
+    else:
+        optimal_parameters = [10**4.89]
 
     filtered_in_app_ids = get_appid_by_keyword_list_to_include(keywords_to_include)
     filtered_out_app_ids = get_appid_by_keyword_list_to_exclude(keywords_to_exclude)

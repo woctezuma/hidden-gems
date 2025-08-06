@@ -5,7 +5,6 @@
 import itertools
 import json
 import operator
-import pathlib
 from pathlib import Path
 from typing import Any
 
@@ -27,7 +26,8 @@ from src.compute_wilson_score import compute_wilson_score
 
 
 def get_review_language_dictionary(
-    app_id: str, previously_detected_languages_dict: dict | None = None
+    app_id: str,
+    previously_detected_languages_dict: dict | None = None,
 ) -> tuple[dict, dict]:
     review_data = steamreviews.load_review_dict(app_id)
     print(f"\nAppID: {app_id}")
@@ -113,9 +113,7 @@ def summarize_review_language_dictionary(language_dict: dict) -> dict[str, dict]
     language_iso_dict = convert_review_language_dictionary_to_iso(language_dict)
 
     for language_iso in set(language_iso_dict.values()):
-        reviews = [
-            r for r in language_dict.values() if r["detected"] == language_iso
-        ]
+        reviews = [r for r in language_dict.values() if r["detected"] == language_iso]
         num_votes = len(reviews)
         num_upvotes = len([r for r in reviews if r["voted_up"]])
         summary_dict[language_iso] = {
@@ -131,7 +129,7 @@ def get_all_review_language_summaries(
     delta_n_reviews_between_temp_saves: int = 10,
 ) -> tuple[dict, list[str]]:
     with Path("idlist.txt").open() as f:
-        app_id_list = [x.strip() for x in f.readlines()]
+        app_id_list = [x.strip() for x in f]
     app_id_list = list(set(app_id_list).union(appid_hidden_gems_reference_set))
 
     game_feature_dict = {}
@@ -139,7 +137,7 @@ def get_all_review_language_summaries(
 
     try:
         previously_detected_languages = load_from_json(
-            previously_detected_languages_filename
+            previously_detected_languages_filename,
         )
     except FileNotFoundError:
         previously_detected_languages = {}
@@ -147,7 +145,8 @@ def get_all_review_language_summaries(
 
     for i, app_id in enumerate(app_id_list):
         language_dict, previously_detected_languages = get_review_language_dictionary(
-            app_id, previously_detected_languages
+            app_id,
+            previously_detected_languages,
         )
         summary_dict = summarize_review_language_dictionary(language_dict)
         game_feature_dict[app_id] = summary_dict
@@ -159,7 +158,8 @@ def get_all_review_language_summaries(
             and previously_detected_languages.get("has_changed")
         ):
             save_to_json(
-                previously_detected_languages, previously_detected_languages_filename
+                previously_detected_languages,
+                previously_detected_languages_filename,
             )
             previously_detected_languages["has_changed"] = False
 
@@ -179,7 +179,8 @@ def save_to_json(content: Any, filename: str | Path) -> None:
 
 
 def compute_review_language_distribution(
-    game_feature_dict: dict, all_languages: list[str]
+    game_feature_dict: dict,
+    all_languages: list[str],
 ) -> dict:
     review_language_distribution = {}
     for app_id, data in game_feature_dict.items():
@@ -203,7 +204,10 @@ def _calculate_prior(observations: dict, verbose: bool = False) -> dict:
 
 
 def choose_language_independent_prior(
-    steam_spy_dict: dict, all_languages: list[str], *, verbose: bool = False
+    steam_spy_dict: dict,
+    all_languages: list[str],
+    *,
+    verbose: bool = False,
 ) -> dict[str, dict]:
     observations = {}
     for appid, app_data in steam_spy_dict.items():
@@ -216,11 +220,14 @@ def choose_language_independent_prior(
                 "num_votes": num_votes,
             }
     common_prior = _calculate_prior(observations, verbose)
-    return {lang: common_prior for lang in all_languages}
+    return dict.fromkeys(all_languages, common_prior)
 
 
 def choose_language_specific_prior(
-    game_feature_dict: dict, all_languages: list[str], *, verbose: bool = False
+    game_feature_dict: dict,
+    all_languages: list[str],
+    *,
+    verbose: bool = False,
 ) -> dict[str, dict]:
     language_specific_prior = {}
     for language in all_languages:
@@ -254,28 +261,42 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
 ) -> dict:
     games = {}
     review_language_distribution = compute_review_language_distribution(
-        game_feature_dict, all_languages
+        game_feature_dict,
+        all_languages,
     )
 
     if compute_prior_on_whole_steam_catalog:
-        print(f"Estimating prior on the whole Steam catalog ({len(steam_spy_dict)} games).")
+        print(
+            f"Estimating prior on the whole Steam catalog ({len(steam_spy_dict)} games)."
+        )
         prior = choose_language_independent_prior(
-            steam_spy_dict, all_languages, verbose=verbose
+            steam_spy_dict,
+            all_languages,
+            verbose=verbose,
         )
     else:
-        print(f"Estimating prior on a pre-computed set of {len(game_feature_dict)} hidden gems.")
+        print(
+            f"Estimating prior on a pre-computed set of {len(game_feature_dict)} hidden gems."
+        )
         prior = choose_language_specific_prior(
-            game_feature_dict, all_languages, verbose=verbose
+            game_feature_dict,
+            all_languages,
+            verbose=verbose,
         )
 
     for app_id, features in game_feature_dict.items():
-        games[app_id] = {"name": steam_spy_dict.get(app_id, {}).get("name", f"Unknown {app_id}")}
+        games[app_id] = {
+            "name": steam_spy_dict.get(app_id, {}).get("name", f"Unknown {app_id}")
+        }
         try:
             owners_str = steam_spy_dict[app_id]["owners"]
             num_owners_for_all_languages = float(owners_str)
         except (KeyError, ValueError):
-            num_owners_for_all_languages = get_mid_of_interval(owners_str) if 'owners' in steam_spy_dict.get(app_id, {}) else 0
-
+            num_owners_for_all_languages = (
+                get_mid_of_interval(owners_str)
+                if "owners" in steam_spy_dict.get(app_id, {})
+                else 0
+            )
 
         for language in all_languages:
             lang_features = features.get(language, {})
@@ -283,13 +304,23 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
             num_neg = lang_features.get("voted_down", 0)
             num_reviews = num_pos + num_neg
 
-            wilson_score = compute_wilson_score(
-                num_pos, num_neg, quantile_for_our_own_wilson_score
-            ) or -1
+            wilson_score = (
+                compute_wilson_score(
+                    num_pos,
+                    num_neg,
+                    quantile_for_our_own_wilson_score,
+                )
+                or -1
+            )
 
             if num_reviews > 0:
-                game_for_bayesian = {"score": num_pos / num_reviews, "num_votes": num_reviews}
-                bayesian_rating = compute_bayesian_score(game_for_bayesian, prior[language])
+                game_for_bayesian = {
+                    "score": num_pos / num_reviews,
+                    "num_votes": num_reviews,
+                }
+                bayesian_rating = compute_bayesian_score(
+                    game_for_bayesian, prior[language]
+                )
             else:
                 bayesian_rating = -1
 
@@ -302,7 +333,7 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
                 print(
                     f"[Warning] Abnormal data detected ({int(num_owners)} owners; "
                     f"{num_reviews} reviews) for language={language} and appID={app_id}. "
-                    "Game skipped."
+                    "Game skipped.",
                 )
                 wilson_score = bayesian_rating = -1
 
@@ -334,7 +365,7 @@ def get_input_data(*, load_from_cache: bool = True) -> tuple[dict, list[str]]:
         all_languages = load_from_json(get_all_languages_filename())
     else:
         game_feature_dict, all_languages = get_all_review_language_summaries(
-            get_detected_languages_filename()
+            get_detected_languages_filename(),
         )
         save_to_json(game_feature_dict, get_language_features_filename())
         save_to_json(all_languages, get_all_languages_filename())
@@ -409,8 +440,9 @@ if __name__ == "__main__":
     use_language_specific_prior = True
 
     if use_global_constant_prior and use_language_specific_prior:
+        msg = "Language-specific prior cannot be computed on the whole catalog."
         raise AssertionError(
-            "Language-specific prior cannot be computed on the whole catalog."
+            msg,
         )
 
     run_regional_workflow(

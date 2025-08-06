@@ -104,12 +104,15 @@ def create_games_dictionary(
     games = {}
     for appid, app_data in data.items():
         game = _create_game_from_steamspy_data(
-            appid, app_data, prior, quantile_for_our_wilson_score
+            appid,
+            app_data,
+            prior,
+            quantile_for_our_wilson_score,
         )
         if game:
             if appid in appid_reference_set:
                 print(
-                    f"Game used as a reference:\t{game.name}\t(appID={game.appid})"
+                    f"Game used as a reference:\t{game.name}\t(appID={game.appid})",
                 )
             games[appid] = game
 
@@ -120,7 +123,9 @@ def main() -> bool:
     data = steamspypi.load()
     output_filename = "dict_top_rated_games_on_steam.json"
     create_games_dictionary(
-        data, output_filename, appid_hidden_gems_reference_set
+        data,
+        output_filename,
+        appid_hidden_gems_reference_set,
     )
     return True
 

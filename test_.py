@@ -1,5 +1,4 @@
 import unittest
-from pathlib import Path
 
 import compute_regional_stats
 import compute_stats
@@ -206,8 +205,6 @@ class TestComputeRegionalStatsMethods(unittest.TestCase):
         )
 
 
-import json
-from dataclasses import asdict
 class TestComputeStatsMethods(unittest.TestCase):
     def test_run_workflow_wilson_reviews(self) -> None:
         create_dict_using_json.main()
@@ -276,7 +273,7 @@ class TestComputeStatsMethods(unittest.TestCase):
         for appid in appids.appid_hidden_gems_reference_set:
             if appid in games:
                 print(
-                    f"Ensuring reference {games[appid].name} (appID={appid}) does not appear in the final ranking."
+                    f"Ensuring reference {games[appid].name} (appID={appid}) does not appear in the final ranking.",
                 )
                 games[appid].should_appear_in_ranking = False
 

@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -8,10 +7,10 @@ class Game:
 
     appid: str
     name: str
-    wilson_score: Optional[float]
-    bayesian_rating: Optional[float]
+    wilson_score: float | None
+    bayesian_rating: float | None
     num_owners: float
-    num_players: Optional[float]
+    num_players: float | None
     median_playtime: int
     average_playtime: int
     num_positive_reviews: int
