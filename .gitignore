@@ -1,0 +1,6 @@
+__pycache__/
+data/
+dict_top_rated_games_on_steam.json
+*.txt
+*.md
+regional_rankings/
