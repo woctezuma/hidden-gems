@@ -196,7 +196,7 @@ def compute_review_language_distribution(
     return review_language_distribution
 
 
-def _calculate_prior(observations: dict, verbose: bool = False) -> dict:
+def _calculate_prior(observations: dict, *, verbose: bool = False) -> dict:
     prior = choose_prior(observations)
     if verbose:
         print(f"Prior: {prior!r}")
@@ -219,7 +219,7 @@ def choose_language_independent_prior(
                 "score": num_pos / num_votes,
                 "num_votes": num_votes,
             }
-    common_prior = _calculate_prior(observations, verbose)
+    common_prior = _calculate_prior(observations, verbose=verbose)
     return dict.fromkeys(all_languages, common_prior)
 
 
@@ -242,7 +242,7 @@ def choose_language_specific_prior(
                     "score": num_pos / num_votes,
                     "num_votes": num_votes,
                 }
-        prior = _calculate_prior(observations, verbose)
+        prior = _calculate_prior(observations, verbose=verbose)
         language_specific_prior[language] = prior
         if verbose:
             print(f"{language}: {prior!r}")
@@ -267,7 +267,7 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
 
     if compute_prior_on_whole_steam_catalog:
         print(
-            f"Estimating prior on the whole Steam catalog ({len(steam_spy_dict)} games)."
+            f"Estimating prior on the whole Steam catalog ({len(steam_spy_dict)} games).",
         )
         prior = choose_language_independent_prior(
             steam_spy_dict,
@@ -276,7 +276,7 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
         )
     else:
         print(
-            f"Estimating prior on a pre-computed set of {len(game_feature_dict)} hidden gems."
+            f"Estimating prior on a pre-computed set of {len(game_feature_dict)} hidden gems.",
         )
         prior = choose_language_specific_prior(
             game_feature_dict,
@@ -286,7 +286,7 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
 
     for app_id, features in game_feature_dict.items():
         games[app_id] = {
-            "name": steam_spy_dict.get(app_id, {}).get("name", f"Unknown {app_id}")
+            "name": steam_spy_dict.get(app_id, {}).get("name", f"Unknown {app_id}"),
         }
         try:
             owners_str = steam_spy_dict[app_id]["owners"]
@@ -319,7 +319,8 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
                     "num_votes": num_reviews,
                 }
                 bayesian_rating = compute_bayesian_score(
-                    game_for_bayesian, prior[language]
+                    game_for_bayesian,
+                    prior[language],
                 )
             else:
                 bayesian_rating = -1
