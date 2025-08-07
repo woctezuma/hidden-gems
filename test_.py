@@ -1,5 +1,4 @@
 import unittest
-from pathlib import Path
 
 import compute_regional_stats
 import compute_stats
@@ -268,22 +267,17 @@ class TestComputeStatsMethods(unittest.TestCase):
     def test_run_workflow_while_removing_reference_hidden_gems(self) -> None:
         create_dict_using_json.main()
 
-        # A dictionary will be stored in the following text file
-        dict_filename = "dict_top_rated_games_on_steam.txt"
-
-        d = compute_stats.load_dict_top_rated_games(dict_filename)
+        dict_filename = "dict_top_rated_games_on_steam.json"
+        games = compute_stats.load_games_from_json(dict_filename)
 
         for appid in appids.appid_hidden_gems_reference_set:
-            print(
-                f"Ensuring reference {d[appid][0]} (appID={appid}) does not appear in the final ranking.",
-            )
-            d[appid][-1] = False
-            # If True, UnEpic should end up about rank 1828. Otherwise, UnEpic should not appear on there.
+            if appid in games:
+                print(
+                    f"Ensuring reference {games[appid].name} (appID={appid}) does not appear in the final ranking.",
+                )
+                games[appid].should_appear_in_ranking = False
 
-        # Save the dictionary to a text file
-        with Path(dict_filename).open("w", encoding="utf8") as outfile:
-            print(create_dict_using_json.get_leading_comment(), file=outfile)
-            print(d, file=outfile)
+        compute_stats.save_games_to_json(games, dict_filename)
 
         assert compute_stats.run_workflow(
             quality_measure_str="wilson_score",
