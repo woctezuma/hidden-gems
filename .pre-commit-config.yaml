@@ -9,7 +9,8 @@ repos:
       --fix,
       --unsafe-fixes,
       --target-version, "py314",
+      --preview,
       --select, "ALL",
-      --ignore, "ANN,C90,D,E501,FBT,FIX,PLR091,PT,S101,T20,TD,PLC0415"
+      --ignore, "ANN,ARG001,CPY001,D,E501,FBT,FIX,PLR091,PT,S101,T20,TD,PLC0415,PLR6301"
       ]
     - id: ruff-format
