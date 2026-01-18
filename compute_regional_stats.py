@@ -219,10 +219,13 @@ def choose_language_independent_prior(
     all_languages: list[str],
     *,
     verbose: bool = False,
+    appid_list: list[str] | None = None,
 ) -> dict[str, dict]:
     # Construct observation structure used to compute a prior for the inference of a Bayesian rating
     observations = {}
     for appid, app_data in steam_spy_dict.items():
+        if appid_list is not None and appid not in appid_list:
+            continue
         num_pos = app_data["positive"]
         num_neg = app_data["negative"]
         num_votes = num_pos + num_neg
@@ -292,11 +295,19 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
         print(
             f"Estimating prior on a pre-computed set of {len(game_feature_dict)} hidden gems.",
         )
-        prior = choose_language_specific_prior(
-            game_feature_dict,
-            all_languages,
-            verbose=verbose,
-        )
+        if compute_language_specific_prior:
+            prior = choose_language_specific_prior(
+                game_feature_dict,
+                all_languages,
+                verbose=verbose,
+            )
+        else:
+            prior = choose_language_independent_prior(
+                steam_spy_dict,
+                all_languages,
+                verbose=verbose,
+                appid_list=list(game_feature_dict.keys()),
+            )
 
     for app_id, features in game_feature_dict.items():
         games[app_id] = {
