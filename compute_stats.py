@@ -110,18 +110,18 @@ def rank_games(
     )
 
     if language is None:
-        sorted_game_names = [g.name for g in sorted_games]
+        sorted_game_ids = [g.appid for g in sorted_games]
         # Find the rank of this game used as a reference of a "hidden gem"
         reference_ranks = {
-            appid: sorted_game_names.index(games[appid].name) + 1
+            appid: sorted_game_ids.index(appid) + 1
             for appid in appid_reference_set
             if appid in games
         }
     else:
-        sorted_game_names = [g["name"] for g in sorted_games]
+        sorted_game_ids = [g["appid"] for g in sorted_games]
 
         reference_ranks = {
-            appid: sorted_game_names.index(games[appid]["name"]) + 1
+            appid: sorted_game_ids.index(appid) + 1
             for appid in appid_reference_set
             if appid in games
         }
