@@ -96,20 +96,6 @@ def rank_games(
     if filtered_app_ids_to_hide is None:
         filtered_app_ids_to_hide = set()
 
-    # Boolean to decide whether printing the ranking of the top 1000 games, rather than the ranking of the whole Steam
-    # catalog. It makes the script finish faster, and usually, we are only interested in the top games anyway.
-    bool(num_top_games_to_print is not None)
-
-    # Boolean to decide whether there is a filtering-in of appIDs (typically to filter-in genres or tags).
-    bool(
-        filtered_app_ids_to_show is not None and len(filtered_app_ids_to_show) != 0,
-    )
-
-    # Boolean to decide whether there is a filtering-out of appIDs (typically to filter-out genres or tags).
-    bool(
-        filtered_app_ids_to_hide is not None and len(filtered_app_ids_to_hide) != 0,
-    )
-
     # Rank all the Steam games
     sorted_games = sorted(
         games.values(),
@@ -124,18 +110,18 @@ def rank_games(
     )
 
     if language is None:
-        sorted_game_names = [g.name for g in sorted_games]
+        sorted_game_ids = [g.appid for g in sorted_games]
         # Find the rank of this game used as a reference of a "hidden gem"
         reference_ranks = {
-            appid: sorted_game_names.index(games[appid].name) + 1
+            appid: sorted_game_ids.index(appid) + 1
             for appid in appid_reference_set
             if appid in games
         }
     else:
-        sorted_game_names = [g["name"] for g in sorted_games]
+        sorted_game_ids = [g["appid"] for g in sorted_games]
 
         reference_ranks = {
-            appid: sorted_game_names.index(games[appid]["name"]) + 1
+            appid: sorted_game_ids.index(appid) + 1
             for appid in appid_reference_set
             if appid in games
         }
@@ -157,7 +143,11 @@ def rank_games(
         if (
             (not filtered_app_ids_to_show or appid in filtered_app_ids_to_show)
             and (not filtered_app_ids_to_hide or appid not in filtered_app_ids_to_hide)
-            and (language is not None or game.should_appear_in_ranking)
+            and (
+                game.should_appear_in_ranking
+                if language is None
+                else game.get("should_appear_in_ranking", True)
+            )
         ):
             game_name = game.name if language is None else game["name"]
             # Append the ranking info
