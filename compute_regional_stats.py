@@ -302,6 +302,10 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
         games[app_id] = {
             "appid": app_id,
             "name": steam_spy_dict.get(app_id, {}).get("name", f"Unknown {app_id}"),
+            "should_appear_in_ranking": steam_spy_dict.get(app_id, {}).get(
+                "should_appear_in_ranking",
+                True,
+            ),
         }
         try:
             owners_str = steam_spy_dict[app_id]["owners"]

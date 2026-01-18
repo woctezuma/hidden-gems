@@ -143,7 +143,11 @@ def rank_games(
         if (
             (not filtered_app_ids_to_show or appid in filtered_app_ids_to_show)
             and (not filtered_app_ids_to_hide or appid not in filtered_app_ids_to_hide)
-            and (language is not None or game.should_appear_in_ranking)
+            and (
+                game.should_appear_in_ranking
+                if language is None
+                else game.get("should_appear_in_ranking", True)
+            )
         ):
             game_name = game.name if language is None else game["name"]
             # Append the ranking info
