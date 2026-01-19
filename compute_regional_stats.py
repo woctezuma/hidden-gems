@@ -103,7 +103,7 @@ def convert_review_language_dictionary_to_iso(language_dict):
             language_iso = iso639.to_iso639_1(language)
 
         except iso639.NonExistentLanguageError:
-            if language in ("schinese", "tchinese"):
+            if language in {"schinese", "tchinese"}:
                 language_iso = "zh-cn"
             elif language == "brazilian":
                 language_iso = "pt"
@@ -162,7 +162,7 @@ def get_all_review_language_summaries(
 ):
     from src.appids import appid_hidden_gems_reference_set
 
-    with Path("idlist.txt").open() as f:
+    with Path("idlist.txt").open(encoding="utf-8") as f:
         d = f.readlines()
 
     app_id_list = [x.strip() for x in d]
@@ -240,10 +240,8 @@ def compute_review_language_distribution(game_feature_dict, all_languages):
         data_for_current_game = game_feature_dict[app_id]
 
         num_reviews = sum(
-            [
-                data_for_current_game[language]["voted"]
-                for language in data_for_current_game
-            ],
+            data_for_current_game[language]["voted"]
+            for language in data_for_current_game
         )
 
         review_language_distribution[app_id] = {}
