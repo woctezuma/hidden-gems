@@ -5,6 +5,7 @@
 import json
 import pathlib
 from pathlib import Path
+from typing import Any
 
 import iso639
 import steamreviews
@@ -17,12 +18,15 @@ from src.compute_bayesian_rating import choose_prior, compute_bayesian_score
 from src.compute_wilson_score import compute_wilson_score
 
 
-def get_review_language_dictionary(app_id, previously_detected_languages_dict=None):
+def get_review_language_dictionary(
+    app_id: str,
+    previously_detected_languages_dict: dict | None = None,
+) -> tuple[dict, dict]:
     # Returns dictionary: reviewID -> dictionary with (tagged language, detected language)
 
     review_data = steamreviews.load_review_dict(app_id)
 
-    print("\nAppID: " + app_id)
+    print(f"\nAppID: {app_id}")
 
     reviews = list(review_data["reviews"].values())
 
@@ -68,7 +72,7 @@ def get_review_language_dictionary(app_id, previously_detected_languages_dict=No
 
 
 # noinspection PyPep8Naming
-def most_common(lst):
+def most_common(lst: list) -> Any:
     # Reference: https://stackoverflow.com/a/1518632
 
     import itertools
@@ -93,7 +97,7 @@ def most_common(lst):
     return max(groups, key=_auxfun)[0]
 
 
-def convert_review_language_dictionary_to_iso(language_dict):
+def convert_review_language_dictionary_to_iso(language_dict: dict) -> dict[str, str]:
     language_iso_dict = {}
 
     languages = {r["tag"] for r in language_dict.values()}
@@ -110,7 +114,7 @@ def convert_review_language_dictionary_to_iso(language_dict):
             elif language == "koreana":
                 language_iso = "ko"
             else:
-                print("Missing language:" + language)
+                print(f"Missing language: {language}")
 
                 detected_languages = [
                     r["detected"]
@@ -127,7 +131,7 @@ def convert_review_language_dictionary_to_iso(language_dict):
     return language_iso_dict
 
 
-def summarize_review_language_dictionary(language_dict):
+def summarize_review_language_dictionary(language_dict: dict) -> dict[str, dict]:
     # Returns dictionary: language -> review stats including:
     #                                 - number of reviews for which tagged language coincides with detected language
     #                                 - number of such reviews which are "Recommended"
@@ -157,9 +161,9 @@ def summarize_review_language_dictionary(language_dict):
 
 
 def get_all_review_language_summaries(
-    previously_detected_languages_filename=None,
-    delta_n_reviews_between_temp_saves=10,
-):
+    previously_detected_languages_filename: str | Path | None = None,
+    delta_n_reviews_between_temp_saves: int = 10,
+) -> tuple[dict, list[str]]:
     from src.appids import appid_hidden_gems_reference_set
 
     with Path("idlist.txt").open(encoding="utf-8") as f:
@@ -210,24 +214,25 @@ def get_all_review_language_summaries(
             )
             previously_detected_languages["has_changed"] = False
 
-        print("AppID " + str(count + 1) + "/" + str(len(app_id_list)) + " done.")
+    print(f"AppID {count + 1}/{len(app_id_list)} done.")
 
-    all_languages = sorted(all_languages)
-
-    return game_feature_dict, all_languages
+    return game_feature_dict, sorted(all_languages)
 
 
-def load_from_json(filename):
+def load_from_json(filename: str | Path) -> Any:
     with Path(filename).open(encoding="utf8") as f:
         return json.load(f)
 
 
-def save_to_json(content, filename):
+def save_to_json(content: Any, filename: str | Path) -> None:
     with Path(filename).open("w", encoding="utf8") as f:
         json.dump(content, f, indent=4)
 
 
-def compute_review_language_distribution(game_feature_dict, all_languages):
+def compute_review_language_distribution(
+    game_feature_dict: dict,
+    all_languages: list[str],
+) -> dict:
     # Compute the distribution of review languages among reviewers
 
     review_language_distribution = {}
@@ -524,7 +529,7 @@ def get_detected_languages_filename() -> str:
     return "previously_detected_languages.json"
 
 
-def get_input_data(*, load_from_cache=True):
+def get_input_data(*, load_from_cache: bool = True) -> tuple[dict, list[str]]:
     if load_from_cache:
         game_feature_dict = load_from_json(get_language_features_filename())
 
@@ -556,7 +561,7 @@ def get_regional_data_path() -> str:
     return "regional_rankings/"
 
 
-def get_regional_ranking_filename(language):
+def get_regional_ranking_filename(language: str) -> str:
     # Folder where regional rankings of hidden gems are saved to.
     output_folder = get_regional_data_path()
 

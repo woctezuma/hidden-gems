@@ -2,19 +2,24 @@
 
 import json
 from pathlib import Path
+from typing import Literal
 
 import numpy as np
 
 from src.appids import APP_ID_CONTRADICTION
 
 
+QualityMeasure = Literal["wilson_score", "bayesian_rating"]
+PopularityMeasure = Literal["num_owners", "num_reviews"]
+
+
 def compute_score_generic(
     my_tuple,
     parameter_list,
-    language=None,
-    popularity_measure_str=None,
-    quality_measure_str=None,
-):
+    language: str | None = None,
+    popularity_measure_str: PopularityMeasure = "num_owners",
+    quality_measure_str: QualityMeasure = "wilson_score",
+) -> float:
     # Objective: compute a score for one Steam game.
     #
     # Input:    - a my_tuple is a list consisting of all retrieved information regarding one game
@@ -83,16 +88,16 @@ def compute_score_generic(
 def rank_games(
     d,
     parameter_list,
-    appid_reference_set=None,
-    language=None,
-    popularity_measure_str=None,
-    quality_measure_str=None,
-    num_top_games_to_print=1000,
-    filtered_app_ids_to_show=None,
-    filtered_app_ids_to_hide=None,
+    appid_reference_set: set[str] | None = None,
+    language: str | None = None,
+    popularity_measure_str: PopularityMeasure = "num_owners",
+    quality_measure_str: QualityMeasure = "wilson_score",
+    num_top_games_to_print: int | None = 1000,
+    filtered_app_ids_to_show: set[str] | None = None,
+    filtered_app_ids_to_hide: set[str] | None = None,
     *,
-    verbose=False,
-):
+    verbose: bool = False,
+) -> tuple[float, list[list[int | str]]]:
     # Objective: rank all the Steam games, given a parameter alpha.
     #
     # Input:    - local dictionary of data extracted from SteamSpy
@@ -250,13 +255,13 @@ def rank_games(
 # noinspection PyPep8Naming
 def optimize_for_alpha(
     d,
-    appid_reference_set=None,
-    language=None,
-    popularity_measure_str=None,
-    quality_measure_str=None,
+    appid_reference_set: set[str] | None = None,
+    language: str | None = None,
+    popularity_measure_str: PopularityMeasure = "num_owners",
+    quality_measure_str: QualityMeasure = "wilson_score",
     *,
-    verbose=True,
-):
+    verbose: bool = True,
+) -> list[float]:
     # Objective: find the optimal value of the parameter alpha
     #
     # Input:    - local dictionary of data extracted from SteamSpy
@@ -317,12 +322,12 @@ def optimize_for_alpha(
 
 
 def save_ranking_to_file(
-    output_filename,
-    ranking_list,
-    width=40,
+    output_filename: str | Path,
+    ranking_list: list[list[int | str]],
+    width: int = 40,
     *,
-    only_show_appid=False,
-    verbose=False,
+    only_show_appid: bool = False,
+    verbose: bool = False,
 ) -> None:
     # Objective: save the ranking to the output text file
 
@@ -369,15 +374,15 @@ def get_num_reviews(game):
 # noinspection PyPep8Naming
 def compute_ranking(
     d,
-    num_top_games_to_print=None,
-    keywords_to_include=None,
-    keywords_to_exclude=None,
-    language=None,
-    popularity_measure_str=None,
-    quality_measure_str=None,
+    num_top_games_to_print: int | None = None,
+    keywords_to_include: list[str] | None = None,
+    keywords_to_exclude: list[str] | None = None,
+    language: str | None = None,
+    popularity_measure_str: PopularityMeasure = "num_owners",
+    quality_measure_str: QualityMeasure = "wilson_score",
     *,
-    perform_optimization_at_runtime=True,
-):
+    perform_optimization_at_runtime: bool = True,
+) -> list[list[int | str]]:
     # Objective: compute a ranking of hidden gems
     #
     # Input:    - local dictionary of data extracted from SteamSpy
@@ -475,15 +480,15 @@ def save_games_to_json(games: dict, output_filename: str | Path) -> None:
 
 
 def run_workflow(
-    quality_measure_str="wilson_score",
-    popularity_measure_str="num_reviews",
+    quality_measure_str: QualityMeasure = "wilson_score",
+    popularity_measure_str: PopularityMeasure = "num_reviews",
     *,
-    perform_optimization_at_runtime=True,
-    num_top_games_to_print=250,
-    verbose=False,
-    language=None,
-    keywords_to_include=None,
-    keywords_to_exclude=None,
+    perform_optimization_at_runtime: bool = True,
+    num_top_games_to_print: int | None = 250,
+    verbose: bool = False,
+    language: str | None = None,
+    keywords_to_include: list[str] | None = None,
+    keywords_to_exclude: list[str] | None = None,
 ) -> bool:
     # Objective: save to disk a ranking of hidden gems.
     #
