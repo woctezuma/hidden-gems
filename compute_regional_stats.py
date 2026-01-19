@@ -2,7 +2,7 @@
 #   https://github.com/woctezuma/steam-reviews/blob/master/download_reviews.py
 #   https://github.com/woctezuma/steam-reviews/blob/master/analyze_language.py
 
-import ast
+import json
 import pathlib
 from pathlib import Path
 
@@ -174,7 +174,7 @@ def get_all_review_language_summaries(
 
     # Load the result of language detection for each review
     try:
-        previously_detected_languages = load_content_from_disk(
+        previously_detected_languages = load_from_json(
             previously_detected_languages_filename,
         )
     except FileNotFoundError:
@@ -204,7 +204,7 @@ def get_all_review_language_summaries(
             and flush_to_file_now
             and previously_detected_languages["has_changed"]
         ):
-            write_content_to_disk(
+            save_to_json(
                 previously_detected_languages,
                 previously_detected_languages_filename,
             )
@@ -217,18 +217,14 @@ def get_all_review_language_summaries(
     return game_feature_dict, all_languages
 
 
-def load_content_from_disk(filename):
+def load_from_json(filename):
     with Path(filename).open(encoding="utf8") as f:
-        lines = f.readlines()
-        # The content is on the first line
-        return ast.literal_eval(lines[0])
+        return json.load(f)
 
 
-def write_content_to_disk(content_to_write, filename) -> None:
-    # Export the content to a text file
-
+def save_to_json(content, filename):
     with Path(filename).open("w", encoding="utf8") as f:
-        print(content_to_write, file=f)
+        json.dump(content, f, indent=4)
 
 
 def compute_review_language_distribution(game_feature_dict, all_languages):
@@ -517,31 +513,31 @@ def prepare_dictionary_for_ranking_of_hidden_gems(
 
 
 def get_language_features_filename() -> str:
-    return "dict_review_languages.txt"
+    return "dict_review_languages.json"
 
 
 def get_all_languages_filename() -> str:
-    return "list_all_languages.txt"
+    return "list_all_languages.json"
 
 
 def get_detected_languages_filename() -> str:
-    return "previously_detected_languages.txt"
+    return "previously_detected_languages.json"
 
 
 def get_input_data(*, load_from_cache=True):
     if load_from_cache:
-        game_feature_dict = load_content_from_disk(get_language_features_filename())
+        game_feature_dict = load_from_json(get_language_features_filename())
 
-        all_languages = load_content_from_disk(get_all_languages_filename())
+        all_languages = load_from_json(get_all_languages_filename())
 
     else:
         (game_feature_dict, all_languages) = get_all_review_language_summaries(
             get_detected_languages_filename(),
         )
 
-        write_content_to_disk(game_feature_dict, get_language_features_filename())
+        save_to_json(game_feature_dict, get_language_features_filename())
 
-        write_content_to_disk(all_languages, get_all_languages_filename())
+        save_to_json(all_languages, get_all_languages_filename())
 
     return game_feature_dict, all_languages
 

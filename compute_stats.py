@@ -1,6 +1,6 @@
 # Objective: compute a score for each Steam game and then rank all the games while favoring hidden gems.
 
-import ast
+import json
 from pathlib import Path
 
 import numpy as np
@@ -464,19 +464,14 @@ def compute_ranking(
     return ranking
 
 
-def load_dict_top_rated_games(input_filename):
-    # Import the local dictionary from the input file
-    with Path(input_filename).open(encoding="utf8") as infile:
-        lines = infile.readlines()
+def load_games_from_json(input_filename: str | Path) -> dict:
+    with Path(input_filename).open(encoding="utf8") as f:
+        return json.load(f)
 
-    # The dictionary is on the second line
-    input_string = lines[1]
 
-    input_string = input_string.replace("np.float64(", "")
-    input_string = input_string.replace("),", ",")
-
-    # noinspection PyPep8Naming
-    return ast.literal_eval(input_string)
+def save_games_to_json(games: dict, output_filename: str | Path) -> None:
+    with Path(output_filename).open("w", encoding="utf8") as f:
+        json.dump(games, f, indent=4)
 
 
 def run_workflow(
@@ -512,8 +507,8 @@ def run_workflow(
     if keywords_to_exclude is None:
         keywords_to_exclude = []  # ["Visual Novel", "Anime"]
 
-    # A local dictionary was stored in the following text file
-    input_filename = "dict_top_rated_games_on_steam.txt"
+    # A local dictionary was stored in the following json file
+    input_filename = "dict_top_rated_games_on_steam.json"
 
     # A ranking, in a format parsable by Github Gist, will be stored in the following text file
     output_filename = "hidden_gems.md"
@@ -521,7 +516,7 @@ def run_workflow(
     # A ranking, as a list of appids, will be stored in the following text file
     output_filename_only_appids = "idlist.txt"
 
-    d = load_dict_top_rated_games(input_filename)
+    d = load_games_from_json(input_filename)
 
     ranking = compute_ranking(
         d,
