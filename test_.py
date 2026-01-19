@@ -1,5 +1,4 @@
 import unittest
-from pathlib import Path
 
 import compute_regional_stats
 import compute_stats
@@ -274,10 +273,15 @@ class TestComputeStatsMethods(unittest.TestCase):
         games = compute_stats.load_games_from_json(dict_filename)
 
         for appid in appids.appid_hidden_gems_reference_set:
+            if appid not in games:
+                print(
+                    f"Skipping reference appID={appid} (not found in current dataset).",
+                )
+                continue
             print(
-                f"Ensuring reference {games[appid][0]} (appID={appid}) does not appear in the final ranking.",
+                f"Ensuring reference {games[appid].name} (appID={appid}) does not appear in the final ranking.",
             )
-            games[appid][-1] = False
+            games[appid].should_appear_in_ranking = False
             # If True, UnEpic should end up about rank 1828. Otherwise, UnEpic should not appear on there.
 
         compute_stats.save_games_to_json(games, dict_filename)

@@ -114,7 +114,8 @@ def create_games_dictionary(
     prior = _compute_prior(data)
 
     games = {}
-    for appid, app_data in data.items():
+    for appid_original, app_data in data.items():
+        appid = str(appid_original)
         game = _create_game_from_steamspy_data(
             appid,
             app_data,
@@ -129,7 +130,8 @@ def create_games_dictionary(
                     f"Game used as a reference:\t{game.name}\t(appID={game.appid})",
                 )
             else:
-                raise AssertionError
+                msg = f"Reference game {appid} not found or has no reviews."
+                raise AssertionError(msg)
 
         if game:
             games[appid] = game
